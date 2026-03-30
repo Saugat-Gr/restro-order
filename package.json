@@ -1,0 +1,37 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@inertiajs/vue3": "^1.0.0",
+        "@tailwindcss/forms": "^0.5.3",
+        "axios": "^1.6.4",
+        "laravel-vite-plugin": "^1.0.0",
+        "tailwindcss": "^3.2.1",
+        "vue": "^3.4.0",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.32.0",
+        "eslint-plugin-vue": "^10.4.0",
+        "globals": "^16.3.0",
+        "postcss": "^8.5.6",
+        "sass": "^1.90.0",
+        "vite": "^7.1.0"
+    },
+    "dependencies": {
+        "@coreui/chartjs": "^4.2.0",
+        "@coreui/coreui": "^5.6.1",
+        "@coreui/icons": "^3.0.1",
+        "@coreui/icons-vue": "^2.2.0",
+        "@coreui/utils": "^2.0.2",
+        "@coreui/vue": "^5.7.0",
+        "@coreui/vue-chartjs": "^3.0.0",
+        "@popperjs/core": "^2.11.8",
+        "chart.js": "^4.5.1",
+        "simplebar-vue": "^2.4.2",
+        "vuex": "^4.0.2"
+    }
+}
