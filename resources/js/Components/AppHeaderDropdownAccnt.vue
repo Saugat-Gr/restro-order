@@ -70,7 +70,7 @@ const itemsCount = 42;
       <CDropdownDivider />
       
 
-      <Link class="text-decoration-none" href="/logout" method="POST" as="button">
+      <Link  href="/logout" class="text-decoration-none" method="POST" as="div">
         <CDropdownItem> <CIcon icon="cil-lock-locked" /> Logout </CDropdownItem>
       </Link>
 

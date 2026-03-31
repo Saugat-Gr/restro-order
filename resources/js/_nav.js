@@ -3,7 +3,7 @@ export default [
   // Dashboard - everyone
   {
     name: 'Dashboard',
-    to: '/',
+    to: '/dashboard',
     icon: 'cil-home',
     roles: ['super-admin', 'owner', 'staff'],
   },
