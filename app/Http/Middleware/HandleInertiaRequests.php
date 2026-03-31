@@ -42,7 +42,6 @@ class HandleInertiaRequests extends Middleware
                         'email' => $user->email,
                         'avatar' => $user->avatar ?   $user->avatar : null,
                         'role' => $user->getRoleNames()->first(),
-
                     ];
                 },
             ],

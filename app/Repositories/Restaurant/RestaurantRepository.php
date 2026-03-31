@@ -3,15 +3,17 @@
 namespace App\Repositories\Restaurant;
 
 use App\Repositories\Restaurant\RestaurantInterface;
-use Illuminate\Http\Request;
+use App\Models\Restaurant;
 
 class RestaurantRepository implements RestaurantInterface
 {
-    public function createRestaurant(Request $request)
+    public function createRestaurant($request)
     {
-
-         
-        
+        $restaurant = Restaurant::create($request);
+        $user = auth()->user();
+        $user->restaurant_id = $restaurant->id;
+        $user->save();
+        return $restaurant;
     }
 
     public function getRestaurantById($id)

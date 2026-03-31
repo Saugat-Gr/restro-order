@@ -1,6 +1,5 @@
-// _nav.js
 export default [
-  // Dashboard - everyone
+  // Dashboard - visible to everyone
   {
     name: 'Dashboard',
     to: '/dashboard',
@@ -8,18 +7,46 @@ export default [
     roles: ['super-admin', 'owner', 'staff'],
   },
 
+ 
+
+  // Foldable group under Restaurant
   {
-     name: 'Hi',
-     to: '/',
-     icon: 'cil-speedometer',
-     roles: ['staff'],
+    component: 'CNavGroup',
+    name: 'Restaurant',
+    icon: 'cil-restaurant',
+    roles: ['owner'],
+    items: [
+      {
+        name: 'Settings',
+        to: '/restaurants/settings',
+        roles: ['owner'],
+      },
+      {
+        name: 'Menu',
+        to: '/restaurants/menu',
+        roles: ['owner'],
+      },
+      {
+        name: 'Orders',
+        to: '/restaurants/orders',
+        roles: ['owner'],
+      },
+    ],
   },
 
+  // Staff-specific link
   {
-     name: 'owners',
-     to: '/owners',
-     icon: 'cil-people',
-     roles: ['super-admin'],
-  }
+    name: 'Hi',
+    to: '/',
+    icon: 'cil-speedometer',
+    roles: ['staff'],
+  },
 
-]
+  // Super-admin link
+  {
+    name: 'Owners',
+    to: '/owners',
+    icon: 'cil-people',
+    roles: ['super-admin'],
+  },
+];

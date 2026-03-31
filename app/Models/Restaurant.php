@@ -10,8 +10,19 @@ class Restaurant extends Model
 {
     use HasFactory;
 
-    public function booted()
+    protected $fillable = [
+        'name',
+        'address',
+        'phone',
+        'owner_id',
+        'email',
+    ];
+
+    public static function booted()
     {
         static::addGlobalScope(new TenantScope);
     }
+
+
+
 }

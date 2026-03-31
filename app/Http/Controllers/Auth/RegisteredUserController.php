@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -47,7 +48,7 @@ class RegisteredUserController extends Controller
             $filePath = $request->file('avatar')->store('user/avatars', 'public');
         }
 
-         Log::info('File path: ' . $filePath);
+        Log::info('File path: ' . $filePath);
 
         $user = User::create([
             'name' => $request->name,
@@ -56,12 +57,12 @@ class RegisteredUserController extends Controller
             'avatar' => $filePath,
         ]);
 
-        $user->assignRole('super-admin');
+        $user->assignRole(UserRole::OWNER->value);
 
-        event(new Registered($user));
+            event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('restaurant.create');
     }
 }

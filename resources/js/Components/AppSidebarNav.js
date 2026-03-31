@@ -11,7 +11,13 @@ import { useStore } from "vuex";
 import nav from "@/_nav.js";
 import simplebar from "simplebar-vue";
 import "simplebar-vue/dist/simplebar.min.css";
-import { CSidebarNav, CNavGroup, CNavTitle, CBadge, useColorModes } from "@coreui/vue";
+import {
+    CSidebarNav,
+    CNavGroup,
+    CNavTitle,
+    CBadge,
+    useColorModes,
+} from "@coreui/vue";
 
 const normalizePath = (path) =>
     decodeURI(path)
@@ -31,7 +37,6 @@ const AppSidebarNav = defineComponent({
         const store = useStore();
         const page = usePage();
 
-
         const userRole = page.props.auth.user.role;
 
         const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
@@ -46,7 +51,7 @@ const AppSidebarNav = defineComponent({
         const filteredNav = nav.filter(
             (item) => !item.roles || item.roles.includes(userRole),
         );
-        
+
         // const filteredNav = nav
 
         const firstRender = ref(true);

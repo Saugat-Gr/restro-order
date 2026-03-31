@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Restaurant\RestaurantInterface;
+use App\Repositories\Restaurant\RestaurantRepository;
+
 use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            RestaurantInterface::class,
+            RestaurantRepository::class
+        );
     }
 
     /**
@@ -24,11 +30,7 @@ class AppServiceProvider extends ServiceProvider
             'app' => [
                 'name' => config('app.name'),
                 'url' => config('app.url'),
-            ],
-
-            'auth' => [
-                
-            ],
+            ]
         ]);
     }
 }

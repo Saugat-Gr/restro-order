@@ -4,7 +4,11 @@ import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head } from '@inertiajs/vue3';
-import CoreDashboard from '../Dashboard.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
+defineOptions({
+    layout: AuthenticatedLayout,
+});
 
 defineProps({
     mustVerifyEmail: {
@@ -22,7 +26,6 @@ defineProps({
          <title>{{ 'Profile' }}</title>
     </Head>
 
-    <CoreDashboard>
         
 
         <div class="py-12 ">
@@ -44,5 +47,4 @@ defineProps({
                 </div>
             </div>
         </div>
-    </CoreDashboard>
 </template>
