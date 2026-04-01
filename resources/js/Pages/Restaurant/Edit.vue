@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { CFormLabel } from "@coreui/vue";
+import { CFormLabel, CHeader } from "@coreui/vue";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm, Head, usePage } from "@inertiajs/vue3";
 
