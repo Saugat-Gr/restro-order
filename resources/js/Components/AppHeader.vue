@@ -2,7 +2,7 @@
 import { onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useColorModes } from "@coreui/vue";
-
+import { Link } from "@inertiajs/vue3";
 import AppBreadcrumb from "@/Components/AppBreadcrumb.vue";
 import AppHeaderDropdownAccnt from "@/Components/AppHeaderDropdownAccnt.vue";
 
@@ -39,11 +39,12 @@ onMounted(() => {
         <CIcon icon="cil-menu" size="lg" />
       </CHeaderToggler>
 
-      <CHeaderNav class="d-none d-md-flex">
+      <!-- <CHeaderNav class="">
         <CNavItem>
-          <Link href="/" as="Dashboard"> Dashboard </Link>
+          <Link href="/" as="button" class="nav-link">
+          </Link>
         </CNavItem>
-      </CHeaderNav>
+      </CHeaderNav> -->
 
       <CHeaderNav class="ms-auto">
 

@@ -7,6 +7,7 @@ const form = useForm({
   address: "",
   phone: "",
   email: "",
+  logo: null
 });
 
 // Submit handler
@@ -75,6 +76,17 @@ const submit = () => {
                 :invalid="form.errors.email"
               />
               <div class="text-danger small">{{ form.errors.email }}</div>
+            </div>
+
+            <!-- Logo -->
+            <div class="mb-4">
+              <CFormLabel>Logo</CFormLabel>
+              <CFormInput
+                type="file"
+                @change="e => form.logo = e.target.files[0]"
+                :invalid="form.errors.logo"
+              />
+              <div class="text-danger small">{{ form.errors.logo }}</div>
             </div>
 
             <!-- Submit -->

@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     //    Restaurant Create and Store Routes:
     Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
     Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
+    Route::post('restaurant/{restaurant}', [RestaurantController::class, 'update'])->name('restaurant.update');
 });
 
 

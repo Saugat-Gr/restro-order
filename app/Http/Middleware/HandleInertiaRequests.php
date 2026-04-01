@@ -31,20 +31,43 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+
             'auth' => [
                 'user' => function () {
                     $user = auth()->user();
-                    if (!$user)
+
+                    if (!$user) {
                         return null;
+                    }
+
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
-                        'avatar' => $user->avatar ?   $user->avatar : null,
+                        'avatar' => $user->avatar ? $user->avatar : null,
                         'role' => $user->getRoleNames()->first(),
+                        'restaurant_id' => $user->restaurant_id,
                     ];
                 },
             ],
+
+            // ✅ ADD THIS BLOCK
+            'restaurant' => function () use ($request) {
+                $user = $request->user();
+
+                if (!$user || !$user->restaurant) {
+                    return null;
+                }
+
+                return [
+                    'id' => $user->restaurant->id,
+                    'name' => $user->restaurant->name,
+                    'address' => $user->restaurant->address,
+                    'phone' => $user->restaurant->phone,
+                    'email' => $user->restaurant->email,
+                    'logo' => $user->restaurant->logo ? $user->restaurant->logo : null,
+                ];
+            },
         ];
     }
 }

@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Restaurant\CreateRequest;
+use App\Http\Requests\Restaurant\UpdateRequest;
+use App\Models\Restaurant;
 use App\Services\RestaurantService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Log;
 
 class RestaurantController extends Controller
 {
     protected RestaurantService $restaurantService;
 
 
-     public function __construct(RestaurantService $restaurantService)
+    public function __construct(RestaurantService $restaurantService)
     {
         $this->restaurantService = $restaurantService;
     }
@@ -22,7 +25,7 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        
+
     }
 
     /**
@@ -30,14 +33,14 @@ class RestaurantController extends Controller
      */
     public function create()
     {
-         return Inertia::render(
+        return Inertia::render(
             'Restaurant/Create',
             [
                 'app' => [
                     'title' => 'Restaurant',
                 ],
             ]
-        ); 
+        );
     }
 
     /**
@@ -45,7 +48,7 @@ class RestaurantController extends Controller
      */
     public function store(CreateRequest $request)
     {
-      return   $this->restaurantService->storeRestaurant($request);
+        return $this->restaurantService->storeRestaurant($request);
     }
 
     /**
@@ -59,17 +62,26 @@ class RestaurantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Restaurant $restaurant)
     {
-        //
+        return Inertia::render(
+            'Restaurant/Edit',
+            [
+                'app' => [
+                    'title' => 'Edit Restaurant',
+                ],
+                'restaurant' => $restaurant,
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRequest $request, Restaurant $restaurant)
     {
-        //
+        Log::info($request->all());
+        return $this->restaurantService->updateRestaurant($request, $restaurant);
     }
 
     /**

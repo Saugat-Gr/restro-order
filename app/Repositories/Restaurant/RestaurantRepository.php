@@ -9,6 +9,7 @@ class RestaurantRepository implements RestaurantInterface
 {
     public function createRestaurant($request)
     {
+
         $restaurant = Restaurant::create($request);
         $user = auth()->user();
         $user->restaurant_id = $restaurant->id;
@@ -21,9 +22,11 @@ class RestaurantRepository implements RestaurantInterface
         // Implementation for retrieving a restaurant by ID
     }
 
-    public function updateRestaurant($id, array $data)
+    public function updateRestaurant($data, $restaurant)
     {
         // Implementation for updating a restaurant
+        $restaurant->update($data);
+        return $restaurant;
     }
 
     public function deleteRestaurant($id)

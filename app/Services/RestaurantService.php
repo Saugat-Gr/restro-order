@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\Restaurant\CreateRequest;
+use App\Http\Requests\Restaurant\UpdateRequest;
 use App\Repositories\Restaurant\RestaurantInterface;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -24,6 +25,10 @@ class RestaurantService
             $validated_data = $request->validated();
             $validated_data['owner_id'] = auth()->id();
 
+            if ($request->hasFile('logo')) {
+                $validated_data['logo'] = $request->file('logo')->store('restaurant/logos', 'public');
+            }
+
             $this->restaurantRepository->createRestaurant($validated_data);
 
             return redirect()->route('dashboard');
@@ -32,6 +37,26 @@ class RestaurantService
             return redirect()->route('welcome');
         } catch (Exception $e) {
             Log::error('Unexpected error creating restaurant: ' . $e->getMessage());
+            return redirect()->route('welcome');
+        }
+    }
+
+    public function updateRestaurant(UpdateRequest $request, $restaurant)
+    {
+        try {
+            Log::info('Updating restaurant with ID: ' . $restaurant->id);
+            $validated_data = $request->validated();
+            
+            if ($request->hasFile('logo')) {
+                $validated_data['logo'] = $request->file('logo')->store('restaurant/logos', 'public');
+            }
+            $this->restaurantRepository->updateRestaurant($validated_data, $restaurant);
+            return redirect()->route('dashboard');
+        } catch (QueryException $e) {
+            Log::error('Error updating restaurant: ' . $e->getMessage());
+            return redirect()->route('welcome');
+        } catch (Exception $e) {
+            Log::error('Unexpected error updating restaurant: ' . $e->getMessage());
             return redirect()->route('welcome');
         }
     }

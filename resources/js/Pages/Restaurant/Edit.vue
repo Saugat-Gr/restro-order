@@ -1,100 +1,110 @@
 <script setup>
-import { useForm, Head } from "@inertiajs/vue3";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { CFormLabel } from "@coreui/vue";
+import { Inertia } from "@inertiajs/inertia";
+import { useForm, Head, usePage } from "@inertiajs/vue3";
+
+const page = usePage();
+
+defineOptions({
+  layout: AuthenticatedLayout,
+});
 
 // Inertia form (cleaner)
 const form = useForm({
-  name: "",
-  address: "",
-  phone: "",
-  email: "",
+  name: page.props.restaurant.name || "",
+  address: page.props.restaurant.address || "",
+  phone: page.props.restaurant.phone || "",
+  email: page.props.restaurant.email || "",
+  logo: null,
 });
 
 // Submit handler
 const submit = () => {
-  form.post(route("restaurant.store"));
+  console.log("Submitting form with data:", form);
+  form.post(`/restaurant/${page.props.restaurant.id}`, {
+    forceFormData: true,
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: () => {
+      Inertia.reload({ only: ["restaurant"] });
+    },
+    onError: (errors) => {
+      console.error("Form submission errors:", errors);
+    },
+  });
 };
 </script>
 
 <template>
   <Head>
-    <title>{{ "Create Restaurant" }}</title>
+    <title>{{ page.props.app.title }}</title>
   </Head>
 
-  <CRow class="w-full justify-content-center mt-5">
-    <CCol xs="12" sm="10" md="6" lg="5">
-      <CCard class="shadow-2xl border-0">
-        <CCardHeader class="text-center">
-          <h4 class="mb-1">🏪 Create Your Restaurant</h4>
-          <small class="text-medium-emphasis">
-            Set up your restaurant to start managing orders
-          </small>
-        </CCardHeader>
+  <CContainer fluid class="bg-grey text-dark rounded-3 shadow-2xl p-4 mt-4">
+    <h1 class="mb-4">General</h1>
+    <p>Enter the general information about your restaurant</p>
 
-        <CCardBody>
-          <CForm @submit.prevent="submit">
-            <!-- Name -->
-            <div class="mb-3">
-              <CFormLabel>Restaurant Name</CFormLabel>
-              <CFormInput
-                v-model="form.name"
-                placeholder="e.g. Himalayan Bites"
-                :invalid="form.errors.name"
-              />
-              <div class="text-danger small">{{ form.errors.name }}</div>
-            </div>
+    <div class="border rounded-3 p-4">
+      <CForm @submit.prevent="submit">
+        <div class="mb-3">
+          <CFormLabel for="name">Restaurant Name</CFormLabel>
+          <CFormInput
+            type="text"
+            v-model="form.name"
+            class="form-control"
+            id="name"
+          />
+        </div>
 
-            <!-- Address -->
-            <div class="mb-3">
-              <CFormLabel>Address</CFormLabel>
-              <CFormInput
-                v-model="form.address"
-                placeholder="e.g. Kathmandu, Nepal"
-                :invalid="form.errors.address"
-              />
-              <div class="text-danger small">{{ form.errors.address }}</div>
-            </div>
+        <div class="mb-3">
+          <CFormLabel for="phone">Phone Number</CFormLabel>
+          <CFormInput
+            type="text"
+            v-model="form.phone"
+            class="form-control"
+            id="phone"
+          />
+        </div>
 
-            <!-- Phone -->
-            <div class="mb-4">
-              <CFormLabel>Phone</CFormLabel>
-              <CFormInput
-                v-model="form.phone"
-                placeholder="+977-98XXXXXXXX"
-                :invalid="form.errors.phone"
-              />
-              <div class="text-danger small">{{ form.errors.phone }}</div>
-            </div>
+        <div class="mb-3">
+          <CFormLabel for="address">Address</CFormLabel>
+          <CFormInput
+            type="text"
+            v-model="form.address"
+            class="form-control"
+            id="address"
+          />
+        </div>
 
-            <!-- Email -->
-            <div class="mb-4">
-              <CFormLabel>Email</CFormLabel>
-              <CFormInput
-                v-model="form.email"
-                type="email"
-                placeholder="e.g. hello@yourrestaurant.com"
-                :invalid="form.errors.email"
-              />
-              <div class="text-danger small">{{ form.errors.email }}</div>
-            </div>
+        <div class="mb-3">
+          <CFormLabel for="email">Email</CFormLabel>
+          <CFormInput
+            type="email"
+            v-model="form.email"
+            class="form-control"
+            id="email"
+          />
+        </div>
 
-            <!-- Submit -->
-            <div class="d-grid">
-              <CButton
-                color="primary"
-                type="submit"
-                :disabled="form.processing"
-              >
-                {{ form.processing ? "Creating..." : "Create Restaurant" }}
-              </CButton>
-            </div>
-          </CForm>
-        </CCardBody>
-      </CCard>
+        <div class="mb-3">
+          <CFormLabel for="logo">Company Logo</CFormLabel>
+          <CFormInput
+            type="file"
+            ref="logoInput"
+            class="form-control"
+            id="logo"
+            @change="form.logo = $event.target.files[0]"
+          />
+          <div v-if="form.errors.logo" class="text-danger mt-1">
+            {{ form.errors.logo }}
+          </div>
+        </div>
 
-      <!-- Info Alert -->
-      <CAlert color="info" class="mt-3 text-center">
-        You must create a restaurant before accessing the dashboard.
-      </CAlert>
-    </CCol>
-  </CRow>
+        <div>
+          <CButton type="submit" color="primary"> Save</CButton>
+        </div>
+      </CForm>
+    </div>
+  </CContainer>
 </template>

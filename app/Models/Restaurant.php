@@ -16,13 +16,12 @@ class Restaurant extends Model
         'phone',
         'owner_id',
         'email',
+        'logo'
     ];
 
-    public static function booted()
-    {
-        static::addGlobalScope(new TenantScope);
-    }
-
-
+   
+  public function user(){
+        return $this->hasOne(User::class, 'restaurant_id');
+  }
 
 }

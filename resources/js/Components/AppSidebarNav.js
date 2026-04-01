@@ -8,7 +8,7 @@ import {
 } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { useStore } from "vuex";
-import nav from "@/_nav.js";
+import getNav from "@/_nav.js";
 import simplebar from "simplebar-vue";
 import "simplebar-vue/dist/simplebar.min.css";
 import {
@@ -46,28 +46,36 @@ const AppSidebarNav = defineComponent({
         const toggleSidebar = (value) =>
             store.dispatch("sidebar/toggleSidebar", value);
 
-        // Role filtering commented for later
-        // const userRole = page.props.auth.user.role
-        const filteredNav = nav.filter(
-            (item) => !item.roles || item.roles.includes(userRole),
-        );
+        const navItems = computed(() => getNav(page));
 
-        // const filteredNav = nav
+        const filteredNav = computed(() =>
+            navItems.value.filter(
+                (item) => !item.roles || item.roles.includes(userRole),
+            ),
+        );
 
         const firstRender = ref(true);
         onMounted(() => {
             firstRender.value = false;
         });
 
-        const renderItem = (item) => {
+        const renderItem = (item, level = 0) => {
+            if (!item) return null; // Defensive guard
+
             if (item.items && item.items.length) {
+                const filteredChildren = item.items.filter(
+                    (child) => !child.roles || child.roles.includes(userRole),
+                );
+
+                if (!filteredChildren.length) return null;
+
                 return h(
                     CNavGroup,
                     {
                         as: "div",
                         compact: true,
                         ...(firstRender.value && {
-                            visible: item.items.some((child) =>
+                            visible: filteredChildren.some((child) =>
                                 isActiveLink(page.url, child.to || child.href),
                             ),
                         }),
@@ -82,7 +90,8 @@ const AppSidebarNav = defineComponent({
                                 : null,
                             item.name,
                         ],
-                        default: () => item.items.map(renderItem),
+                        default: () =>
+                            filteredChildren.map(child => renderItem(child, level + 1)),
                     },
                 );
             }
@@ -92,7 +101,8 @@ const AppSidebarNav = defineComponent({
                 {
                     href: item.to,
                     class: [
-                        "sidebar-nav-link d-flex align-items-center gap-2 py-2 px-3 rounded mb-1 text-decoration-none text-white ",
+                        "sidebar-nav-link d-flex align-items-center gap-2 py-2 px-3 rounded mb-1 text-decoration-none text-white",
+                        level > 0 ? "ml-12" : 'ps-3',
                         isActiveLink(page.url, item.to)
                             ? "active bg-primary bg-opacity-10"
                             : "",
@@ -124,6 +134,7 @@ const AppSidebarNav = defineComponent({
             );
         };
 
+        // 🔥 PERFECT FIX: Just change this return statement
         return () =>
             h(
                 CSidebarNav,
@@ -131,7 +142,9 @@ const AppSidebarNav = defineComponent({
                     as: simplebar,
                     class: "sidebar-nav-perfect",
                 },
-                { default: () => filteredNav.map(renderItem) },
+                { 
+                    default: () => filteredNav.value.map((item) => renderItem(item, 0))
+                },
             );
     },
 });

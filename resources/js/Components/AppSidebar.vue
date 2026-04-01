@@ -1,13 +1,19 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import { useStore } from "vuex";
-import { logo } from "@/assets/brand/logo";
-import { sygnet } from "@/assets/brand/sygnet";
 import { AppSidebarNav } from "@/Components/AppSidebarNav.js";
 import { computed } from "vue";
 
 // Access the store
 const store = useStore();
+
+// Access the page shared props:
+const page = usePage();
+
+//  Logo of the Copmany:
+const logo = page.props.restaurant 
+  ? `/storage/${page.props.restaurant.logo}`
+  : 'storage/restaurant/logos/default.avif';
 
 // Sidebar reactive state from Vuex
 const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
@@ -27,10 +33,12 @@ const toggleUnfoldable = () => store.dispatch("sidebar/toggleUnfoldable");
     :visible="sidebarVisible"
     @visible-change="toggleSidebar"
   >
-    <CSidebarHeader class="border-bottom">
-      <Link href="/" class="text-decoration-none text-white inline-block">
-        Restro Application
-      </Link>
+    <CSidebarHeader class="border-bottom ">
+      <div class="bg-red w-full h-full flex items-center justify-center">
+        <Link href="/" class="text-decoration-none text-white">
+          <CImage :src="logo" width="100" v-if="logo" />
+        </Link>
+      </div>
       <CCloseButton
         class="d-lg-none"
         dark
