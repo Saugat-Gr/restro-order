@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\MenuItemCategoryController;
+use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
+use App\Models\MenuItem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,6 +19,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -45,13 +49,33 @@ Route::middleware('auth')->group(function () {
 
         //  Restaurant Routes:
         Route::resource('restaurant', RestaurantController::class);
+
+        // Menu: 
+        Route::prefix('menu')->name('menu.')->group(function () {
+
+            // Menu Categories:
+            Route::get('category', [MenuItemCategoryController::class, 'index'])->name('category');
+            Route::patch('category/{menu_item_category}', [MenuItemCategoryController::class, 'update'])->name('category.update');
+            Route::delete('category/{menu_item_category}', [MenuItemCategoryController::class, 'destroy'])->name('category.destroy');
+            Route::post('category', [MenuItemCategoryController::class, 'store'])->name('category.store');
+
+            // Menu Items Routes:
+            Route::resource('menu-items', MenuItemController::class);
+            
+
+        });
+
+
     });
 
     //    Restaurant Create and Store Routes:
     Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
     Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
-    Route::post('restaurant/{restaurant}', [RestaurantController::class, 'update'])->name('restaurant.update');
+
 });
 
 
+
+
 require __DIR__ . '/auth.php';
+

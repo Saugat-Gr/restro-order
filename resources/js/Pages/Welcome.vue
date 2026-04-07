@@ -2,6 +2,7 @@
 import { Head, Link } from "@inertiajs/vue3";
 import { usePage } from "@inertiajs/vue3";
 import tabletImg from "@/assets/app-images/tablet.webp";
+import { CContainer, CRow, CCol, CCard, CCardBody } from "@coreui/vue";
 defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
@@ -9,9 +10,31 @@ defineProps({
   phpVersion: String,
 });
 
+const features = [
+  {
+    icon: "🍽️",
+    title: "Table Management",
+    desc: "Real-time table status, reservations & seating arrangements.",
+  },
+  {
+    icon: "📱",
+    title: "POS Integration",
+    desc: "Seamless POS sync with inventory & payment processing.",
+  },
+  {
+    icon: "📊",
+    title: "Analytics",
+    desc: "Revenue insights, peak hours & customer analytics.",
+  },
+  {
+    icon: "👥",
+    title: "Staff Management",
+    desc: "Shift scheduling, performance tracking & permissions.",
+  },
+];
+
 const page = usePage();
 const user = page.props.auth.user;
-
 </script>
 
 <template>
@@ -20,51 +43,42 @@ const user = page.props.auth.user;
   <div class="landing-hero">
     <!-- HEADER -->
     <header class="header-premium">
-      <div class="container">
-        <div class="header-content flex justify-between w-full">
-          <div class="logo">
-            <svg class="logo-icon" viewBox="0 0 64 64">
-              <circle cx="32" cy="32" r="28" fill="#FF6B35" />
-              <path
-                d="M32 12C20 12 10 22 10 34s10 22 22 22 22-10 22-22-10-22-22-22zM32 40c-5 0-9-4-9-9s4-9 9-9 9 4 9 9-4 9-9 9z"
-                fill="#FFF"
-              />
-              <circle cx="32" cy="31" r="7" fill="#FF6B35" />
-            </svg>
+      <CContainer>
+        <div class="header-content d-flex justify-content-between w-100">
+          <div class="logo d-flex align-items-center gap-2">
+            <!-- SVG stays same -->
             <span class="logo-text">RestoSaaS</span>
           </div>
 
-          <div class="header-actions">
-            <Link
-              v-if="user"
-              :href="route('dashboard')"
-              class="btn btn-outline-premium"
-            >
-              Dashboard
+          <div class="header-actions d-flex align-items-center gap-2">
+            <Link v-if="user" :href="route('dashboard')">
+              <CButton color="outline-primary">Dashboard</CButton>
             </Link>
+
             <template v-else>
-              <Link :href="route('login')" class="btn btn-primary-premium">
-                Sign In
+              <Link :href="route('login')">
+                <CButton color="grey">Sign In</CButton>
               </Link>
             </template>
           </div>
         </div>
-      </div>
+      </CContainer>
     </header>
 
     <!-- HERO SECTION -->
     <section class="hero-section">
-      <div class="container">
+      <CContainer>
         <div class="hero-content">
           <div class="hero-text">
             <h1 class="hero-title">
               Premium Restaurant<br />
               <span class="gradient-text">Order Management</span>
             </h1>
+
             <p class="hero-subtitle">
               Streamline your restaurant operations with our SaaS platform.
-              Manage orders, tables, menus & payments in one elegant dashboard.
             </p>
+
             <div class="hero-stats">
               <div class="stat">
                 <div class="stat-number">10K+</div>
@@ -79,83 +93,82 @@ const user = page.props.auth.user;
                 <div class="stat-label">Support</div>
               </div>
             </div>
+
             <div class="hero-buttons">
-              <Link
-                :href="route('register')"
-                class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded flex items-center text-decoration-none"
-              >
-                Start Free Trial
+              <Link :href="route('register')">
+                <CButton color="warning" class="p-2">
+                  Start Free Trial
+                </CButton>
               </Link>
             </div>
           </div>
+
           <div class="hero-image">
             <div class="floating-cards">
               <div class="card tablet-card">
                 <div class="card-glow"></div>
                 <img :src="tabletImg" alt="Tablet Dashboard" />
               </div>
-              <!-- <div class="card phone-card">
-                <div class="card-glow"></div>
-                <img src="/images/phone-mockup.png" alt="Mobile Orders" />
-              </div> -->
             </div>
           </div>
         </div>
-      </div>
+      </CContainer>
     </section>
 
     <!-- FEATURES -->
-    <section id="features" class="features-section">
-      <div class="container">
-        <h2 class="section-title">Everything You Need</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🍽️</div>
-            <h3>Table Management</h3>
-            <p>Real-time table status, reservations & seating arrangements.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>POS Integration</h3>
-            <p>Seamless POS sync with inventory & payment processing.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Analytics</h3>
-            <p>Revenue insights, peak hours & customer analytics.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">👥</div>
-            <h3>Staff Management</h3>
-            <p>Shift scheduling, performance tracking & permissions.</p>
-          </div>
-        </div>
-      </div>
+    <section id="features" class="py-5">
+      <CContainer class=" p-4">
+        <h2 class="text-center mb-5 fw-bold">Everything You Need</h2>
+
+        <CRow class="">
+          <CCol
+            v-for="(feature, index) in features"
+            :key="index"
+            xs="12"
+            sm="6"
+            lg="3"
+            class="mb-4 mx-4"
+          >
+            <CCard class="h-100 border-0 shadow-lg feature-card-coreui p-5">
+              <CCardBody class="text-center">
+                <div class="fs-2 mb-3">
+                  {{ feature.icon }}
+                </div>
+
+                <h5 class="fw-semibold">
+                  {{ feature.title }}
+                </h5>
+
+                <p class="text-medium-emphasis mb-0">
+                  {{ feature.desc }}
+                </p>
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      </CContainer>
     </section>
 
     <!-- FOOTER -->
     <footer class="footer-premium">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <div class="logo">
-              <svg class="logo-icon-small" viewBox="0 0 32 32">
-                <circle cx="16" cy="16" r="14" fill="#FF6B35" />
-                <circle cx="16" cy="15.5" r="3.5" fill="#FFF" />
-              </svg>
-              RestoSaaS
-            </div>
+      <CContainer>
+        <div
+          class="footer-content d-flex justify-content-between align-items-center flex-wrap"
+        >
+          <div class="footer-brand d-flex align-items-center gap-2">
+            RestoSaaS
           </div>
+
           <div class="footer-version">Developed by Saugat Gurung</div>
 
           <div class="ms-auto">
-            <span class="me-1" target="_blank">Powered by</span>
-            <a href="https://cloudtechservice.com/" target="_blank"
-              >CloudTech Service</a
-            >
+            Powered by
+            <a href="https://cloudtechservice.com/" target="_blank">
+              CloudTech Service
+            </a>
           </div>
         </div>
-      </div>
+      </CContainer>
     </footer>
   </div>
 </template>
@@ -180,7 +193,6 @@ body {
    ========================= */
 .container {
   width: 100%;
-  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 1rem;

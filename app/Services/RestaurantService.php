@@ -16,7 +16,7 @@ class RestaurantService
 
     public function __construct(RestaurantInterface $restaurantRepository)
     {
-        $restaurant = $this->restaurantRepository = $restaurantRepository;
+         $this->restaurantRepository = $restaurantRepository;
     }
 
     public function storeRestaurant(CreateRequest $request)
@@ -44,7 +44,6 @@ class RestaurantService
     public function updateRestaurant(UpdateRequest $request, $restaurant)
     {
         try {
-            Log::info('Updating restaurant with ID: ' . $restaurant->id);
             $validated_data = $request->validated();
             
             if ($request->hasFile('logo')) {

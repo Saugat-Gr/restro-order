@@ -13,7 +13,7 @@ const page = usePage();
 //  Logo of the Copmany:
 const logo = page.props.restaurant 
   ? `/storage/${page.props.restaurant.logo}`
-  : 'storage/restaurant/logos/default.avif';
+  : '/storage/restaurant/logos/default.avif';
 
 // Sidebar reactive state from Vuex
 const sidebarVisible = computed(() => store.getters["sidebar/visible"]);

@@ -112,4 +112,24 @@ const appName = computed(() => page.props.app.title);
     padding: 1rem;
   }
 }
+
+/* Applies to all vue-easymde instances */
+.EasyMDEContainer {
+  background-color: var(--cui-bg-dark); /* CoreUI dark background */
+  color: var(--cui-text-light);
+}
+
+.EasyMDEContainer .CodeMirror {
+  background-color: var(--cui-bg-dark);
+  color: var(--cui-text-light);
+}
+
+.EasyMDEContainer .CodeMirror-cursor {
+  border-left: 1px solid var(--cui-text-light);
+}
+
+.EasyMDEContainer .editor-toolbar {
+  background-color: var(--cui-bg-dark);
+  border: none;
+}
 </style>

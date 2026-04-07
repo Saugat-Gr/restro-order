@@ -17,7 +17,29 @@ import { iconsSet as icons } from '@/assets/icons'
 
 import  store from '@/Store/index.js'
 import theme from './Store/modules/theme';
+
+import VueEasymde from 'vue3-easymde';
+import 'easymde/dist/easymde.min.css';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+const vueConfig = {
+     toolbar:[
+         "bold",
+         "italic",
+         "heading",
+         "|",
+         "quote",
+         "unordered-list",
+         "ordered-list",
+         "|",
+         "link",
+         "preview",
+         "side-by-side",
+         "fullscreen"
+     ],
+     maxHeight: "250px",
+};
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -27,6 +49,7 @@ createInertiaApp({
             .use(plugin)
             .use(store)
             .use(ZiggyVue)
+            .use(VueEasymde, vueConfig)
             .use(CoreuiVue)
             .provide('icons', icons)
             .component('CIcon', CIcon)

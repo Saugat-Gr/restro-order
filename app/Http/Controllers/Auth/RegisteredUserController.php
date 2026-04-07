@@ -33,7 +33,6 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        Log::info($request->all());
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -48,8 +47,6 @@ class RegisteredUserController extends Controller
             $filePath = $request->file('avatar')->store('user/avatars', 'public');
         }
 
-        Log::info('File path: ' . $filePath);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -59,7 +56,7 @@ class RegisteredUserController extends Controller
 
         $user->assignRole(UserRole::OWNER->value);
 
-            event(new Registered($user));
+        event(new Registered($user));
 
         Auth::login($user);
 

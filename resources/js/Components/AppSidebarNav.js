@@ -86,6 +86,7 @@ const AppSidebarNav = defineComponent({
                                 ? h(resolveComponent("CIcon"), {
                                       icon: item.icon,
                                       class: "nav-icon",
+                                      size:"sm",
                                   })
                                 : null,
                             item.name,
@@ -114,6 +115,7 @@ const AppSidebarNav = defineComponent({
                             ? h(resolveComponent("CIcon"), {
                                   icon: item.icon,
                                   class: "nav-icon flex-shrink-0",
+                                  size: "sm"
                               })
                             : null,
                         h("span", { class: "nav-text fw-medium" }, item.name),
@@ -124,7 +126,6 @@ const AppSidebarNav = defineComponent({
                                       class: "ms-auto",
                                       color: item.badge.color,
                                       shape: "rounded-pill",
-                                      size: "sm",
                                   },
                                   item.badge.text,
                               )

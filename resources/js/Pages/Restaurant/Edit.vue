@@ -1,36 +1,43 @@
 <script setup>
+import { Head, useForm, usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { CFormLabel, CHeader } from "@coreui/vue";
+import {
+  CButton,
+  CContainer,
+  CForm,
+  CFormInput,
+  CFormLabel,
+  CFormFeedback,
+  CHeader,
+} from "@coreui/vue";
 import { Inertia } from "@inertiajs/inertia";
-import { useForm, Head, usePage } from "@inertiajs/vue3";
-
-const page = usePage();
 
 defineOptions({
   layout: AuthenticatedLayout,
 });
 
-// Inertia form (cleaner)
+const page = usePage();
+const restaurant = page.props.restaurant;
+
+// Form setup
 const form = useForm({
-  name: page.props.restaurant.name || "",
-  address: page.props.restaurant.address || "",
-  phone: page.props.restaurant.phone || "",
-  email: page.props.restaurant.email || "",
-  logo: null,
+  _method: "patch",
+  name: restaurant.name || "",
+  address: restaurant.address || "",
+  phone: restaurant.phone || "",
+  email: restaurant.email || "",
+  logo: null,                    // Start with null (important)
 });
 
-// Submit handler
 const submit = () => {
-  console.log("Submitting form with data:", form);
-  form.post(`/restaurant/${page.props.restaurant.id}`, {
-    forceFormData: true,
+  form.post(`/restaurant/${restaurant.id}`, {
+    forceFormData: true,         // ← This is critical when files are involved
     preserveScroll: true,
-    preserveState: true,
     onSuccess: () => {
-      Inertia.reload({ only: ["restaurant"] });
+     Inertia.reload({ only: ["restaurant"] });      // Clear the file input after success
     },
     onError: (errors) => {
-      console.error("Form submission errors:", errors);
+      console.error("Submission errors:", errors);
     },
   });
 };
@@ -38,71 +45,74 @@ const submit = () => {
 
 <template>
   <Head>
-    <title>{{ page.props.app.title }}</title>
+    <title>Edit Restaurant - {{ page.props.app?.title || "Restaurant" }}</title>
   </Head>
 
-  <CContainer fluid class="bg-grey text-dark rounded-3 shadow-2xl p-4 mt-4">
-    <h1 class="mb-4">General</h1>
-    <p>Enter the general information about your restaurant</p>
-
+  <CContainer fluid class="bg-grey rounded-3 shadow-2xl p-4 mt-4">
     <div class="border rounded-3 p-4">
       <CForm @submit.prevent="submit">
+        <CHeader class="mb-5 text-2xl text-center fw-bold border-none">
+          Edit the general information about your restaurant
+        </CHeader>
+
         <div class="mb-3">
           <CFormLabel for="name">Restaurant Name</CFormLabel>
-          <CFormInput
-            type="text"
-            v-model="form.name"
-            class="form-control"
-            id="name"
-          />
+          <CFormInput id="name" v-model="form.name" :invalid="!!form.errors.name" />
+          <CFormFeedback invalid>{{ form.errors.name }}</CFormFeedback>
         </div>
 
         <div class="mb-3">
           <CFormLabel for="phone">Phone Number</CFormLabel>
-          <CFormInput
-            type="text"
-            v-model="form.phone"
-            class="form-control"
-            id="phone"
-          />
+          <CFormInput id="phone" type="tel" v-model="form.phone" :invalid="!!form.errors.phone" />
+          <CFormFeedback invalid>{{ form.errors.phone }}</CFormFeedback>
         </div>
 
         <div class="mb-3">
           <CFormLabel for="address">Address</CFormLabel>
-          <CFormInput
-            type="text"
-            v-model="form.address"
-            class="form-control"
-            id="address"
-          />
+          <CFormInput id="address" v-model="form.address" :invalid="!!form.errors.address" />
+          <CFormFeedback invalid>{{ form.errors.address }}</CFormFeedback>
         </div>
 
         <div class="mb-3">
           <CFormLabel for="email">Email</CFormLabel>
-          <CFormInput
-            type="email"
-            v-model="form.email"
-            class="form-control"
-            id="email"
-          />
+          <CFormInput id="email" type="email" v-model="form.email" :invalid="!!form.errors.email" />
+          <CFormFeedback invalid>{{ form.errors.email }}</CFormFeedback>
         </div>
 
-        <div class="mb-3">
-          <CFormLabel for="logo">Company Logo</CFormLabel>
-          <CFormInput
-            type="file"
-            ref="logoInput"
-            class="form-control"
-            id="logo"
-            @change="form.logo = $event.target.files[0]"
-          />
-          <div v-if="form.errors.logo" class="text-danger mt-1">
-            {{ form.errors.logo }}
+        <!-- Logo Section -->
+        <div class="mb-4">
+          <CFormLabel for="logo">Company Logo (Optional)</CFormLabel>
+
+          <!-- Current logo preview -->
+          <div v-if="restaurant.logo" class="mb-3">
+            <small class="text-muted d-block mb-1">Current Logo:</small>
+            <img
+              :src="`/storage/${restaurant.logo}`"
+              alt="Current Logo"
+              style="max-height: 100px; border-radius: 8px; object-fit: contain;"
+            />
           </div>
+
+          <CFormInput
+            id="logo"
+            type="file"
+            accept="image/*"
+            @change="(e) => {
+              form.logo = e.target.files?.[0] || null;
+            }"
+            :invalid="!!form.errors.logo"
+          />
+          <CFormFeedback invalid>{{ form.errors.logo }}</CFormFeedback>
         </div>
 
-        <div>
-          <CButton type="submit" color="primary"> Save</CButton>
+        <div class="mt-4">
+          <CButton
+            type="submit"
+            color="primary"
+            :disabled="form.processing"
+          >
+            {{ form.processing ? "Saving..." : "Save Changes" }}
+          </CButton>
         </div>
       </CForm>
     </div>
