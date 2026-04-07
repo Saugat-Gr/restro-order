@@ -13,7 +13,6 @@ class MenuItemRepository implements MenuItemInterface
 
     public function createItem($data)
     {
-
         try {
             $menu_item = MenuItem::create($data);
             return $menu_item;
@@ -36,4 +35,11 @@ class MenuItemRepository implements MenuItemInterface
         return $item->delete();
     }
 
+    public function getAll(){
+           return MenuItem::with('menuItemCategory')->get();
+    }
+
+    public function findById(MenuItem $menuItem){
+         return $menuItem;
+    }
 }

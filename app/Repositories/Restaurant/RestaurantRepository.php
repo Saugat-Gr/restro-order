@@ -4,6 +4,7 @@ namespace App\Repositories\Restaurant;
 
 use App\Repositories\Restaurant\RestaurantInterface;
 use App\Models\Restaurant;
+use Log;
 
 class RestaurantRepository implements RestaurantInterface
 {
@@ -25,6 +26,7 @@ class RestaurantRepository implements RestaurantInterface
     public function updateRestaurant($data, $restaurant)
     {
         // Implementation for updating a restaurant
+        Log::info($data);
         $restaurant->update($data);
         return $restaurant;
     }

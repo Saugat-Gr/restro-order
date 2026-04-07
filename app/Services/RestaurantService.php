@@ -44,8 +44,8 @@ class RestaurantService
     public function updateRestaurant(UpdateRequest $request, $restaurant)
     {
         try {
+            Log::info($request);
             $validated_data = $request->validated();
-            
             if ($request->hasFile('logo')) {
                 $validated_data['logo'] = $request->file('logo')->store('restaurant/logos', 'public');
             }

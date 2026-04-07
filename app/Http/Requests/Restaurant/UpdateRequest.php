@@ -22,11 +22,11 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|string|size:10',  
-            'logo' => 'nullable|image|mimes:jpg,png,gif,svg|max:2048',  
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255',
+            'address' => 'sometimes|string|max:255',
+            'phone' => 'sometimes|string|size:10',  
+            'logo' => 'sometimes|image|mimes:jpg,png,gif,svg|max:2048',  
         ];
     }
 }

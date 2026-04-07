@@ -39,9 +39,8 @@ class MenuItemService
             $validated_data['is_in_stock'] = true;
 
 
-            $this->menuItemRepo->createItem($validated_data);
+           return  $this->menuItemRepo->createItem($validated_data);
 
-            return redirect()->route('menu.menu-items.index');
         } catch (QueryException $e) {
             Log::error($e);
             return redirect()->route('menu.items.index');
@@ -53,21 +52,25 @@ class MenuItemService
     }
 
 
-  public function updateItem(UpdateRequest $request, MenuItem $menuItem)
-{
-    $validated_data = $request->validated();
+    public function updateItem(UpdateRequest $request, MenuItem $menuItem)
+    {
+        $validated_data = $request->validated();
 
 
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('restaurant/items/images', 'public');
-        $validated_data['image'] = $path;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('restaurant/items/images', 'public');
+            $validated_data['image'] = $path;
+        }
+
+        return $this->menuItemRepo->updateItem($validated_data, $menuItem);
     }
-
-    return $this->menuItemRepo->updateItem($validated_data, $menuItem);
-}
     public function destroy(MenuItem $item)
     {
         return $this->menuItemRepo->deleteItem($item);
+    }
+
+    public function getAll(){
+          return $this->menuItemRepo->getAll();
     }
 
 }

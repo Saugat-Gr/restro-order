@@ -15,6 +15,7 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
+  CFormSwitch,
 } from "@coreui/vue";
 import CIcon from "@coreui/icons-vue";
 
@@ -51,6 +52,12 @@ const toggleStatus = (item, newStatus) => {
       alert("Failed to update status");
     },
   });
+
+  if (newStatus === "inactive") {
+    toggleStock(item, 0);
+  } else {
+    toggleStock(item, 1);
+  }
 };
 
 const toggleStock = (item, newStock) => {
@@ -86,10 +93,10 @@ const deleteItem = (item) => {
       </CButton>
     </Link>
 
-    <CTable caption="top" hover  bordered responsive>
+    <CTable caption="top" hover bordered>
       <CTableCaption>List of Menu Items</CTableCaption>
 
-      <CTableHead >
+      <CTableHead>
         <CTableRow>
           <CTableHeaderCell>#</CTableHeaderCell>
           <CTableHeaderCell>Item Name</CTableHeaderCell>
@@ -111,14 +118,14 @@ const deleteItem = (item) => {
           <!-- Status Dropdown -->
           <CTableDataCell>
             <CDropdown>
-              <CDropdownToggle
-                :color="item.status === 'active' ? 'success' : 'danger'"
-                class="text-white"
-                size="sm"
-                caret
-              >
-                {{ item.status?.toUpperCase() || "—" }}
-              </CDropdownToggle>
+              <CFormSwitch
+                size="lg"
+                :modelValue="item.status === 'active'"
+                @update:modelValue="
+                  (val) => toggleStatus(item, val ? 'active' : 'inactive')
+                "
+              />
+
               <CDropdownMenu>
                 <CDropdownItem
                   class="hover:cursor-pointer"
@@ -210,3 +217,14 @@ const deleteItem = (item) => {
     </CTable>
   </CContainer>
 </template>
+
+<style scoped>
+.form-switch .form-check-input {
+  width: 2.5em;
+  height: 1.3em;
+}
+
+.form-switch .form-check-input:checked {
+  background-position: right center;
+}
+</style>
