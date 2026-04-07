@@ -8,10 +8,19 @@ export default function getNav(page) {
         },
 
         {
+
+        },
+
+        {
             name: "Owners",
             to: "/owners",
             icon: "cil-people",
             roles: ["super-admin"],
+        },
+
+        {
+             component: "CNavTitle",
+             name: "Menu Items",
         },
 
         {
@@ -35,6 +44,11 @@ export default function getNav(page) {
                      icon: "cil-circle"
                 }
             ],
+        },
+
+        {
+             component: "CNavTitle",
+             name: "App Configs"
         },
 
         {
