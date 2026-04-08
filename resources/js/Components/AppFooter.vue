@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <CFooter class="px-4">
+  <CFooter class="px-4 ">
     <div>
       <span>Saugat Gurung</span>
       <span class="ms-1"

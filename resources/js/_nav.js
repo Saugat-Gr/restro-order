@@ -34,14 +34,14 @@ export default function getNav(page) {
                     name: "Categories",
                     to: "/menu/category",
                     roles: ["owner", "staff"],
-                    icon: "cil-circle",
+                    icon: "cil-minus",
                 },
 
                 {
                      name: "Items",
                      to: "/menu/menu-items",
                      roles: ["owner"],
-                     icon: "cil-circle"
+                     icon: "cil-minus"
                 }
             ],
         },

@@ -25,17 +25,15 @@ class MenuItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    // app/Http/Controllers/MenuItemController.php
+    public function index(Request $request)
     {
-        $menu_items = $this->menuItemService->getAll();
+        $menuItems = $this->menuItemService->getFiltered($request->all(), 10);
 
-        return Inertia::render('Restaurant/Menu/Items/Index', [
-            "app" => [
-                'title' => 'Menu Items'
-            ],
-
-            'menu_items' => $menu_items
-
+        return Inertia::render('Restaurant/Menu/Items/Index', [   // Use Inertia::render instead of inertia()
+            "app" => ["title" => "Menu Items"],
+            'menu_items' => $menuItems,
+            'filters' => $request->only(['search', 'status', 'stock', 'perPage'])
         ]);
     }
 
@@ -73,11 +71,11 @@ class MenuItemController extends Controller
      */
     public function show(MenuItem $menuItem)
     {
-        return Inertia::render('Restaurant/Menu/Items/Show',[
-             'app' => [
-                 'title' => 'Details',
-             ],
-             'menu_item' => $menuItem
+        return Inertia::render('Restaurant/Menu/Items/Show', [
+            'app' => [
+                'title' => 'Details',
+            ],
+            'menu_item' => $menuItem
         ]);
     }
 
@@ -112,8 +110,8 @@ class MenuItemController extends Controller
 
             $this->menuItemService->updateItem($request, $menuItem);
             return redirect()->route('menu.menu-items.index');
-        }catch(Exception $e){
-             Log::info($e);
+        } catch (Exception $e) {
+            Log::info($e);
         }
     }
 
@@ -122,12 +120,12 @@ class MenuItemController extends Controller
      */
     public function destroy(MenuItem $menuItem)
     {
-         try{
-        $this->menuItemService->destroy($menuItem);
-        return redirect()->route('menu.menu-items.index');
-         }catch(Exception $e){
-              Log::info($e);
-         }
+        try {
+            $this->menuItemService->destroy($menuItem);
+            return redirect()->route('menu.menu-items.index');
+        } catch (Exception $e) {
+            Log::info($e);
+        }
     }
 
 }

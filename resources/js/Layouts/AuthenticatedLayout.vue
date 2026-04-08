@@ -35,14 +35,14 @@ const appName = computed(() => page.props.app.title);
     >
       <AppHeader />
   
-      <div class="content-scrollable">
+      <div class="content-scrollable ">
         <CContainer fluid>
           <slot />
         </CContainer>
       </div>
+      <AppFooter />
       
       <!-- FIXED FOOTER -->
-      <AppFooter />
     </div>
   </div>
 </template>

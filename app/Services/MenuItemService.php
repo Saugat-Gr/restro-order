@@ -21,6 +21,10 @@ class MenuItemService
     }
 
 
+    public function getFiltered(array $filters = [], $perPage)
+    {
+        return $this->menuItemRepo->getFiltered($filters, $perPage);
+    }
     public function createItem(CreateRequest $request)
     {
 
@@ -39,7 +43,7 @@ class MenuItemService
             $validated_data['is_in_stock'] = true;
 
 
-           return  $this->menuItemRepo->createItem($validated_data);
+            return $this->menuItemRepo->createItem($validated_data);
 
         } catch (QueryException $e) {
             Log::error($e);
@@ -69,8 +73,9 @@ class MenuItemService
         return $this->menuItemRepo->deleteItem($item);
     }
 
-    public function getAll(){
-          return $this->menuItemRepo->getAll();
+    public function getAll()
+    {
+        return $this->menuItemRepo->getAll();
     }
 
 }

@@ -9,6 +9,7 @@ interface MenuItemInterface
 {
 
     public function getAll();
+    public function getFiltered(array $filters = [], $perPage);
 
     public function findById(MenuItem $menuItem);
 
