@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\Status; 
 
 return new class extends Migration {
     /**
@@ -16,9 +17,8 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->decimal('price', 8, 2);
-            $table->enum('status', ['active', 'inactive'])->default('active');
-           $table->boolean('is_in_stock')->default(true);
-           
+$table->enum('status', Status::values())->default(Status::ACTIVE->value);
+           $table->boolean('is_in_stock')->default(true);   
             $table->foreignId('restaurant_id')
                 ->constrained()
                 ->cascadeOnUpdate()
@@ -30,6 +30,9 @@ return new class extends Migration {
                 ->cascadeOnDelete();
 
             $table->timestamps();
+
+            $table->index(['restaurant_id', 'status', 'is_in_stock']);
+
         });
     }
 
