@@ -427,7 +427,7 @@ const forwardPage = (page) => {
 
     <!-- Empty State -->
     <div v-if="menuItems.length === 0" class="text-center py-5 text-muted">
-      No menu items found matching your filters.
+      No menu items.
     </div>
   </CContainer>
 </template>

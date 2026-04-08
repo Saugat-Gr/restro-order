@@ -8,7 +8,9 @@ export default function getNav(page) {
         },
 
         {
-
+           component: "CNavTitle",
+           name: "Users",
+           roles: ["super-admin"]
         },
 
         {
@@ -21,6 +23,7 @@ export default function getNav(page) {
         {
              component: "CNavTitle",
              name: "Menu Items",
+             roles: ["owner"]
         },
 
         {
@@ -48,29 +51,23 @@ export default function getNav(page) {
 
         {
              component: "CNavTitle",
-             name: "App Configs"
+             name: "App Configs",
+             roles: ["owner", "super-admin"]
         },
 
         {
             component: "CNavGroup",
             name: "Settings",
             icon: "cil-settings",
-            roles: ["owner"],
+            roles: ["owner", "super-admin"],
             items: [
                 {
                     name: "General",
                     to: `/restaurant/${page.props.auth.user.restaurant_id}/edit`,
-                    roles: ["owner"],
+                    roles: ["owner", "super-admin"],
                     icon: "cil-smile",
                 },
             ],
-        },
-
-        {
-            name: "Hi",
-            to: "/",
-            icon: "cil-speedometer",
-            roles: ["staff"],
         },
     ];
 }
