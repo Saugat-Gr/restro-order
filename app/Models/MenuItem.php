@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Models\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +23,8 @@ class MenuItem extends Model
     ];
 
     protected $casts = [
-        'is_in_stock' => 'boolean'
+        'is_in_stock' => 'boolean',
+        'status' => Status::class
     ];
 
     public function menuItemCategory()

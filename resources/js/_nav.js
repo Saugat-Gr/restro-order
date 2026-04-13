@@ -8,9 +8,9 @@ export default function getNav(page) {
         },
 
         {
-           component: "CNavTitle",
-           name: "Users",
-           roles: ["super-admin"]
+            component: "CNavTitle",
+            name: "Users",
+            roles: ["super-admin"],
         },
 
         {
@@ -21,9 +21,9 @@ export default function getNav(page) {
         },
 
         {
-             component: "CNavTitle",
-             name: "Menu Items",
-             roles: ["owner"]
+            component: "CNavTitle",
+            name: "Feature",
+            roles: ["owner"],
         },
 
         {
@@ -41,18 +41,57 @@ export default function getNav(page) {
                 },
 
                 {
-                     name: "Items",
-                     to: "/menu/menu-items",
-                     roles: ["owner"],
-                     icon: "cil-minus"
-                }
+                    name: "Items",
+                    to: "/menu/menu-items",
+                    roles: ["owner"],
+                    icon: "cil-minus",
+                },
             ],
         },
 
         {
-             component: "CNavTitle",
-             name: "App Configs",
-             roles: ["owner", "super-admin"]
+            component: "CNavGroup",
+            name: "Orders",
+            icon: "cil-cart",
+            roles: ["owner", "staff"],
+
+            items: [
+                {
+                    name: "Order History",
+                    to: "/orders",
+                    roles: ["owner", "staff"],
+                    icon: "cil-history",
+                },
+
+                {
+                    name: "Create Order",
+                    to: "/orders/create",
+                    roles: ["owner", "staff"],
+                    icon: "cil-plus",
+                },
+
+                {
+                    name: "Search Order",
+                    to: "/orders/search",
+                    roles: ["owner", "staff"],
+                    icon: "cil-magnifying-glass"
+                }
+            ],
+        },
+
+
+        {
+            name: "Tables",
+            icon: "cil-view-module",
+            to: "/tables",
+            roles: ["owner", "staff"],
+        },
+        
+
+        {
+            component: "CNavTitle",
+            name: "App Configs",
+            roles: ["owner", "super-admin"],
         },
 
         {

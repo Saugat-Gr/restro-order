@@ -47,28 +47,6 @@ class MenuItemRepository implements MenuItemInterface
     public function getFiltered(array $filters = [], $perPage = 10)
     {
 
-        // $query = MenuItem::with('menuItemCategory');
-
-        // // Apply filters as before
-        // if (!empty($filters['search'])) {
-        //     $query->where(function ($q) use ($filters) {
-        //         $q->where('item_name', 'LIKE', "%{$filters['search']}%")
-        //             ->orWhere('description', 'LIKE', "%{$filters['search']}%");
-        //     });
-        // }
-
-        // if (!empty($filters['status'])) {
-        //     $query->where('status', $filters['status']);
-        // }
-
-        // if (isset($filters['stock']) && $filters['stock'] !== '') {
-        //     $query->where('is_in_stock', $filters['stock'] === 'in_stock' ? 1 : 0);
-        // }
-        // return ($query->get());
-
-        // Paginate the results
-        // return $query->paginate($perPage);  // Handles pagination
-
         $query = MenuItem::with('menuItemCategory');
 
         if (!empty($filters['search'] ?? '')) {
@@ -88,6 +66,9 @@ class MenuItemRepository implements MenuItemInterface
 
         $perPage = (int) ($filters['perPage'] ?? $perPage);
 
-        return $query->paginate($perPage)->withQueryString();
+        return $query
+    ->orderBy('id', 'desc') // 🔥 REQUIRED
+    ->paginate($perPage)
+    ->withQueryString();
     }
 }

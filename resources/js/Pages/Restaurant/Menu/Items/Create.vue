@@ -33,9 +33,7 @@ const form = useForm({
 
 const createItem = () => {
   console.log(form);
-  form.post(route("menu.menu-items.store"), {
-    onError: (error) => console.log(error),
-  });
+  form.post(route("menu.menu-items.store"));
 };
 </script>
 

@@ -227,8 +227,7 @@ const forwardPage = (page) => {
           <CDropdownToggle color="secondary">
             {{
               filters.status
-                ? filters.status.charAt(0).toUpperCase() +
-                  filters.status.slice(1)
+                ? $capitalize(filters.status)
                 : "All Status"
             }}
           </CDropdownToggle>

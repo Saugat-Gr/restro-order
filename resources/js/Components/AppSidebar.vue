@@ -36,7 +36,7 @@ const toggleUnfoldable = () => store.dispatch("sidebar/toggleUnfoldable");
     <CSidebarHeader class="border-bottom ">
       <div class="bg-red w-full h-full flex items-center justify-center">
         <Link href="/" class="text-decoration-none text-white">
-          <CImage :src="logo" width="100" v-if="logo" />
+          <CImage :src="logo" class="w-full" v-if="logo" />
         </Link>
       </div>
       <CCloseButton

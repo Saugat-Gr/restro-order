@@ -7,7 +7,7 @@ const page = usePage();
 
 const avatar = page.props.auth.user.avatar
   ? `/storage/${page.props.auth.user.avatar}`
-  : avatar; 
+  : null; 
 
 const itemsCount = 42;
 </script>

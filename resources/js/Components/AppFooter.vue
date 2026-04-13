@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 </script>
 
 <template>
@@ -9,8 +9,8 @@
         >&copy; {{ new Date().getFullYear() }} Dev.</span
       >
     </div>
-    <div class="ms-auto">
-      <span class="me-1" target="_blank">Powered by</span>
+    <div class="">
+      <span class="" target="_blank">Powered by</span>
       <a href="https://cloudtechservice.com/">CloudTech Service</a>
     </div>
   </CFooter>

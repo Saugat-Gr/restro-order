@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\MenuItemCategoryController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\TableController;
 use App\Models\MenuItem;
+use App\Models\MenuItemCategory;
+use App\Models\Table;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -61,9 +65,15 @@ Route::middleware('auth')->group(function () {
 
             // Menu Items Routes:
             Route::resource('menu-items', MenuItemController::class);
-            
 
         });
+
+        // Tables Routes:
+        Route::resource('tables', TableController::class);
+
+        // Order Routes:
+        Route::get('/orders/search', [OrderController::class, 'searchOrder'])->name('orders.search');
+        Route::resource('orders', OrderController::class);
 
 
     });
@@ -74,6 +84,17 @@ Route::middleware('auth')->group(function () {
 
 });
 
+Route::get('/search', function () {
+    $menuItemCategories = MenuItemCategory::all();
+    return Inertia::render(
+        'Restaurant/Orders/Create',
+        [
+            "menu_item_categories" => $menuItemCategories
+        ]
+    );
+});
+
+Route::get('/filter-data', [OrderController::class, 'filteredData'])->name('filter-data');
 
 
 

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\MenuItem\MenuItemInterface;
 use App\Repositories\MenuItem\MenuItemRepository;
+use App\Repositories\Order\OrderInterface;
+use App\Repositories\Order\OrderRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Restaurant\RestaurantInterface;
 use App\Repositories\Restaurant\RestaurantRepository;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(MenuItemInterface::class, MenuItemRepository::class);
+
+        $this->app->bind(OrderInterface::class, OrderRepository::class);
     }
 
     /**

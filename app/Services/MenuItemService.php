@@ -21,7 +21,7 @@ class MenuItemService
     }
 
 
-    public function getFiltered(array $filters = [], $perPage)
+    public function getFiltered(array $filters = [], $perPage = 10)
     {
         return $this->menuItemRepo->getFiltered($filters, $perPage);
     }
