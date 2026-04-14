@@ -35,7 +35,7 @@ Route::get('/', function () {
 })->name('welcome');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:owner|staff'])->group(function () {
 
     //  Login Routes:
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -87,18 +87,6 @@ Route::middleware('auth')->group(function () {
     Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
 
 });
-
-Route::get('/search', function () {
-    $menuItemCategories = MenuItemCategory::all();
-    return Inertia::render(
-        'Restaurant/Orders/Create',
-        [
-            "menu_item_categories" => $menuItemCategories
-        ]
-    );
-});
-
-Route::get('/filter-data', [OrderController::class, 'filteredData'])->name('filter-data');
 
 
 require __DIR__ . '/auth.php';

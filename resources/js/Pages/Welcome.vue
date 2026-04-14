@@ -3,12 +3,28 @@ import { Head, Link } from "@inertiajs/vue3";
 import { usePage } from "@inertiajs/vue3";
 import tabletImg from "@/assets/app-images/tablet.webp";
 import { CContainer, CRow, CCol, CCard, CCardBody } from "@coreui/vue";
+import { watch } from "vue";
 defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
   laravelVersion: String,
   phpVersion: String,
 });
+
+const page = usePage();
+
+watch(
+  () => page.props.flash,
+  (flash) => {
+    if (flash?.success) {
+      toastr.success(flash.success);
+    }
+    if (flash?.error) {
+      toastr.error(flash.error);
+    }
+  },
+  { immediate: true }
+);
 
 const features = [
   {
@@ -33,7 +49,6 @@ const features = [
   },
 ];
 
-const page = usePage();
 const user = page.props.auth.user;
 </script>
 
