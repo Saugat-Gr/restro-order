@@ -101,6 +101,5 @@ Route::get('/search', function () {
 Route::get('/filter-data', [OrderController::class, 'filteredData'])->name('filter-data');
 
 
-
 require __DIR__ . '/auth.php';
 

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Dashboard\DashBoardInterface;
+use App\Repositories\Dashboard\DashboardRepository;
 use App\Repositories\MenuItem\MenuItemInterface;
 use App\Repositories\MenuItem\MenuItemRepository;
 use App\Repositories\Order\OrderInterface;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MenuItemInterface::class, MenuItemRepository::class);
 
         $this->app->bind(OrderInterface::class, OrderRepository::class);
+
     }
 
     /**
