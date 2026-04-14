@@ -37,8 +37,6 @@ const props = defineProps({
   filters: Array,
 });
 
-console.log(props.tables);
-
 const tables = computed(() => props.tables.data);
 const statuses = props.statuses;
 
@@ -48,7 +46,6 @@ const statuses = props.statuses;
 const form = useForm({
   _method: "patch",
   status: props.filters.status ?? "",
-  table_number: props.filters.table_number ?? "",
 });
 
 const deleteForm = useForm({

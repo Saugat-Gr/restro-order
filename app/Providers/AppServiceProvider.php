@@ -34,11 +34,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         Inertia::share([
             'app' => [
                 'name' => config('app.name'),
                 'url' => config('app.url'),
-            ]
+            ],
+            'flash' => function () {
+                return [
+                    'success' => fn() => request()->session()->get('success'),
+                    'error' => fn() => request()->session()->get('error'),
+                ];
+            },
         ]);
     }
 }

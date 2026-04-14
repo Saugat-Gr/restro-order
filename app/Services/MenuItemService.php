@@ -42,7 +42,7 @@ class MenuItemService
             $validated_data['restaurant_id'] = auth()->user()->restaurant_id;
             $validated_data['is_in_stock'] = true;
 
-
+            
             return $this->menuItemRepo->createItem($validated_data);
 
         } catch (QueryException $e) {

@@ -60,9 +60,10 @@ class MenuItemController extends Controller
     {
         try {
             $this->menuItemService->createItem($request);
-            return redirect()->route('menu.menu-items.index');
+            return redirect()->route('menu.menu-items.index')->with('success', 'Item Created Successfully.');
         } catch (Exception $e) {
             Log::info($e);
+            return redirect()->route('menu.menu-items.index')->with('error', $e);
         }
     }
 
@@ -109,9 +110,10 @@ class MenuItemController extends Controller
         try {
 
             $this->menuItemService->updateItem($request, $menuItem);
-            return redirect()->route('menu.menu-items.index');
+            return redirect()->route('menu.menu-items.index')->with('success', 'Item Updated.');
         } catch (Exception $e) {
             Log::info($e);
+            return redirect()->route('menu.menu-items.index')->with('error', $e);
         }
     }
 
@@ -122,7 +124,7 @@ class MenuItemController extends Controller
     {
         try {
             $this->menuItemService->destroy($menuItem);
-            return redirect()->route('menu.menu-items.index');
+            return redirect()->route('menu.menu-items.index')->with('success', 'Item Removed Successfully');
         } catch (Exception $e) {
             Log::info($e);
         }

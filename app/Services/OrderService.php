@@ -7,6 +7,7 @@ use App\Enums\TableStatus;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\Table;
+use App\Models\Transaction;           // ← new
 use App\Repositories\Order\OrderInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -49,103 +50,126 @@ class OrderService
     {
         return DB::transaction(function () use ($validated) {
 
-            $menuItems = MenuItem::whereIn(
-                'id',
-                collect($validated['items'])->pluck('menu_item_id')
-            )->get()->keyBy('id');
+            $menuItems = MenuItem::whereIn('id', collect($validated['items'])->pluck('menu_item_id'))
+                ->get()->keyBy('id');
 
             $order = $this->repository->create([
                 'restaurant_id' => auth()->user()->restaurant_id,
-                'table_id' => $validated['table_id'],
+                'table_id' => $validated['table_id'] ?? null,
                 'created_by' => auth()->id(),
                 'status' => OrderStatus::IN_PROGRESS,
                 'total_amount' => 0,
             ]);
 
-            $total = 0;
-
-            foreach ($validated['items'] as $item) {
-                $menuItem = $menuItems[$item['menu_item_id']] ?? null;
-
-                if (!$menuItem || !$menuItem->is_in_stock) {
-                    throw new Exception("Item {$menuItem?->item_name} is out of stock");
-                }
-
-                $subtotal = $menuItem->price * $item['quantity'];
-
-                $order->orderItems()->create([
-                    'restaurant_id' => auth()->user()->restaurant_id,
-                    'menu_item_id' => $menuItem->id,
-                    'item_name' => $menuItem->item_name,
-                    'item_price' => $menuItem->price,
-                    'quantity' => $item['quantity'],
-                ]);
-
-                $total += $subtotal;
-            }
-
-            $this->repository->update($order, ['total_amount' => $total]);
-
-            return $order;
-        });
-    }
-
-    public function updateOrder(Order $order, array $validated): Order
-    {
-        if ($order->status !== OrderStatus::COMPLETED) {
-            throw new \DomainException('Completed orders cannot be updated.');
-        }
-
-        return DB::transaction(function () use ($validated, $order) {
-
-            $this->repository->update($order, [
-                'table_id' => $validated['table_id'],
-                'status' => $validated['status'],
-            ]);
-
-            // Remove old items
-            $order->orderItems()->delete();
-
-            if (empty($validated['items'])) {
-                $order->update(['total_amount' => 0]);
-                return $order->fresh(['orderItems', 'table', 'user']);
-            }
-
-            $menuItems = MenuItem::whereIn(
-                'id',
-                collect($validated['items'])->pluck('menu_item_id')
-            )->get()->keyBy('id');
-
-            $total = 0;
-
-            foreach ($validated['items'] as $itemData) {
-                $menuItem = $menuItems[$itemData['menu_item_id']] ?? null;
-
-                if (!$menuItem || !$menuItem->is_in_stock) {
-                    throw new Exception("Item {$menuItem?->item_name} is out of stock");
-                }
-
-                $subtotal = $menuItem->price * $itemData['quantity'];
-
-                $order->orderItems()->create([
-                    'restaurant_id' => auth()->user()->restaurant_id,
-                    'menu_item_id' => $menuItem->id,
-                    'item_name' => $menuItem->item_name,
-                    'item_price' => $menuItem->price,
-                    'quantity' => $itemData['quantity'],
-                ]);
-
-                $total += $subtotal;
-            }
+            $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
 
             $this->repository->update($order, ['total_amount' => $total]);
 
             return $order->fresh(['orderItems', 'table', 'user']);
         });
-
-
     }
 
+    public function updateOrder(Order $order, array $validated): Order
+    {
+        if ($order->status === OrderStatus::COMPLETED) {
+            throw new \DomainException('Completed orders cannot be updated.');
+        }
+
+        return DB::transaction(function () use ($validated, $order) {
+
+            $updates = [];
+
+            // 1. Partial field updates (table + status)
+            if (!empty($validated['table_id'])) {
+                $updates['table_id'] = $validated['table_id'];
+            }
+            if (!empty($validated['status'])) {
+                $updates['status'] = $validated['status'];
+            }
+
+            // 2. Rebuild items ONLY if 'items' key is explicitly sent (full edit form)
+            $shouldRebuildItems = array_key_exists('items', $validated);
+
+            if ($shouldRebuildItems) {
+                $order->orderItems()->delete();   // safe because we're in transaction
+
+                if (empty($validated['items'])) {
+                    $updates['total_amount'] = 0;
+                } else {
+                    $menuItems = MenuItem::whereIn(
+                        'id',
+                        collect($validated['items'])->pluck('menu_item_id')
+                    )->get()->keyBy('id');
+
+                    $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
+                    $updates['total_amount'] = $total;
+                }
+            }
+
+            // 3. CREATE TRANSACTION only when status becomes COMPLETED
+            if (
+                isset($validated['status']) &&
+                $validated['status'] === OrderStatus::COMPLETED &&
+                $order->status !== OrderStatus::COMPLETED
+            ) {
+                if ($order->transaction()->exists()) {
+                    throw new \DomainException('Order already has a transaction.');
+                }
+
+                // payment_method is required only for completion (sent from frontend)
+                // $paymentMethod = $validated['payment_method'] ?? 'cash';
+
+                // Transaction::create([
+                //     'restaurant_id'     => auth()->user()->restaurant_id,
+                //     'order_id'          => $order->id,
+                //     'processed_by'      => auth()->id(),
+                //     'transaction_number'=> 'TRX-' . now()->format('Ymd-His') . '-' . rand(1000, 9999),
+                //     'amount'            => $updates['total_amount'] ?? $order->total_amount,
+                //     'payment_method'    => $paymentMethod,
+                //     'paid_at'           => now(),
+                // ]);
+            }
+
+            // 4. Apply updates if any
+            if (!empty($updates)) {
+                $this->repository->update($order, $updates);
+            }
+
+            // return $order->fresh(['orderItems', 'table', 'user', 'transaction']);
+            return $order->fresh(['orderItems', 'table', 'user']);
+
+        });
+    }
+
+    /**
+     * Extracted helper so create & update share the same logic
+     */
+    private function syncOrderItems(Order $order, array $itemsData, $menuItemsCollection): float
+    {
+        $total = 0;
+
+        foreach ($itemsData as $item) {
+            $menuItem = $menuItemsCollection[$item['menu_item_id']] ?? null;
+
+            if (!$menuItem || !$menuItem->is_in_stock) {
+                throw new Exception("Item {$menuItem?->item_name} is out of stock");
+            }
+
+            $subtotal = $menuItem->price * $item['quantity'];
+
+            $order->orderItems()->create([
+                'restaurant_id' => auth()->user()->restaurant_id,
+                'menu_item_id' => $menuItem->id,
+                'item_name' => $menuItem->item_name,
+                'item_price' => $menuItem->price,
+                'quantity' => $item['quantity'],
+            ]);
+
+            $total += $subtotal;
+        }
+
+        return $total;
+    }
     public function searchOrders(?string $table = null, ?string $searchTerm = null, ?string $status = null)
     {
         return $this->repository->searchOrders($table, $searchTerm, $status);

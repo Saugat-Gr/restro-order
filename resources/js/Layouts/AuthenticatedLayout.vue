@@ -3,45 +3,57 @@ import AppFooter from "@/Components/AppFooter.vue";
 import AppHeader from "@/Components/AppHeader.vue";
 import AppSidebar from "@/Components/AppSidebar.vue";
 import { useStore } from "vuex";
-import { computed } from "vue";
-import {Head, usePage, Link} from '@inertiajs/vue3';
+import { computed, inject, watch } from "vue";
+import { Head, usePage, Link } from "@inertiajs/vue3";
 
 const store = useStore();
-const sidebarVisible = computed(() => store.getters['sidebar/visible']);
-const sidebarUnfoldable = computed(() => store.getters['sidebar/unfoldable']);
+const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
+const sidebarUnfoldable = computed(() => store.getters["sidebar/unfoldable"]);
 
 const page = usePage();
 const appName = computed(() => page.props.app.title);
 
+const toastr = inject("toastr");
 
+watch(
+  () => page.props.flash,
+  (flash) => {
+    if (flash?.success) {
+      toastr.success(flash.success);
+    }
+    if (flash?.error) {
+      toastr.error(flash.error);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-
-<Head>
+  <Head>
     <title>{{ appName }}</title>
-</Head>
+  </Head>
 
   <div class="layout-wrapper">
     <AppSidebar />
-    
+
     <!-- MAIN CONTENT -->
-    <div 
+    <div
       class="layout-wrapper-main"
       :class="{
         'sidebar-visible': sidebarVisible,
-        'sidebar-folded': sidebarUnfoldable && sidebarVisible
+        'sidebar-folded': sidebarUnfoldable && sidebarVisible,
       }"
     >
       <AppHeader />
-  
-      <div class="content-scrollable ">
+
+      <div class="content-scrollable">
         <CContainer fluid>
           <slot />
         </CContainer>
       </div>
       <AppFooter />
-      
+
       <!-- FIXED FOOTER -->
     </div>
   </div>
@@ -49,25 +61,24 @@ const appName = computed(() => page.props.app.title);
 
 <style scoped>
 .layout-wrapper {
-  height: 100vh;  /* ✅ FULL viewport height */
+  height: 100vh; /* ✅ FULL viewport height */
   display: flex;
-  overflow: hidden;  /* Prevent body scroll */
+  overflow: hidden; /* Prevent body scroll */
 }
 
 .layout-wrapper-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;  /* Full height */
+  height: 100vh; /* Full height */
 }
 
 /* DESKTOP SIDEBAR PUSH */
 @media (min-width: 992px) {
-
   .layout-wrapper-main.sidebar-folded {
     margin-left: 56px;
   }
-  
+
   .layout-wrapper-main:not(.sidebar-visible) {
     margin-left: 0;
   }
@@ -87,7 +98,7 @@ const appName = computed(() => page.props.app.title);
   .layout-wrapper-main {
     margin-left: 0 !important;
   }
-  
+
   :deep(.c-header .c-container) {
     padding-left: 1rem !important;
   }
@@ -95,8 +106,8 @@ const appName = computed(() => page.props.app.title);
 
 /* ✅ PERFECT SCROLLABLE CONTENT */
 .content-scrollable {
-  flex: 1;           /* Takes remaining space */
-  overflow-y: auto;  /* Scroll only content */
+  flex: 1; /* Takes remaining space */
+  overflow-y: auto; /* Scroll only content */
   overflow-x: hidden;
   padding: 1.5rem 0; /* Your preferred padding */
 }

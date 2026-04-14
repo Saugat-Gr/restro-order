@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, Link, router } from "@inertiajs/vue3";
-import { ref, watch, computed } from "vue"; // ← added computed
+import { ref, watch, computed, onMounted } from "vue"; // ← added computed
 import debounce from "lodash/debounce";
 
 import {
@@ -33,6 +33,19 @@ const props = defineProps({
   menu_items: Object, // Full paginator object from Laravel
   app: Object,
   filters: Object,
+  flash: Object,
+});
+
+console.log(props.flash);
+
+onMounted(() => {
+  if (props.flash.success) {
+    toastr.success(props.flash.success, "Success");
+  }
+
+  if (props.flash.error) {
+    toastr.error(props.flash.error, "Error");
+  }
 });
 
 // Use computed so it automatically updates when props change
@@ -225,11 +238,7 @@ const forwardPage = (page) => {
         </CDropdown>
         <CDropdown>
           <CDropdownToggle color="secondary">
-            {{
-              filters.status
-                ? $capitalize(filters.status)
-                : "All Status"
-            }}
+            {{ filters.status ? $capitalize(filters.status) : "All Status" }}
           </CDropdownToggle>
           <CDropdownMenu>
             <CDropdownItem
@@ -396,7 +405,7 @@ const forwardPage = (page) => {
         <CPagination aria-label="Page navigation example">
           <!-- Previous Button -->
           <CPaginationItem
-           :disabled ="props.menu_items.current_page === 1"
+            :disabled="props.menu_items.current_page === 1"
             @click="backwardPage(props.menu_items.current_page - 1)"
           >
             Previous
@@ -404,7 +413,9 @@ const forwardPage = (page) => {
 
           <!-- Next Button -->
           <CPaginationItem
-           :disabled ="props.menu_items.current_page === props.menu_items.last_page"
+            :disabled="
+              props.menu_items.current_page === props.menu_items.last_page
+            "
             @click="forwardPage(props.menu_items.current_page + 1)"
           >
             Next

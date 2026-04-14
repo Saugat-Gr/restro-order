@@ -22,6 +22,18 @@ import theme from "./Store/modules/theme";
 import VueEasymde from "vue3-easymde";
 import "easymde/dist/easymde.min.css";
 
+import toastr from "toastr";
+import "toastr/build/toastr.min.css";
+
+toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    timeOut: "2000",
+};
+
+window.toastr = toastr;
+
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
 const vueConfig = {
@@ -58,6 +70,7 @@ createInertiaApp({
             .use(VueEasymde, vueConfig)
             .use(ZiggyVue)
             .provide("icons", icons)
+            .provide('toastr', toastr)
             .component("CIcon", CIcon)
             .mount(el);
     },

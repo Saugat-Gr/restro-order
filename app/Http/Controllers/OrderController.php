@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Http\Requests\Order\CreateRequest;
 use App\Http\Requests\Order\UpdateRequest;
 use App\Models\Order;
+use App\Models\Table;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,10 +20,12 @@ class OrderController extends Controller
     public function index()
     {
         $orders = $this->orderService->getRecentOrders();
+        
 
         return Inertia::render('Restaurant/Orders/Index', [
             'app'    => ['title' => 'Orders'],
             'orders' => $orders,
+            'order_statuses' => OrderStatus::values()
         ]);
     }
 
@@ -75,10 +79,10 @@ class OrderController extends Controller
 
         return Inertia::render('Restaurant/Orders/Search', [
             'app'      => ['title' => 'Search Order'],
-            'tables'   => \App\Models\Table::all(),
+            'tables'   => Table::all(),
             'orders'   => $orders,
             'filters'  => $request->only('table', 'searchTerm', 'status'),
-            'statuses' => \App\Enums\OrderStatus::values(),
+            'statuses' => OrderStatus::values(),
         ]);
     }
 }

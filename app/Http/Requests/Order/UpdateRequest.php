@@ -24,11 +24,11 @@ class UpdateRequest extends FormRequest
     {
         return [
             'table_id' => ['nullable', 'exists:tables,id'],
-            'status' => ['required', 'in:' . implode(',', OrderStatus::values())],
+            'status' => ['sometimes', 'in:' . implode(',', OrderStatus::values())],
             'items' => ['array'],
             'items.*.id' => ['nullable', 'exists:order_items,id'],
-            'items.*.menu_item_id' => ['required', 'exists:menu_items,id'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.menu_item_id' => ['sometimes', 'exists:menu_items,id'],
+            'items.*.quantity' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }

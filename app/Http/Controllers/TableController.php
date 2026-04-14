@@ -66,7 +66,7 @@ class TableController extends Controller
 
         Log::info($table);
 
-        return redirect()->route('tables.index');
+        return redirect()->route('tables.index')->with('success', 'Table Created.');
     }
 
     /**
@@ -102,7 +102,7 @@ class TableController extends Controller
 
         $table->update($validated_data);
 
-        return redirect()->route('tables.index');
+        return redirect()->route('tables.index')->with('success', 'Table Updated.');
 
     }
 
@@ -113,7 +113,7 @@ class TableController extends Controller
     {
         $table->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Table Deleted.');
     }
 
     private function filterData($status, $table_number){
