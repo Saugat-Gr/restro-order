@@ -75,7 +75,7 @@ export default function getNav(page) {
                     to: "/orders/search",
                     roles: ["owner", "staff"],
                     icon: "cil-magnifying-glass"
-                }
+                },
             ],
         },
 
@@ -85,6 +85,13 @@ export default function getNav(page) {
             icon: "cil-view-module",
             to: "/tables",
             roles: ["owner", "staff"],
+        },
+
+        {
+             name: "Transactions",
+             icon: "cib-cashapp",
+             to: "/transactions",
+             roles: ["owner"]
         },
         
 

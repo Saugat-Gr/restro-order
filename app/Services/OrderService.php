@@ -11,6 +11,7 @@ use App\Models\Transaction;           // ← new
 use App\Repositories\Order\OrderInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class OrderService
 {
@@ -71,6 +72,7 @@ class OrderService
 
     public function updateOrder(Order $order, array $validated): Order
     {
+
         if ($order->status === OrderStatus::COMPLETED) {
             throw new \DomainException('Completed orders cannot be updated.');
         }
@@ -109,25 +111,19 @@ class OrderService
             // 3. CREATE TRANSACTION only when status becomes COMPLETED
             if (
                 isset($validated['status']) &&
-                $validated['status'] === OrderStatus::COMPLETED &&
+                $validated['status'] === OrderStatus::COMPLETED->value &&
                 $order->status !== OrderStatus::COMPLETED
             ) {
-                if ($order->transaction()->exists()) {
-                    throw new \DomainException('Order already has a transaction.');
-                }
+                $paymentMethod = $validated['payment_method'] ?? 'cash';
 
-                // payment_method is required only for completion (sent from frontend)
-                // $paymentMethod = $validated['payment_method'] ?? 'cash';
-
-                // Transaction::create([
-                //     'restaurant_id'     => auth()->user()->restaurant_id,
-                //     'order_id'          => $order->id,
-                //     'processed_by'      => auth()->id(),
-                //     'transaction_number'=> 'TRX-' . now()->format('Ymd-His') . '-' . rand(1000, 9999),
-                //     'amount'            => $updates['total_amount'] ?? $order->total_amount,
-                //     'payment_method'    => $paymentMethod,
-                //     'paid_at'           => now(),
-                // ]);
+                Transaction::create([
+                    'restaurant_id' => auth()->user()->restaurant_id,
+                    'order_id' => $order->id,
+                    'processed_by' => auth()->id(),
+                    'amount' => $updates['total_amount'] ?? $order->total_amount,
+                    'payment_method' => $paymentMethod,
+                    'paid_at' => now(),
+                ]);
             }
 
             // 4. Apply updates if any

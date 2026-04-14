@@ -235,7 +235,7 @@ const confirmDelete = () => {
       </CTableBody>
     </CTable>
 
-    <CPagination aria-label="Page navigation example">
+    <CPagination aria-label="Page navigation">
       <Link :href="props.tables.prev_page_url">
         <CPaginationItem :disabled="!props.tables.prev_page_url">
           Previous Page

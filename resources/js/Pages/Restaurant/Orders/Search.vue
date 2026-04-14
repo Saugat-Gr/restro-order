@@ -10,13 +10,14 @@ import {
   CCard,
   CCardBody,
   CBadge,
+  CButton,
 } from "@coreui/vue";
 
 import CIcon from "@coreui/icons-vue";
 import { cilSearch } from "@coreui/icons";
 import { ref, watch } from "vue";
 import debounce from "lodash/debounce";
-import { useForm } from "@inertiajs/vue3";
+import { router, useForm, Link } from "@inertiajs/vue3";
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -45,6 +46,12 @@ watch(
   () => [filterData.table, filterData.searchTerm, filterData.status],
   () => search()
 );
+
+const edit = (order) => {
+    router.get(route('orders.edit', order.id));
+  
+};
+
 </script>
 
 <template>
@@ -138,6 +145,14 @@ watch(
               <div>
                 {{ new Date(order.created_at).toLocaleString() }}
               </div>
+            </div>
+
+            <div class="float-end">
+                <Link :href="route('orders.edit', order)">
+                    <CButton color="dark" variant="outline">
+                       <CIcon name="cil-pencil" ></CIcon>
+                    </CButton>
+                </Link>
             </div>
 
           </CCardBody>

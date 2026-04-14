@@ -63,23 +63,20 @@ class Order extends Model
 
     public static function generateOrderNumber(): string
     {
-        $prefix = 'ORD';                    // You can make this configurable
-        $date = now()->format('Ymd');       // 20260410
+        $prefix = 'ORD';                   
+        $date = now()->format('Ymd');       
 
-        // Get the last order number for today
         $lastOrder = self::where('order_number', 'like', "{$prefix}-{$date}-%")
             ->orderBy('order_number', 'desc')
             ->first();
 
         if ($lastOrder) {
-            // Extract the last 4-digit sequence and increment
             $lastNumber = (int) substr($lastOrder->order_number, -4);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
 
-        // Pad with zeros → ORD-20260410-0001
         return "{$prefix}-{$date}-" . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 

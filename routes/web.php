@@ -6,9 +6,11 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\TransactionController;
 use App\Models\MenuItem;
 use App\Models\MenuItemCategory;
 use App\Models\Table;
+use App\Models\Transaction;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -75,6 +77,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders/search', [OrderController::class, 'searchOrder'])->name('orders.search');
         Route::resource('orders', OrderController::class);
 
+        // Tranasctions: 
+        Route::resource('transactions', TransactionController::class);
 
     });
 

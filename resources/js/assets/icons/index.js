@@ -1,4 +1,5 @@
 import {
+  cibCashapp,
   cibFacebook,
   cibTwitter,
   cibLinkedin,
@@ -39,6 +40,7 @@ import {
   cilCalculator,
   cilCalendar,
   cilCart,
+  cilCash,
   cilCloudDownload,
   cilChartPie,
   cilCheck,
@@ -107,6 +109,7 @@ export const iconsSet = Object.assign(
     cilCalculator,
     cilCalendar,
     cilCart,
+    cilCash,
     cilCloudDownload,
     cilChartPie,
     cilCheck,
@@ -173,6 +176,7 @@ export const iconsSet = Object.assign(
     cifPl,
   },
   {
+    cibCashapp,
     cibFacebook,
     cibTwitter,
     cibLinkedin,

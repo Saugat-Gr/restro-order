@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TransactionMethod;
 use App\Enums\TransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,14 +14,28 @@ return new class extends Migration {
             $table->foreignId('restaurant_id')->constrained()->cascadeOnDelete();
             $table->foreignId('order_id')->unique()->constrained()->cascadeOnDelete();
 
+            $table->foreignId('processed_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->decimal('amount', 10, 2);
-            $table->enum('payment_method', TransactionStatus::values());
+            $table->enum('payment_method', TransactionMethod::values());
             $table->enum('status', TransactionStatus::values());
 
-            $table->timestamps();
+            $table->timestamp('paid_at')->nullable();
 
+            $table->uuid('transaction_number')->unique();
+
+            $table->timestamps();
+            $table->index(['restaurant_id', 'status']);
+            $table->index(['restaurant_id', 'paid_at']);           
+            $table->index(['restaurant_id', 'payment_method']);
+            $table->index('processed_by');
+            $table->index('transaction_number');
+
+            // Composite for fast lookups
             $table->index(['restaurant_id', 'created_at']);
-            $table->index('order_id');
         });
     }
 
