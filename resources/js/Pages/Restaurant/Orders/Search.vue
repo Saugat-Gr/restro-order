@@ -103,7 +103,7 @@ const edit = (order) => {
                 v-model="filterData.searchTerm"
                 placeholder="Search order number (e.g. 0002)"
               />
-              <div class="input-group-text bg-white">
+              <div class="input-group-text">
                 <CIcon :icon="cilSearch" />
               </div>
             </CInputGroup>

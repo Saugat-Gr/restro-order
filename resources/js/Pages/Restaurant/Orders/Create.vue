@@ -149,7 +149,7 @@ const placeOrder = () => {
               placeholder="Search menu items..."
               class="ps-4"
             />
-            <div class="input-group-text bg-white">
+            <div class="input-group-text">
               <CIcon :icon="cilSearch" />
             </div>
           </CInputGroup>
@@ -244,8 +244,8 @@ const placeOrder = () => {
 
       <!-- CART SECTION -->
       <CCol lg="4">
-        <CCard class="shadow sticky-top" style="top: 20px">
-          <CCardHeader class="bg-light border-0 py-3">
+        <CCard class="shadow " style="top: 20px">
+          <CCardHeader class=" border-0 py-3">
             <strong class="fs-5">Current Order</strong>
           </CCardHeader>
 
@@ -298,7 +298,7 @@ const placeOrder = () => {
             </div>
           </CCardBody>
 
-          <CCardFooter class="bg-light border-0 pt-3">
+          <CCardFooter class=" border-0 pt-3">
             <div class="d-flex justify-content-between fs-5 mb-3">
               <strong>Total</strong>
               <strong class="text-primary"

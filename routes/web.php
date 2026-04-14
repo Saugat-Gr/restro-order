@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuItemCategoryController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
@@ -41,16 +42,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //  Dashboard Routes:
+       Route::get(
+            '/dashboard',
+            [DashboardController::class, 'index']
+        )->name('dashboard');
+
     Route::middleware('ensure.user.has.restaurant')->group(function () {
 
-        //  Dashboard Routes:
-        Route::get('/dashboard', function () {
-            return Inertia::render('Dashboard', [
-                'app' => [
-                    'title' => 'Dashboard',
-                ],
-            ]);
-        })->name('dashboard');
+     
 
 
         //  Restaurant Routes:

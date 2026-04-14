@@ -7,7 +7,7 @@ const page = usePage();
 
 const avatar = page.props.auth.user.avatar
   ? `/storage/${page.props.auth.user.avatar}`
-  : null; 
+  : null;
 
 const itemsCount = 42;
 </script>
@@ -22,31 +22,7 @@ const itemsCount = 42;
     <CDropdownMenu class="pt-0">
       <CDropdownHeader
         component="h6"
-        class="bg-body-secondary text-body-secondary fw-semibold mb-2 rounded-top"
-      >
-        Account
-      </CDropdownHeader>
-      <CDropdownItem>
-        <CIcon icon="cil-bell" /> Updates
-        <CBadge color="info" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-      <CDropdownItem>
-        <CIcon icon="cil-envelope-open" /> Messages
-        <CBadge color="success" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-      <CDropdownItem>
-        <CIcon icon="cil-task" /> Tasks
-        <CBadge color="danger" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-      <CDropdownItem>
-        <CIcon icon="cil-comment-square" /> Comments
-        <CBadge color="warning" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-
-      <!-- DropdownHeader 2: Settings-->
-      <CDropdownHeader
-        component="h6"
-        class="bg-body-secondary text-body-secondary fw-semibold my-2"
+        class="bg-body-secondary text-body-secondary fw-semibold rounded-top"
       >
         Settings
       </CDropdownHeader>
@@ -55,25 +31,14 @@ const itemsCount = 42;
         <CDropdownItem> <CIcon icon="cil-user" /> Profile </CDropdownItem>
       </Link>
 
-      <CDropdownItem> <CIcon icon="cil-settings" /> Settings </CDropdownItem>
-
-      <CDropdownItem>
-        <CIcon icon="cil-dollar" /> Payments
-        <CBadge color="secondary" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-
-      <CDropdownItem>
-        <CIcon icon="cil-file" /> Projects
-        <CBadge color="primary" class="ms-auto">{{ itemsCount }}</CBadge>
-      </CDropdownItem>
-
+      <Link :href="`/restaurant/${page.props.auth.user.restaurant_id}/edit`">
+        <CDropdownItem> <CIcon icon="cil-settings" /> Settings </CDropdownItem>
+      </Link>
       <CDropdownDivider />
-      
 
-      <Link  href="/logout" class="text-decoration-none" method="POST" as="div">
+      <Link href="/logout" class="text-decoration-none" method="POST" as="div">
         <CDropdownItem> <CIcon icon="cil-lock-locked" /> Logout </CDropdownItem>
       </Link>
-
     </CDropdownMenu>
   </CDropdown>
 </template>

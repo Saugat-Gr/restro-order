@@ -39,24 +39,12 @@ onMounted(() => {
         <CIcon icon="cil-menu" size="lg" />
       </CHeaderToggler>
 
-      <!-- <CHeaderNav class="">
-        <CNavItem>
-          <Link href="/" as="button" class="nav-link">
-          </Link>
-        </CNavItem>
-      </CHeaderNav> -->
 
       <CHeaderNav class="ms-auto">
 
         <CNavItem>
           <CNavLink href="#">
             <CIcon icon="cil-bell" size="lg" />
-          </CNavLink>
-        </CNavItem>
-
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon icon="cil-list" size="lg" />
           </CNavLink>
         </CNavItem>
         

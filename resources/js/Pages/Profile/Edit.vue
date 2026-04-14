@@ -1,50 +1,47 @@
 <script setup>
-import { Link} from '@inertiajs/vue3';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3'
+import {
+  CContainer,
+  CRow,
+  CCol,
+} from '@coreui/vue'
+
+import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue'
+import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue'
+import DeleteUserForm from './Partials/DeleteUserForm.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 defineOptions({
-    layout: AuthenticatedLayout,
-});
+    layout: AuthenticatedLayout
+})
 
 defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
+  mustVerifyEmail: Boolean,
+  status: String,
+})
 </script>
 
 <template>
+  <Head title="Profile" />
 
-    <Head>
-         <title>{{ 'Profile' }}</title>
-    </Head>
+  <CContainer class="py-4">
+    <CRow class="g-4">
 
-        
+      <CCol xs="12">
+        <UpdateProfileInformationForm
+          :must-verify-email="mustVerifyEmail"
+          :status="status"
+        />
+      </CCol>
 
-        <div class="py-12 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
+      <CCol xs="12">
+        <UpdatePasswordForm />
+      </CCol>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
+      <CCol xs="12">
+        <DeleteUserForm />
+      </CCol>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
-            </div>
-        </div>
+    </CRow>
+  </CContainer>
 </template>
