@@ -47,11 +47,11 @@ class HandleInertiaRequests extends Middleware
                         'avatar' => $user->avatar ? $user->avatar : null,
                         'role' => $user->getRoleNames()->first(),
                         'restaurant_id' => $user->restaurant_id,
+                        'permissions' => $user->getAllPermissions()->pluck('name')
                     ];
                 },
             ],
 
-            // ✅ ADD THIS BLOCK
             'restaurant' => function () use ($request) {
                 $user = $request->user();
 

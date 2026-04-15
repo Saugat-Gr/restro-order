@@ -30,6 +30,7 @@ class OrderService
         return [
             'tables' => $this->repository->getAvailableTables(),
             'categories' => $this->repository->getActiveCategoriesWithMenuItems(),
+            'staffs' => $this->repository->getStaffs()
         ];
     }
 
@@ -60,6 +61,14 @@ class OrderService
                 'created_by' => auth()->id(),
                 'status' => OrderStatus::IN_PROGRESS,
                 'total_amount' => 0,
+            ]);
+
+            $table_id = $validated['table_id'];
+            $staff_id = $validated['staff_id'] ?? auth()->user()->id;
+
+            Table::findOrFail($table_id)->update([
+                'status' => TableStatus::BOOKED,
+                'assigned_staff_id' => $staff_id
             ]);
 
             $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
@@ -114,6 +123,16 @@ class OrderService
                 $validated['status'] === OrderStatus::COMPLETED->value &&
                 $order->status !== OrderStatus::COMPLETED
             ) {
+
+                if ($order->table_id) {
+                    $table = ($order->table_id);
+
+                    Table::findOrFail($table)->update([
+                        'status' => TableStatus::AVAILABLE,
+                        'assigned_staff_id' => NULL,
+                    ]);
+                }
+
                 $paymentMethod = $validated['payment_method'] ?? 'cash';
 
                 Transaction::create([

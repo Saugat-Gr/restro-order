@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Log;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -34,7 +35,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        
+
+        if (auth()->user()->hasRole('super-admin')) {
+            return redirect(RouteServiceProvider::SUPER_HOME);
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

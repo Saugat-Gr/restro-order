@@ -7,6 +7,7 @@ use App\Enums\TableStatus;
 use App\Models\MenuItemCategory;
 use App\Models\Order;
 use App\Models\Table;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 class OrderRepository implements OrderInterface
@@ -53,6 +54,10 @@ class OrderRepository implements OrderInterface
             ->select('id', 'name')
             ->orderBy('name')
             ->get();
+    }
+
+    public function getStaffs(){
+          return User::role('staff')->where('restaurant_id', auth()->user()->restaurant_id)->get();
     }
 
     public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null): Collection

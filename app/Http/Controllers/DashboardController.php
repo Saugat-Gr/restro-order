@@ -32,7 +32,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        // Fallback (you can expand later for Super Admin / Staff)
-        return Inertia::render('Dashboard/SuperAdmin');
+        $data = $this->dashboardService->getStaffMetrics($user->restaurant_id);
+        return Inertia::render('Dashboard/Staff');
     }
 }

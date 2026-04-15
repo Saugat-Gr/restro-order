@@ -12,7 +12,7 @@ class CreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->hasPermissionTo('create-menu-item');
     }
 
     /**
@@ -33,10 +33,11 @@ class CreateRequest extends FormRequest
         ];
     }
 
-    public function messages(){
-          return[ 
+    public function messages()
+    {
+        return [
             'menu_item_category_id.required' => "A Category is required",
             'description.required' => "A short description of item is required."
-          ];
+        ];
     }
 }

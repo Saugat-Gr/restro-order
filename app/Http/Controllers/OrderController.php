@@ -40,6 +40,7 @@ class OrderController extends Controller
             'app' => ['title' => 'Create Order'],
             'tables' => $data['tables'],
             'categories' => $data['categories'],
+            'staffs' => $data['staffs']
         ]);
     }
 
@@ -69,7 +70,7 @@ class OrderController extends Controller
         try {
             $this->orderService->updateOrder($order, $request->validated());
 
-            return redirect()->back()
+            return redirect()->route('orders.search')
                 ->with('success', 'Order updated successfully.');
         } catch (Exception $e) {
             Log::error($e->getMessage());

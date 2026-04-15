@@ -19,6 +19,8 @@ interface OrderInterface
 
     public function getActiveCategoriesWithMenuItems();
 
+    public function getStaffs();
+
     public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null): Collection;
 
 }

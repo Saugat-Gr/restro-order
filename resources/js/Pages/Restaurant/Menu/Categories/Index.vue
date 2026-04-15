@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { useForm, router } from "@inertiajs/vue3";
+import { useForm, router, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 import {
@@ -31,6 +31,12 @@ defineOptions({
 defineProps({
   categories: Array,
 });
+
+const page = usePage();
+
+const user = page.props.auth.user;
+
+const canCreate = user.permissions.includes('create-category');
 
 /* ---------------- FORMS ---------------- */
 const createForm = useForm({
@@ -96,7 +102,7 @@ const closeModal = () => {
 
 <template>
   <!-- CREATE -->
-  <CContainer class="border rounded-3 shadow-lg p-4">
+  <CContainer class="border rounded-3 shadow-lg p-4" v-if="canCreate">
     <CHeader class="d-flex justify-content-center border-none">
       <h4 class="text-dark">Create Menu Category</h4>
     </CHeader>
@@ -185,7 +191,7 @@ const closeModal = () => {
           <CTableHeaderCell>#</CTableHeaderCell>
           <CTableHeaderCell>Name</CTableHeaderCell>
           <CTableHeaderCell>Items</CTableHeaderCell>
-          <CTableHeaderCell>Actions</CTableHeaderCell>
+          <CTableHeaderCell v-if="canCreate">Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
 
@@ -195,7 +201,7 @@ const closeModal = () => {
           <CTableDataCell>{{ category.name }}</CTableDataCell>
           <CTableDataCell>{{ category.menu_items_count }}</CTableDataCell>
 
-          <CTableDataCell>
+          <CTableDataCell v-if="canCreate">
             <CButton
               color="danger"
               class="me-2"

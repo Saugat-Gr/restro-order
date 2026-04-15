@@ -4,7 +4,13 @@ export default function getNav(page) {
             name: "Dashboard",
             to: "/dashboard",
             icon: "cil-home",
-            roles: ["super-admin", "owner", "staff"],
+            roles: ["owner", "staff"],
+        },
+          {
+            name: "Dashboard",
+            to: "/super-admin/dashboard",
+            icon: "cil-home",
+            roles: ["super-admin"],
         },
 
         {
@@ -43,7 +49,7 @@ export default function getNav(page) {
                 {
                     name: "Items",
                     to: "/menu/menu-items",
-                    roles: ["owner"],
+                    roles: ["owner","staff"],
                     icon: "cil-minus",
                 },
             ],
@@ -68,13 +74,15 @@ export default function getNav(page) {
                     to: "/orders/create",
                     roles: ["owner", "staff"],
                     icon: "cil-plus",
+                    permission: ["create-order"]
                 },
 
                 {
                     name: "Search Order",
                     to: "/orders/search",
                     roles: ["owner", "staff"],
-                    icon: "cil-magnifying-glass"
+                    icon: "cil-magnifying-glass",
+                    permission: ['search-order']
                 },
             ],
         },

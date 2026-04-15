@@ -16,11 +16,13 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/vue";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 defineOptions({
   layout: AuthenticatedLayout,
 });
+
+
 
 const props = defineProps({
   orders: Array,
@@ -42,7 +44,6 @@ const update = (orderId, status) => {
     preserveState: true,
   });
 };
-
 </script>
 
 <template>
@@ -76,7 +77,7 @@ const update = (orderId, status) => {
 
           <!-- ✅ Status Dropdown -->
           <CTableDataCell>
-            <CDropdown class="w-full"> 
+            <CDropdown class="w-full">
               <CDropdownToggle
                 color="secondary"
                 size="sm"
@@ -91,7 +92,7 @@ const update = (orderId, status) => {
                   :key="status"
                   :active="order.status === status"
                   @click="update(order.id, status)"
-                  :disabled = "order.status === 'completed'"
+                  :disabled="order.status === 'completed'"
                 >
                   {{ $capitalize(status) }}
                 </CDropdownItem>

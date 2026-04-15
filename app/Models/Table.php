@@ -28,8 +28,13 @@ class Table extends Model
         static::addGlobalScope(new TenantScope());
     }
 
+    public function user(){
+          return $this->belongsTo(User::class, 'assigned_staff_id');
+    }
+
     public function scopeAvailable($query)
     {
         return $query->where('status', TableStatus::AVAILABLE->value);
     }
+
 }

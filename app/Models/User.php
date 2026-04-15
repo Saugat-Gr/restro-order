@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +48,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+   
     public function restaurant()
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id');

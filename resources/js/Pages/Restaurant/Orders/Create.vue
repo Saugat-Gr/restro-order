@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import {
   CContainer,
   CRow,
@@ -31,10 +31,21 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+
+  staffs:{
+     type: Object,
+  }
 });
+
+
+const page = usePage();
+const user = page.props.auth.user;
+
+const canAssign = user.permissions.includes("assign-to-table");
 
 // State
 const selectedTableId = ref(null);
+const selectedStaffId = ref(null);
 
 const activeCategoryId = ref(
   props.categories.find((cat) => cat.menu_items?.length)?.id ||
@@ -111,6 +122,7 @@ const cartTotal = computed(() =>
 // Order Form
 const orderForm = useForm({
   table_id: null,
+  staff_id: null,
   items: [],
 });
 
@@ -118,6 +130,7 @@ const placeOrder = () => {
   if (cart.value.length === 0) return;
 
   orderForm.table_id = selectedTableId.value;
+  orderForm.staff_id = selectedStaffId.value;
   orderForm.items = cart.value.map((item) => ({
     menu_item_id: item.menu_item_id,
     quantity: item.quantity,
@@ -128,6 +141,7 @@ const placeOrder = () => {
     onSuccess: () => {
       cart.value = [];
       selectedTableId.value = null;
+      selectedStaffId.value = null;
     },
   });
 };
@@ -241,11 +255,10 @@ const placeOrder = () => {
         </CRow>
       </CCol>
 
-
       <!-- CART SECTION -->
       <CCol lg="4">
-        <CCard class="shadow " style="top: 20px">
-          <CCardHeader class=" border-0 py-3">
+        <CCard class="shadow" style="top: 20px">
+          <CCardHeader class="border-0 py-3">
             <strong class="fs-5">Current Order</strong>
           </CCardHeader>
 
@@ -254,6 +267,13 @@ const placeOrder = () => {
               <option value="">Takeaway / No Table Assigned</option>
               <option v-for="table in tables" :key="table.id" :value="table.id">
                 Table {{ table.table_number }} — {{ table.capacity }} seats
+              </option>
+            </CFormSelect>
+
+            <CFormSelect v-model="selectedStaffId" class="mb-4" v-if="canAssign">
+              <option value="">Assign Staff / No Staff Assigned</option>
+              <option v-for="staff in props.staffs" :key="staff.id" :value="staff.id">
+                 {{ staff.name }}
               </option>
             </CFormSelect>
 
@@ -298,7 +318,7 @@ const placeOrder = () => {
             </div>
           </CCardBody>
 
-          <CCardFooter class=" border-0 pt-3">
+          <CCardFooter class="border-0 pt-3">
             <div class="d-flex justify-content-between fs-5 mb-3">
               <strong>Total</strong>
               <strong class="text-primary"

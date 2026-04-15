@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuItemCategoryController;
 use App\Http\Controllers\MenuItemController;
@@ -30,6 +31,15 @@ Route::get('/', function () {
 })->name('welcome');
 
 
+// Super-Admin: 
+
+Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(function(){
+     Route::get('/dashboard', [SuperAdminDashboard::class, 'index']);
+
+});
+
+
+//  Owner and Staffs
 Route::middleware(['auth', 'role:owner|staff'])->group(function () {
 
     //  Login Routes:

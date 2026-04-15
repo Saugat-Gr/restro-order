@@ -11,7 +11,7 @@ class CreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->hasPermissionTo('create-order');
     }
 
     /**
@@ -26,6 +26,7 @@ class CreateRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.menu_item_id' => ['required', 'exists:menu_items,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'staff_id' => ['nullable', 'exists:users,id']
         ];
     }
 }

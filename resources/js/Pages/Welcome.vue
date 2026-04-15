@@ -50,6 +50,9 @@ const features = [
 ];
 
 const user = page.props.auth.user;
+
+const link = (user?.role === 'staff' || user?.role === 'owner') ? '/dashboard' : '/super-admin/dashboard';
+
 </script>
 
 <template>
@@ -66,7 +69,7 @@ const user = page.props.auth.user;
           </div>
 
           <div class="header-actions d-flex align-items-center gap-2">
-            <Link v-if="user" :href="route('dashboard')">
+            <Link v-if="user" :href="link">
               <CButton color="outline-primary">Dashboard</CButton>
             </Link>
 

@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm, Link, router } from "@inertiajs/vue3";
+import { Head, useForm, Link, router, usePage } from "@inertiajs/vue3";
 import { ref, watch, computed, onMounted } from "vue"; // ← added computed
 import debounce from "lodash/debounce";
 
@@ -29,6 +29,13 @@ import CIcon from "@coreui/icons-vue";
 
 defineOptions({ layout: AuthenticatedLayout });
 
+const page = usePage();
+const user = page.props.auth.user;
+// Permission:
+const canCreate = user.permissions.includes('create-menu-item');
+const canUpdate = user.permissions.includes('update-menu-item');
+console.log(canCreate);
+
 const props = defineProps({
   menu_items: Object, // Full paginator object from Laravel
   app: Object,
@@ -36,17 +43,6 @@ const props = defineProps({
   flash: Object,
 });
 
-console.log(props.flash);
-
-onMounted(() => {
-  if (props.flash.success) {
-    toastr.success(props.flash.success, "Success");
-  }
-
-  if (props.flash.error) {
-    toastr.error(props.flash.error, "Error");
-  }
-});
 
 // Use computed so it automatically updates when props change
 const menuItems = computed(
@@ -263,7 +259,7 @@ const forwardPage = (page) => {
             >
           </CDropdownMenu>
         </CDropdown>
-        <Link href="/menu/menu-items/create">
+        <Link href="/menu/menu-items/create" v-if="canCreate">
           <CButton color="primary" class="text-white"
             >+ Create New Item</CButton
           >
@@ -301,13 +297,14 @@ const forwardPage = (page) => {
 
           <!-- Status -->
           <CTableDataCell>
-            <CDropdown>
+            <CDropdown >
               <CFormSwitch
                 size="lg"
                 :modelValue="item.status === 'active'"
                 @update:modelValue="
                   (val) => toggleStatus(item, val ? 'active' : 'inactive')
                 "
+                :disabled="!canUpdate"
               />
               <CDropdownMenu>
                 <CDropdownItem
@@ -347,6 +344,7 @@ const forwardPage = (page) => {
                 class="text-white"
                 size="sm"
                 caret
+                :disabled="!canUpdate"
               >
                 {{ item.is_in_stock ? "In Stock" : "Out of Stock" }}
               </CDropdownToggle>

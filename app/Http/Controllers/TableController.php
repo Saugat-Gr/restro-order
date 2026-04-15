@@ -21,7 +21,7 @@ class TableController extends Controller
         $status = $request->input('status');
         $tableNumber = $request->input('table_number');
 
-        $query =  $this->filterData($status, $tableNumber);
+        $query = $this->filterData($status, $tableNumber);
 
         $tables = $query->paginate(10)->withQueryString();
 
@@ -111,21 +111,26 @@ class TableController extends Controller
      */
     public function destroy(Table $table)
     {
+        if ($table->status === TableStatus::BOOKED) {
+            return redirect()->back()->with('error', 'Cannot delete table');
+
+        }
         $table->delete();
 
         return redirect()->back()->with('success', 'Table Deleted.');
     }
 
-    private function filterData($status, $table_number){
-    
+    private function filterData($status, $table_number)
+    {
+
         $query = Table::query();
 
-        return $query->when($status, function(Builder $q) use ($status){
-           
+        return $query->with('user')->when($status, function (Builder $q) use ($status) {
+
             $q->where('status', $status);
-        
-        })->when($table_number, function(Builder $q) use ($table_number){
-             $q->where('table_number', 'LIKE' , '%' . $table_number . "%");
+
+        })->when($table_number, function (Builder $q) use ($table_number) {
+            $q->where('table_number', 'LIKE', '%' . $table_number . "%");
         });
 
 

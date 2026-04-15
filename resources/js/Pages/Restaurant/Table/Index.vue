@@ -31,13 +31,21 @@ defineOptions({
   layout: AuthenticatedLayout,
 });
 
+const page = usePage();
+const user = page.props.auth.user;
+
+const canCreate = user.permissions.includes('create-table');
+
 const props = defineProps({
   tables: Array,
   statuses: Array,
   filters: Array,
 });
 
+console.log(props.tables);
+
 const tables = computed(() => props.tables.data);
+console.log(props.tables);
 const statuses = props.statuses;
 
 /**
@@ -99,7 +107,7 @@ const applyFilters = debounce(() => {
 
 // Watch filters
 watch(
-  filters,
+  () => [filters.status, filters.table_number],
   () => {
     applyFilters();
   },
@@ -127,7 +135,7 @@ const confirmDelete = () => {
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <CButton color="secondary" @click="resetFilters">
+        <CButton color="secondary" @click="resetFilters()">
           Reset Filters
         </CButton>
       </div>
@@ -160,7 +168,7 @@ const confirmDelete = () => {
         </CDropdown>
 
         <!-- ADD TABLE -->
-        <Link :href="route('tables.create')">
+        <Link :href="route('tables.create')" v-if="canCreate">
           <CButton color="primary">
             <CIcon name="cil-plus" />
             Add Table
@@ -211,7 +219,7 @@ const confirmDelete = () => {
           </CTableDataCell>
 
           <CTableDataCell>
-            {{ table.assigned_to || "NONE" }}
+            {{ table?.user?.name || "NONE" }}
           </CTableDataCell>
 
           <!-- ACTIONS -->
@@ -235,7 +243,7 @@ const confirmDelete = () => {
       </CTableBody>
     </CTable>
 
-    <CPagination aria-label="Page navigation">
+    <CPagination aria-label="Page navigation" v-if="props.tables.current_page < props.tables.last_page">
       <Link :href="props.tables.prev_page_url">
         <CPaginationItem :disabled="!props.tables.prev_page_url">
           Previous Page

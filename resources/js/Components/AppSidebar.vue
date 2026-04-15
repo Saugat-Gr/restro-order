@@ -19,6 +19,8 @@ const logo = page.props.restaurant
 const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
 const sidebarUnfoldable = computed(() => store.getters["sidebar/unfoldable"]);
 
+const link = (page.props.auth.user.role === 'staff' || page.props.auth.user.role) === 'staff' ? '/dashboard' : '/super-admin/dashboard';
+
 // Methods to dispatch actions
 const toggleSidebar = (value) => store.dispatch("sidebar/toggleSidebar", value);
 const toggleUnfoldable = () => store.dispatch("sidebar/toggleUnfoldable");
@@ -35,7 +37,8 @@ const toggleUnfoldable = () => store.dispatch("sidebar/toggleUnfoldable");
   >
     <CSidebarHeader class="border-bottom ">
       <div class="bg-red w-full h-full flex items-center justify-center">
-        <Link href="/" class="text-decoration-none text-white">
+        
+        <Link :href="link" class="text-decoration-none text-white">
           <CImage :src="logo" class="w-full" v-if="logo" />
         </Link>
       </div>
