@@ -8,20 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'address',
-        'phone',
-        'owner_id',
-        'email',
-        'logo'
-    ];
+  protected $fillable = [
+    'name',
+    'address',
+    'phone',
+    'owner_id',
+    'email',
+    'logo'
+  ];
 
-   
-  public function user(){
-        return $this->hasOne(User::class, 'restaurant_id');
+
+  public function user()
+  {
+    return $this->hasOne(User::class, 'restaurant_id');
   }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\SuperAdmin;
 
+use App\Models\Restaurant;
 use Carbon\Carbon;
 
 
@@ -9,9 +10,9 @@ class DashboardService{
 
    public function getMetrics(){
 
-      $now = Carbon::now();
+    
+      $total_restaurants = Restaurant::count();    
 
-      dd($now);
       
    }
 

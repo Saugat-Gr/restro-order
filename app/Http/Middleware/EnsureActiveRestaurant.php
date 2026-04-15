@@ -5,10 +5,9 @@ namespace App\Http\Middleware;
 use App\Enums\Status;
 use Closure;
 use Illuminate\Http\Request;
-use Log;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserHasRestaurant
+class EnsureActiveRestaurant
 {
     /**
      * Handle an incoming request.
@@ -17,24 +16,12 @@ class EnsureUserHasRestaurant
      */
     public function handle(Request $request, Closure $next): Response
     {
-
         $user = $request->user();
 
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
-        if ($user->roles->pluck('name')->contains('super-admin')) {
-            return $next($request);
-        }
-
-        if (!$user->restaurant_id) {
-            return redirect()->route('restaurant.create');
-        }
-
         if($user->restaurant->status !== Status::ACTIVE){
-              return redirect()->route('welcome')->with('error', "Restaurant is in-active");
+              return redirect()->back()->with('error', 'Restaurant is in-active');
         }
+
 
         return $next($request);
     }

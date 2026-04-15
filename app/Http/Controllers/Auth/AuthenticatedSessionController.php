@@ -36,11 +36,13 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
 
-        if (auth()->user()->hasRole('super-admin')) {
-            return redirect(RouteServiceProvider::SUPER_HOME);
+        if (auth()->user()->hasRole('owner')) {
+            return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Successfully Logged In.');
+        } else if (auth()->user()->hasRole('staff')) {
+            return redirect()->route('orders.create')->with('success', 'Successfully Logged In.');
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::SUPER_HOME)->with('success', 'Successfully Logged In.');
     }
 
     /**

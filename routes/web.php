@@ -40,7 +40,7 @@ Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(fu
 
 
 //  Owner and Staffs
-Route::middleware(['auth', 'role:owner|staff'])->group(function () {
+Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->group(function () {
 
     //  Login Routes:
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -9,13 +9,15 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
 
-      protected DashboardService $dashboardService;
+   protected DashboardService $dashboardService;
 
-      public function __construct(DashboardService $dashboardService){
-         $this->dashboardService = $dashboardService;
-      }
+   public function __construct(DashboardService $dashboardService)
+   {
+      $this->dashboardService = $dashboardService;
+   }
 
-     public function index(){
-            $this->dashboardService->getMetrics();
-     }
+   public function index()
+   {
+      $this->dashboardService->getMetrics();
+   }
 }
