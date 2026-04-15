@@ -19,7 +19,7 @@ const itemsCount = 42;
     </CDropdownToggle>
 
     <!-- DropDownHeader: 1: Account -->
-    <CDropdownMenu class="pt-0">
+    <CDropdownMenu class="pt-0 hover:cursor-pointer">
       <CDropdownHeader
         component="h6"
         class="bg-body-secondary text-body-secondary fw-semibold rounded-top"
