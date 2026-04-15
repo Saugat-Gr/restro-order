@@ -76,14 +76,14 @@ Route::middleware(['auth', 'role:owner|staff'])->group(function () {
         });
 
         // Tables Routes:
-        Route::resource('tables', TableController::class);
+        Route::resource('tables', TableController::class)->only(['index','create','edit','update','destroy' ,'store']);
 
         // Order Routes:
         Route::get('/orders/search', [OrderController::class, 'searchOrder'])->name('orders.search');
         Route::resource('orders', OrderController::class);
 
         // Tranasctions: 
-        Route::resource('transactions', TransactionController::class);
+        Route::resource('transactions', TransactionController::class)->only('index');
 
     });
 
@@ -93,6 +93,10 @@ Route::middleware(['auth', 'role:owner|staff'])->group(function () {
 
 });
 
+
+Route::fallback(function(){
+     return redirect()->back()->with('error','Page Not Found');  
+});
 
 require __DIR__ . '/auth.php';
 

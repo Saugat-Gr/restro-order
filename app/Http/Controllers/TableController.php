@@ -6,13 +6,26 @@ use App\Enums\TableStatus;
 use App\Http\Requests\Table\CreateRequest;
 use App\Http\Requests\Table\UpdateRequest;
 use App\Models\Table;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use PHPUnit\Framework\MockObject\Generator\DuplicateMethodException;
 
 class TableController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view-tables', ['only' => ['index']]);
+        $this->middleware('permission:create-table', ['only' => ['create', 'store']]);
+        $this->middleware('permission:update-table', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-table', ['only' => ['destroy']]);
+
+
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -58,15 +71,17 @@ class TableController extends Controller
      */
     public function store(CreateRequest $request)
     {
-        $validated_data = $request->validated();
+        try {
+            $validated_data = $request->validated();
 
-        $validated_data['restaurant_id'] = auth()->user()->restaurant_id;
-
-        $table = Table::create($validated_data);
-
-        Log::info($table);
-
-        return redirect()->route('tables.index')->with('success', 'Table Created.');
+            $validated_data['restaurant_id'] = auth()->user()->restaurant_id;
+            Table::create($validated_data);
+            return redirect()->route('tables.index')->with('success', 'Table Created.');
+        } catch (QueryException $e) {
+            return redirect()->back()->with('error', 'Table Name Already Exists.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Cannot Create Table');
+        }
     }
 
     /**

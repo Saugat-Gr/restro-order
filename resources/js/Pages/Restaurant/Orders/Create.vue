@@ -19,6 +19,7 @@ import {
 import CIcon from "@coreui/icons-vue";
 import { cilPlus, cilTrash, cilSearch } from "@coreui/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { formatCurrency } from "@/utils/format";
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -230,7 +231,7 @@ const placeOrder = () => {
                   {{ item.description }}
                 </p>
                 <div class="text-success fw-bold fs-5 mb-3">
-                  Rs. {{ parseFloat(item.price).toFixed(2) }}
+                  {{formatCurrency(parseFloat(item.price).toFixed(2)) }}
                 </div>
 
                 <CButton
@@ -311,7 +312,7 @@ const placeOrder = () => {
                   <CButton size="sm" @click="increaseQty(index)">+</CButton>
 
                   <div class="ms-auto text-success fw-bold">
-                    Rs. {{ (item.item_price * item.quantity).toFixed(2) }}
+                     {{ formatCurrency((item.item_price * item.quantity).toFixed(2)) }}
                   </div>
                 </div>
               </div>
@@ -322,7 +323,7 @@ const placeOrder = () => {
             <div class="d-flex justify-content-between fs-5 mb-3">
               <strong>Total</strong>
               <strong class="text-primary"
-                >Rs. {{ cartTotal.toFixed(2) }}</strong
+                > {{ formatCurrency(cartTotal.toFixed(2)) }}</strong
               >
             </div>
 

@@ -4,7 +4,7 @@ export default function getNav(page) {
             name: "Dashboard",
             to: "/dashboard",
             icon: "cil-home",
-            roles: ["owner", "staff"],
+            roles: ["owner"],
         },
           {
             name: "Dashboard",
@@ -29,7 +29,7 @@ export default function getNav(page) {
         {
             component: "CNavTitle",
             name: "Feature",
-            roles: ["owner"],
+            roles: ["owner","staff"],
         },
 
         {

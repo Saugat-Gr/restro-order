@@ -35,6 +35,7 @@ const page = usePage();
 const user = page.props.auth.user;
 
 const canCreate = user.permissions.includes('create-table');
+const canUpdate = user.permissions.includes('update-table');
 
 const props = defineProps({
   tables: Array,
@@ -81,7 +82,6 @@ const updateStatus = (table, status) => {
 
   form.post(route("tables.update", table.id), {
     preserveScroll: true,
-    onSuccess: () => Inertia.reload([tables]),
   });
 };
 
@@ -188,7 +188,7 @@ const confirmDelete = () => {
           <CTableHeaderCell>Capacity</CTableHeaderCell>
           <CTableHeaderCell>Status</CTableHeaderCell>
           <CTableHeaderCell>Assigned To</CTableHeaderCell>
-          <CTableHeaderCell>Actions</CTableHeaderCell>
+          <CTableHeaderCell v-if="canUpdate">Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
 
@@ -223,7 +223,7 @@ const confirmDelete = () => {
           </CTableDataCell>
 
           <!-- ACTIONS -->
-          <CTableDataCell>
+          <CTableDataCell v-if="canUpdate">
             <Link :href="route('tables.edit', table.id)">
               <CButton color="primary" variant="outline">
                 <CIcon name="cil-pencil" />

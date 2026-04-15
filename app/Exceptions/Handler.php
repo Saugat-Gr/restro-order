@@ -32,8 +32,12 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof HttpException && $exception->getStatusCode() === 403) {
-            return redirect()->route('welcome') // or any safe route
-                ->with('error', 'You do not have permission to access this page.');
+            return redirect()->back() // or any safe route
+                ->with('error', 'You do not have permission to perform this action.');
+        }
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return redirect()->route('welcome')
+                ->with('error', 'Invalid HTTP method used for this route.');
         }
 
         return parent::render($request, $exception);

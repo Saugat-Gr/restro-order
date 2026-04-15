@@ -12,6 +12,7 @@ import {
   CBadge,
 } from "@coreui/vue";
 import { usePage } from "@inertiajs/vue3";
+import { formatCurrency } from "@/utils/format";
 defineOptions({
   layout: AuthenticatedLayout,
 });
@@ -49,7 +50,7 @@ const menu_item = page.props.menu_item;
               </div>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
-              <span class="fs-4 fw-bold">${{ menu_item.price }}</span>
+              <span class="fs-4 fw-bold">{{ formatCurrency(menu_item.price) }}</span>
               <Link :href="route('menu.menu-items.index')">
                 <CButton color="primary" size="lg">Go BACK </CButton>
               </Link>

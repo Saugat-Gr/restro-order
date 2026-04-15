@@ -31,8 +31,6 @@ class DashboardController extends Controller
 
             ]);
         }
-
-        $data = $this->dashboardService->getStaffMetrics($user->restaurant_id);
-        return Inertia::render('Dashboard/Staff');
+        return Inertia::render('Restaurant/Orders/Create');
     }
 }

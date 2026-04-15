@@ -13,7 +13,7 @@ import {
   CHeader,
   CRow,
 } from "@coreui/vue";
-import { useForm, usePage } from "@inertiajs/vue3";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 defineOptions({
   layout: AuthenticatedLayout,
@@ -86,7 +86,9 @@ const createTable = () => {
         </CRow>
 
         <div class="mt-4 float-end">
+          <Link :href="route('tables.index')">
           <CButton color="secondary" class="mr-2">Cancel</CButton>
+          </Link>
           <CButton color="primary" type="submit"> Create Table </CButton>
         </div>
       </CForm>

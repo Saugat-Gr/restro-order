@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { formatCurrency } from "@/utils/format";
 import CIcon from "@coreui/icons-vue";
 import {
   CButton,
@@ -102,7 +103,7 @@ const update = (orderId, status) => {
 
           <!-- Amount -->
           <CTableDataCell>
-            {{ order.total_amount }}
+            {{ formatCurrency(order.total_amount) }}
           </CTableDataCell>
 
           <!-- User -->

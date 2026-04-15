@@ -18,6 +18,7 @@ import {
 import { Link, useForm } from "@inertiajs/vue3";
 import { computed, watch } from "vue";
 import debounce from "lodash/debounce";
+import { formatCurrency } from "@/utils/format";
 
 defineOptions({
   layout: AuthenticatedLayout,
@@ -144,7 +145,7 @@ watch(
           </CTableDataCell>
 
           <CTableDataCell>
-            {{ transaction.amount }}
+            {{ formatCurrency(transaction.amount) }}
           </CTableDataCell>
 
           <CTableDataCell>

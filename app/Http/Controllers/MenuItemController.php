@@ -20,6 +20,10 @@ class MenuItemController extends Controller
     public function __construct(MenuItemService $menuItemService)
     {
         $this->menuItemService = $menuItemService;
+        $this->middleware('permission:view-menu-items', ['only' => ['index']]);
+        $this->middleware('permission:create-menu-items', ['only' => ['store']]);
+        $this->middleware('permission:update-menu-items', ['only' => ['edit', 'update']]);
+
     }
 
     /**

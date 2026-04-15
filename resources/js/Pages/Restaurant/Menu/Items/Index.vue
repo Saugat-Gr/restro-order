@@ -366,7 +366,7 @@ const forwardPage = (page) => {
           <!-- Actions -->
           <CTableDataCell>
             <div class="d-flex gap-2">
-              <Link :href="route('menu.menu-items.edit', item.id)">
+              <Link :href="route('menu.menu-items.edit', item.id)" v-if="canUpdate">
                 <CButton color="secondary" size="sm" variant="outline"
                   ><CIcon name="cil-pencil"
                 /></CButton>
@@ -376,6 +376,7 @@ const forwardPage = (page) => {
                 size="sm"
                 variant="outline"
                 @click="deleteItem(item)"
+                v-if="canUpdate"
                 ><CIcon name="cil-trash"
               /></CButton>
               <Link :href="route('menu.menu-items.show', item.id)">

@@ -183,7 +183,7 @@ const closeModal = () => {
 
   <!-- TABLE -->
   <CContainer class="border rounded-3 shadow-lg mt-4 p-4">
-    <CTable caption="top">
+    <CTable caption="top" hover bordered>
       <CTableCaption>List of Categories</CTableCaption>
 
       <CTableHead>

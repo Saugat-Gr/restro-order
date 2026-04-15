@@ -18,6 +18,7 @@ import { cilSearch } from "@coreui/icons";
 import { ref, watch } from "vue";
 import debounce from "lodash/debounce";
 import { router, useForm, Link } from "@inertiajs/vue3";
+import { formatCurrency } from "@/utils/format";
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -141,7 +142,7 @@ const edit = (order) => {
             <!-- INFO -->
             <div class="text-muted small">
               <div>Table: {{ order.table?.table_number || '-' }}</div>
-              <div>Total: ${{ order.total_amount }}</div>
+              <div>Total: {{formatCurrency(order.total_amount) }}</div>
               <div>
                 {{ new Date(order.created_at).toLocaleString() }}
               </div>
