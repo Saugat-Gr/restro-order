@@ -19,6 +19,7 @@ defineOptions({
   layout: AuthenticatedLayout,
 });
 
+
 const props = defineProps({
   kpis: Object,
   sales_trend: Object,

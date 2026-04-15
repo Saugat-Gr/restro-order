@@ -22,7 +22,14 @@ class DashboardController extends Controller
         // For now we are building Owner only
         if ($user->hasRole('owner') && $user->restaurant_id) {
             $data = $this->dashboardService->getOwnerMetrics($user->restaurant_id);
-            return Inertia::render('Dashboard/Owner', $data);
+            return Inertia::render('Dashboard/Owner', [
+                ...$data,
+
+                "app" => [
+                    "title" => 'Dashboard'
+                ]
+
+            ]);
         }
 
         // Fallback (you can expand later for Super Admin / Staff)
