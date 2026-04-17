@@ -20,19 +20,15 @@ class RestaurantRepository implements RestaurantInterface
 
     public function getRestaurantById($id)
     {
-        // Implementation for retrieving a restaurant by ID
     }
 
     public function updateRestaurant($data, $restaurant)
     {
-        // Implementation for updating a restaurant
-        Log::info($data);
         $restaurant->update($data);
         return $restaurant;
     }
 
     public function deleteRestaurant($id)
     {
-        // Implementation for deleting a restaurant
     }
 }

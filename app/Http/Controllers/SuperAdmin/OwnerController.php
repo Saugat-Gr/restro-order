@@ -13,6 +13,12 @@ class OwnerController extends Controller
 
     public function __construct(protected OwnerService $ownerService)
     {
+        $this->middleware('permission:view-owners', ['only' => ['index']]);
+        $this->middleware('permission:create-owner', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-owner', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:remove-owner', ['only' => ['destroy']]);
+
+
     }
 
     /**

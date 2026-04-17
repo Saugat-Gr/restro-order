@@ -39,7 +39,6 @@ const user = page.props.auth.user;
 
 const canCreate = user.permissions.includes("create-category");
 
-/* ---------------- FORMS ---------------- */
 const createForm = useForm({
   name: "",
 });
@@ -54,12 +53,10 @@ const deleteForm = useForm({
   name: "",
 });
 
-/* ---------------- STATE ---------------- */
 const isEditModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
 const isCreateModalOpen = ref(false);
 
-/* ---------------- CREATE ---------------- */
 const createCategory = () => {
   createForm.post(route("menu.category.store"), {
     onSuccess: () => {
@@ -69,7 +66,7 @@ const createCategory = () => {
   });
 };
 
-/* ---------------- EDIT ---------------- */
+
 const openEditModal = (category) => {
   editForm.id = category.id;
   editForm.name = category.name;
@@ -82,7 +79,6 @@ const updateCategory = () => {
   });
 };
 
-/* ---------------- DELETE ---------------- */
 const openDeleteModal = (category) => {
   deleteForm.id = category.id;
   deleteForm.name = category.name;
@@ -95,7 +91,7 @@ const deleteCategory = () => {
   });
 };
 
-/* ---------------- MODAL ---------------- */
+
 const closeModal = () => {
   isEditModalOpen.value = false;
   isDeleteModalOpen.value = false;
@@ -107,7 +103,6 @@ const closeModal = () => {
 };
 </script>
 <template>
-  <!-- ================= MODALS ================= -->
 
   <!-- EDIT -->
   <CModal backdrop="static" :visible="isEditModalOpen" @close="closeModal">
@@ -196,7 +191,6 @@ const closeModal = () => {
     </CModalFooter>
   </CModal>
 
-  <!-- ================= PAGE ================= -->
 
   <CContainer class="py-4">
     <!-- Card Table -->

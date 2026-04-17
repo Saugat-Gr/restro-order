@@ -40,7 +40,6 @@ const perPageValues = [10, 20, 30, 40];
 
 const transactions = computed(() => props.transactions.data);
 
-// ✅ Debounced request
 const filterData = debounce(() => {
   filters.get(route("transactions.index"), {
     preserveScroll: true,
@@ -49,7 +48,6 @@ const filterData = debounce(() => {
   });
 }, 300);
 
-// ✅ Cleaner watch
 watch(
   () => ({
     perPage: filters.perPage,
@@ -63,10 +61,8 @@ watch(
 <template>
   <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
 
-    <!-- ================= FILTER BAR ================= -->
     <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
 
-      <!-- SEARCH -->
       <div class="flex-grow-1 text-center">
         <CFormInput
           class="w-50 mx-auto"
@@ -75,7 +71,6 @@ watch(
         />
       </div>
 
-      <!-- METHOD -->
       <div>
         <CFormLabel class="text-medium-emphasis">Transaction Method</CFormLabel>
         <CFormSelect v-model="filters.transaction_method" >
@@ -91,7 +86,6 @@ watch(
 
     </div>
 
-    <!-- ================= TABLE ================= -->
     <CTable hover responsive align="middle" class="mb-0">
 
       <CTableCaption class="text-medium-emphasis">
@@ -156,13 +150,11 @@ watch(
       </CTableBody>
     </CTable>
 
-    <!-- ================= PAGINATION ================= -->
     <div
       v-if="props.transactions.last_page >= 1"
       class="mt-4 d-flex justify-content-end align-items-center flex-wrap gap-3"
     >
 
-      <!-- KEEP STRUCTURE SAME (just style tweak) -->
       <CPagination class="mb-0">
 
         <CPaginationItem
@@ -195,7 +187,6 @@ watch(
 
       </CPagination>
 
-      <!-- ITEMS PER PAGE (unchanged position) -->
       <div class="d-flex align-items-center gap-2">
         <CFormLabel class="mb-0 text-medium-emphasis">
           Items:

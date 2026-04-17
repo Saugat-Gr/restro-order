@@ -30,13 +30,10 @@ class RestaurantService
 
             $this->restaurantRepository->createRestaurant($validated_data);
 
-            return redirect()->back()->with('success', 'Restaurant Created.');
         } catch (QueryException $e) {
             Log::info($e->getMessage());
-            return redirect()->back()->with('error', 'Restaurant May Be Already Created.');
         } catch (Exception $e) {
             Log::error('Unexpected error creating restaurant: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Could Not Create Restaurant.');
         }
     }
 
@@ -49,7 +46,6 @@ class RestaurantService
                 $validated_data['logo'] = $request->file('logo')->store('restaurant/logos', 'public');
             }
             $this->restaurantRepository->updateRestaurant($validated_data, $restaurant);
-            return redirect()->route('dashboard');
         } catch (QueryException $e) {
             Log::error('Error updating restaurant: ' . $e->getMessage());
             return redirect()->route('welcome');

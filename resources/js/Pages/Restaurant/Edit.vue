@@ -19,7 +19,6 @@ defineOptions({
 const page = usePage();
 const restaurant = page.props.restaurant;
 
-// ✅ Form (logo included directly — best practice)
 const form = useForm({
   _method: "patch",
   name: restaurant.name || "",
@@ -29,7 +28,6 @@ const form = useForm({
   logo: null,
 });
 
-// ✅ Submit
 const submit = () => {
   form
     .transform((data) => {
@@ -42,8 +40,10 @@ const submit = () => {
       forceFormData: true,
       preserveScroll: true,
       onSuccess: () => {
-        Inertia.reload({ only: ["restaurant"] });
         form.logo = null;
+        setTimeout(() => {
+          Inertia.reload({ only: ["restaurant"] });
+        }, 3000);
       },
       onError: (errors) => {
         console.error("Submission errors:", errors);
@@ -53,12 +53,10 @@ const submit = () => {
 </script>
 <template>
   <Head>
-    <title>Edit Restaurant - {{ page.props.app?.title || "Restaurant" }}</title>
+    <title>{{ page.props.app?.title || "Restaurant" }}</title>
   </Head>
 
   <CContainer class="py-4">
-
-    <!-- HEADER -->
     <div class="mb-4">
       <h3 class="fw-bold mb-1">Restaurant Settings</h3>
       <div class="text-muted">
@@ -66,23 +64,15 @@ const submit = () => {
       </div>
     </div>
 
-    <!-- SINGLE FORM SURFACE -->
     <CForm @submit.prevent="submit">
-
       <CCard class="border-0 shadow-lg rounded-3 overflow-hidden">
-
-        <!-- SECTION: GENERAL INFO -->
         <div class="p-4 border-bottom">
           <h6 class="fw-semibold mb-3">General Information</h6>
 
           <CRow class="g-3">
-
             <CCol md="12">
               <CFormLabel>Restaurant Name</CFormLabel>
-              <CFormInput
-                v-model="form.name"
-                :invalid="!!form.errors.name"
-              />
+              <CFormInput v-model="form.name" :invalid="!!form.errors.name" />
               <CFormFeedback invalid>
                 {{ form.errors.name }}
               </CFormFeedback>
@@ -90,10 +80,7 @@ const submit = () => {
 
             <CCol md="6">
               <CFormLabel>Phone</CFormLabel>
-              <CFormInput
-                v-model="form.phone"
-                :invalid="!!form.errors.phone"
-              />
+              <CFormInput v-model="form.phone" :invalid="!!form.errors.phone" />
               <CFormFeedback invalid>
                 {{ form.errors.phone }}
               </CFormFeedback>
@@ -121,11 +108,9 @@ const submit = () => {
                 {{ form.errors.address }}
               </CFormFeedback>
             </CCol>
-
           </CRow>
         </div>
 
-        <!-- SECTION: BRANDING -->
         <div class="p-4 border-bottom text-center">
           <h6 class="fw-semibold mb-3 text-start">Branding</h6>
 
@@ -160,9 +145,9 @@ const submit = () => {
           </div>
         </div>
 
-        <!-- SECTION: ACTION BAR (INSIDE SAME FORM) -->
-        <div class="p-4 d-flex justify-content-end align-items-center gap-3 bg-light">
-
+        <div
+          class="p-4 d-flex justify-content-end align-items-center gap-3 bg-light"
+        >
           <div class="text-muted small">
             Make sure all details are correct before saving
           </div>
@@ -176,11 +161,8 @@ const submit = () => {
           >
             {{ form.processing ? "Saving..." : "Save Changes" }}
           </CButton>
-
         </div>
-
       </CCard>
-
     </CForm>
   </CContainer>
 </template>

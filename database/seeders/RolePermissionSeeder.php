@@ -35,21 +35,30 @@ class RolePermissionSeeder extends Seeder
             "create-menu-item",
             "update-menu-item",
             "delete-menu-item",
+            "update-menu-item-stock",
 
             // Tables
             "view-tables",
             "create-table",
             "update-table",
             "delete-table",
+            "assign-to-table",
 
             // Orders
             "view-orders",
             "create-order",
             "update-order",
-            "complete-order", // IMPORTANT
+            "complete-order",
+            "search-order",
 
             // Transactions
             "view-transactions",
+
+            //  Staffs:
+            "view-staffs",
+            "create-staffs",
+            "edit-staffs",
+            "delete-staffs",
 
             // App Settings
             "update-app-settings",
@@ -72,6 +81,33 @@ class RolePermissionSeeder extends Seeder
             "update-order",
             "complete-order"
         ]);
+
+        $super_admin_permissions = [
+
+            "view-super-admin-dashboard",
+
+            //   Owners:
+            "view-owners",
+            "create-owner",
+            "edit-owner",
+            "remove-owner",
+
+            //   Restaurant:
+            "view-restaurants",
+            "create-restaurant",
+            "edit-restaurant",
+            "remove-restaurant",
+
+            // analytics:
+            "view-analytics"
+
+        ];
+
+        foreach ($super_admin_permissions as $super_permission) {
+            Permission::firstOrCreate(["name" => $super_permission]);
+        }
+
+        $superAdmin->syncPermissions($super_admin_permissions);
 
 
     }

@@ -16,13 +16,20 @@ const appName = computed(() => page.props.app.title);
 const toastr = inject("toastr");
 
 watch(
-  () => page.props.flash,
-  (flash) => {
-    if (flash?.success) {
-      toastr.success(flash.success);
+  () => page.props.flash?.success,
+  (success) => {
+    if (success) {
+      toastr.success(success);
     }
-    if (flash?.error) {
-      toastr.error(flash.error);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => page.props.flash?.error,
+  (error) => {
+    if (error) {
+      toastr.error(error);
     }
   },
   { immediate: true }

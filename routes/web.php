@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
 use App\Http\Controllers\SuperAdmin\RestaurantController as SuperAdminRestaurantController;
@@ -71,7 +72,7 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 
 
         //  Restaurant Routes:
-        Route::resource('restaurant', RestaurantController::class);
+        Route::resource('restaurant', RestaurantController::class)->only(['index','edit','update']);
 
         // Menu: 
         Route::prefix('menu')->name('menu.')->group(function () {
@@ -97,13 +98,16 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
         // Tranasctions: 
         Route::resource('transactions', TransactionController::class)->only('index');
 
+        // Staffs:
+        Route::resource('staffs', StaffController::class);
+
     });
 
     //    Restaurant Create and Store Routes:
 
 });
-Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
-Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
+// Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
+// Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
 
 
 Route::fallback(function () {

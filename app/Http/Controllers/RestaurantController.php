@@ -18,6 +18,9 @@ class RestaurantController extends Controller
     public function __construct(RestaurantService $restaurantService)
     {
         $this->restaurantService = $restaurantService;
+        $this->middleware('permission:update-app-settings', ['only' => ['edit', 'update']]);
+
+
     }
 
     /**
@@ -80,8 +83,8 @@ class RestaurantController extends Controller
      */
     public function update(UpdateRequest $request, Restaurant $restaurant)
     {
-        Log::info($request->all());
-        return $this->restaurantService->updateRestaurant($request, $restaurant);
+        $this->restaurantService->updateRestaurant($request, $restaurant);
+        return redirect()->back()->with('success', 'Restaurant Data Updated.');
     }
 
     /**

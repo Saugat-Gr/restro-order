@@ -132,6 +132,26 @@ export default function getNav(page) {
         },
 
         {
+             component: "CNavTitle",
+             name: "Manage Staffs",
+             roles: ["owner"],
+        },
+
+        {
+              name: "Staffs",
+              icon: "cil-people",
+              to: "/staffs",
+              roles: ["owner"]
+        },
+
+        {
+              name: "Add Staff",
+              icon: "cil-plus",
+              to: "/staffs/create",
+              roles: ["owner"]
+        },
+
+        {
             component: "CNavTitle",
             name: "App Configs",
             roles: ["owner", "super-admin"],

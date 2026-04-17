@@ -27,7 +27,6 @@ const props = defineProps({
   table_stats: Object,
 });
 
-// Prepare Doughnut data for Top Items
 const topItemsChart = {
   labels: props.top_items.map((item) => item.item_name),
   datasets: [
@@ -40,7 +39,7 @@ const topItemsChart = {
 </script>
 <template>
   <div>
-    <!-- HEADER -->
+
     <div class="mb-4">
       <h3 class="fw-semibold mb-1">Restaurant Dashboard</h3>
       <div class="text-muted small">
@@ -48,7 +47,7 @@ const topItemsChart = {
       </div>
     </div>
 
-    <!-- ================= KPI ================= -->
+
     <CRow class="g-4 mb-3">
       <CCol sm="6" lg="3">
         <CWidgetStatsF
@@ -103,9 +102,8 @@ const topItemsChart = {
       </CCol>
     </CRow>
 
-    <!-- ================= MAIN INSIGHT ROW ================= -->
     <CRow class="g-4">
-      <!-- SALES TREND -->
+
       <CCol lg="8">
         <CCard class="border-0 shadow-lg h-100">
           <CCardHeader class="border-bottom">

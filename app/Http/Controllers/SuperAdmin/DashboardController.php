@@ -15,6 +15,7 @@ class DashboardController extends Controller
    public function __construct(DashboardService $dashboardService)
    {
       $this->dashboardService = $dashboardService;
+       $this->middleware('permission:view-super-admin-dashboard', ['only' => ['index']]);
 
    }
 

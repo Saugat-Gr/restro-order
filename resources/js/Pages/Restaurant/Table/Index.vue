@@ -49,9 +49,7 @@ const tables = computed(() => props.tables.data);
 console.log(props.tables);
 const statuses = props.statuses;
 
-/**
- * FORMS
- */
+
 const form = useForm({
   _method: "patch",
   status: props.filters.status ?? "",
@@ -66,17 +64,11 @@ const filters = reactive({
   table_number: "",
 });
 
-/**
- * STATE
- */
+
 const showDeleteModal = ref(false);
 const tableToDelete = ref(null);
 
-/**
- * FUNCTIONS
- */
 
-// ✅ Update status (fixed)
 const updateStatus = (table, status) => {
   form.status = status;
 
@@ -85,18 +77,16 @@ const updateStatus = (table, status) => {
   });
 };
 
-// ✅ Apply filter
 const addFilterStatus = (status) => {
   filters.status = status;
 };
 
-// ✅ Reset filters
 const resetFilters = () => {
   filters.status = "";
   filters.table_number = "";
 };
 
-// ✅ Debounced filtering
+
 const applyFilters = debounce(() => {
   router.get(route("tables.index"), filters, {
     preserveState: true,
@@ -105,7 +95,7 @@ const applyFilters = debounce(() => {
   });
 }, 300);
 
-// Watch filters
+
 watch(
   () => [filters.status, filters.table_number],
   () => {
@@ -114,7 +104,6 @@ watch(
   { deep: true }
 );
 
-// ✅ Delete modal
 const openDeleteModal = (table) => {
   tableToDelete.value = table;
   showDeleteModal.value = true;
@@ -132,7 +121,6 @@ const confirmDelete = () => {
 <template>
   <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
 
-    <!-- ================= HEADER ================= -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
       <!-- LEFT FILTERS -->
@@ -162,7 +150,6 @@ const confirmDelete = () => {
 
       </div>
 
-      <!-- SEARCH (same position) -->
       <div class="flex-grow-1 d-flex align-items-center justify-center">
         <CCol lg="4">
           <CFormInput
@@ -172,7 +159,6 @@ const confirmDelete = () => {
         </CCol>
       </div>
 
-      <!-- CREATE -->
       <div>
         <Link :href="route('tables.create')" v-if="canCreate">
           <CButton class="d-flex align-items-center gap-2 px-3" color="primary">
@@ -184,7 +170,6 @@ const confirmDelete = () => {
 
     </div>
 
-    <!-- ================= TABLE ================= -->
     <CTable hover responsive align="middle" class="mb-0">
 
       <CTableCaption class="text-medium-emphasis">
@@ -273,8 +258,7 @@ const confirmDelete = () => {
       </CTableBody>
     </CTable>
 
-    <!-- ================= PAGINATION (UNCHANGED STRUCTURE) ================= -->
-   <div
+    <div
   class="d-flex justify-content-end mt-4"
   v-if="props.tables.current_page <= props.tables.last_page"
 >
@@ -301,14 +285,12 @@ const confirmDelete = () => {
   </CPagination>
 </div>
 
-    <!-- EMPTY -->
     <div v-if="tables.length === 0" class="text-center text-muted my-5">
       <h5 class="mb-0">No Tables Found</h5>
     </div>
 
   </CContainer>
 
-  <!-- DELETE CONFIRM -->
   <ConfirmDialog
     v-model:visible="showDeleteModal"
     :message="`Are you sure you want to delete ${tableToDelete?.table_number}?`"

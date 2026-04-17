@@ -13,6 +13,7 @@ class DashboardController extends Controller
     public function __construct(DashboardService $dashboardService)
     {
         $this->dashboardService = $dashboardService;
+        $this->middleware('permission:view-dashboard', ['only' => ['index']]);
     }
 
     public function index()

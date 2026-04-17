@@ -12,6 +12,9 @@ class AnalyticsController extends Controller
 {
     public function __construct(protected AnalyticsService $analyticsService)
     {
+         $this->middleware('permission:view-analytics', ['only' => ['index']]);
+
+
     }
     public function index(Request $request)
     {

@@ -13,6 +13,12 @@ class RestaurantController extends Controller
 {
     public function __construct(protected RestaurantService $restaurantService)
     {
+        $this->middleware('permission:view-restaurants', ['only' => ['index']]);
+        $this->middleware('permission:create-restaurant', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-restaurant', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:remove-restaurant', ['only' => ['destroy']]);
+
+
     }
 
     /**
@@ -49,7 +55,7 @@ class RestaurantController extends Controller
     {
         $this->restaurantService->createRestaurant($request);
 
-        return redirect()->route('restaurants.create')->with('success', 'Restaurant Created');
+        return redirect()->back()->with('success', 'Restaurant Created');
     }
 
     /**
