@@ -24,6 +24,7 @@ import {
 import CIcon from "@coreui/icons-vue";
 import { cilSave, cilArrowLeft, cilPlus, cilTrash } from "@coreui/icons";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { removeUnderScore } from "@/utils/format";
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -177,14 +178,13 @@ const saveOrder = () => {
                   :key="status"
                   :value="status"
                 >
-                  {{ $capitalize(status) }}
+                  {{ $capitalize(removeUnderScore(status)) }}
                 </option>
               </CFormSelect>
             </div>
           </CCardBody>
         </CCard>
 
-        <!-- Add Items -->
         <CCard class="shadow-sm">
           <CCardHeader class="bg-light">
             <strong>Add Items to Order</strong>
@@ -195,7 +195,6 @@ const saveOrder = () => {
               <CFormInput v-model="searchTerm" placeholder="Search menu..." />
             </CInputGroup>
 
-            <!-- ✅ categories fixed -->
             <div class="d-flex gap-2 mb-3 flex-wrap">
               <CButton
                 v-for="cat in categories"

@@ -147,45 +147,51 @@ const placeOrder = () => {
   });
 };
 </script>
-
 <template>
   <CContainer fluid class="mt-4">
     <CRow class="g-4">
       <!-- MENU SECTION -->
       <CCol lg="8">
-        <div
-          class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3"
-        >
-          <h2 class="mb-0 fw-semibold">Create New Order</h2>
-
-          <CInputGroup style="max-width: 320px">
-            <CFormInput
-              v-model="searchTerm"
-              placeholder="Search menu items..."
-              class="ps-4"
-            />
-            <div class="input-group-text">
-              <CIcon :icon="cilSearch" />
+        <!-- Header -->
+        <div class="mb-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+            <div>
+              <h2 class="mb-1 fw-semibold">Create New Order</h2>
+              <div class="text-muted small">
+                Select items from menu and build customer order
+              </div>
             </div>
-          </CInputGroup>
+
+            <CInputGroup style="max-width: 320px">
+              <span class="input-group-text bg-white">
+                <CIcon :icon="cilSearch" />
+              </span>
+              <CFormInput
+                v-model="searchTerm"
+                placeholder="Search menu items..."
+              />
+            </CInputGroup>
+          </div>
         </div>
 
         <!-- Categories -->
-        <div class="d-flex gap-2 mb-4 flex-wrap">
-          <CButton
-            v-for="category in categories"
-            :key="category.id"
-            :color="activeCategoryId === category.id ? 'primary' : 'light'"
-            size="sm"
-            class="px-4 py-2 fw-medium"
-            @click="activeCategoryId = category.id"
-          >
-            {{ category.name }}
-          </CButton>
+        <div class="mb-4">
+          <div class="d-flex gap-2 flex-wrap">
+            <CButton
+              v-for="category in categories"
+              :key="category.id"
+              :color="activeCategoryId === category.id ? 'primary' : 'light'"
+              size="sm"
+              class="px-3 py-2 fw-medium rounded-pill"
+              @click="activeCategoryId = category.id"
+            >
+              {{ category.name }}
+            </CButton>
+          </div>
         </div>
 
         <!-- Menu Items -->
-        <CRow class="g-4">
+        <CRow class="g-3">
           <CCol
             v-for="item in filteredMenuItems"
             :key="item.id"
@@ -194,44 +200,53 @@ const placeOrder = () => {
             lg="3"
           >
             <CCard
-              class="h-100 menu-card shadow-lg border-0 overflow-hidden"
-              style="cursor: pointer; transition: all 0.2s ease"
+              class="h-100 border-0 shadow-lg overflow-hidden"
+              style="cursor: pointer;"
               @click="addToCart(item)"
             >
               <div class="position-relative">
                 <CImage
                   v-if="item.image"
                   :src="`/storage/${item.image}`"
-                  class="card-img-top"
-                  style="height: 180px; object-fit: cover"
+                  class="w-100"
+                  style="height: 170px; object-fit: cover"
                 />
                 <div
                   v-else
                   class="bg-light d-flex align-items-center justify-content-center"
-                  style="height: 180px"
+                  style="height: 170px"
                 >
-                  <span class="text-muted">No Image</span>
+                  <span class="text-muted small">No Image</span>
                 </div>
 
                 <CBadge
                   v-if="!item.is_in_stock"
                   color="danger"
-                  class="position-absolute top-2 end-2"
+                  class="position-absolute top-0 end-0 m-2"
                 >
                   Out of Stock
                 </CBadge>
               </div>
 
-              <CCardBody class="text-center pt-3 pb-4">
-                <h5 class="fw-semibold mb-1">{{ item.item_name }}</h5>
+              <CCardBody class="p-3">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <h6 class="fw-semibold mb-0 text-truncate">
+                    {{ item.item_name }}
+                  </h6>
+                </div>
+
                 <p
                   v-if="item.description"
-                  class="text-muted small mb-3 line-clamp-2"
+                  class="text-muted small mb-2"
+                  style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                 >
                   {{ item.description }}
                 </p>
-                <div class="text-success fw-bold fs-5 mb-3">
-                  {{formatCurrency(parseFloat(item.price).toFixed(2)) }}
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div class="text-success fw-semibold">
+                    {{ formatCurrency(parseFloat(item.price).toFixed(2)) }}
+                  </div>
                 </div>
 
                 <CButton
@@ -240,17 +255,19 @@ const placeOrder = () => {
                   variant="outline"
                   class="w-100"
                 >
-                  <CIcon :icon="cilPlus" class="me-1" /> Add to Order
+                  <CIcon :icon="cilPlus" class="me-1" />
+                  Add
                 </CButton>
               </CCardBody>
             </CCard>
           </CCol>
 
-          <!-- Empty state for current category -->
+          <!-- Empty state -->
           <CCol v-if="filteredMenuItems.length === 0" cols="12">
             <div class="text-center py-5 text-muted">
-              <p class="fs-5 mb-1">No available items in this category</p>
-              <small v-if="searchTerm">Try clearing the search term</small>
+              <div class="mb-1 fw-medium">No items found</div>
+              <small v-if="searchTerm">Try adjusting your search</small>
+              <small v-else>Switch category to view items</small>
             </div>
           </CCol>
         </CRow>
@@ -258,78 +275,93 @@ const placeOrder = () => {
 
       <!-- CART SECTION -->
       <CCol lg="4">
-        <CCard class="shadow" style="top: 20px">
-          <CCardHeader class="border-0 py-3">
-            <strong class="fs-5">Current Order</strong>
+        <CCard class="border-0 shadow-lg rounded-2 sticky-top z-1" style="top: 20px">
+          <CCardHeader class="border-bottom py-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <strong class="fs-6 mb-0">Current Order</strong>
+              <span class="text-muted small">{{ cart.length }} items</span>
+            </div>
           </CCardHeader>
 
-          <CCardBody style="max-height: 65vh; overflow-y: auto" class="pe-3">
-            <CFormSelect v-model="selectedTableId" class="mb-4">
-              <option value="">Takeaway / No Table Assigned</option>
+          <CCardBody class="p-3" style="max-height: 65vh; overflow-y: auto">
+            <CFormSelect v-model="selectedTableId" class="mb-3">
+              <option value="">Takeaway / No Table</option>
               <option v-for="table in tables" :key="table.id" :value="table.id">
                 Table {{ table.table_number }} — {{ table.capacity }} seats
               </option>
             </CFormSelect>
 
-            <CFormSelect v-model="selectedStaffId" class="mb-4" v-if="canAssign">
-              <option value="">Assign Staff / No Staff Assigned</option>
+            <CFormSelect
+              v-model="selectedStaffId"
+              class="mb-3"
+              v-if="canAssign"
+            >
+              <option value="">Assign Staff (Optional)</option>
               <option v-for="staff in props.staffs" :key="staff.id" :value="staff.id">
-                 {{ staff.name }}
+                {{ staff.name }}
               </option>
             </CFormSelect>
 
             <div v-if="cart.length === 0" class="text-center text-muted py-5">
-              <p>Your cart is empty</p>
-              <small>Click items from the menu to add them</small>
+              <div class="mb-1">Cart is empty</div>
+              <small>Add items from menu</small>
             </div>
 
-            <div v-else>
+            <div v-else class="d-flex flex-column gap-3">
               <div
                 v-for="(item, index) in cart"
                 :key="index"
-                class="mb-4 pb-4 border-bottom"
+                class="border rounded p-2"
               >
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <strong>{{ item.item_name }}</strong>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div class="pe-2">
+                    <div class="fw-semibold small">
+                      {{ item.item_name }}
+                    </div>
                     <div class="text-muted small">
-                      Rs. {{ item.item_price.toFixed(2) }}
+                      {{ formatCurrency(item.item_price.toFixed(2)) }}
                     </div>
                   </div>
+
                   <CButton
                     color="danger"
                     variant="ghost"
                     size="sm"
+                    class="p-1"
                     @click="removeItem(index)"
                   >
                     <CIcon :icon="cilTrash" />
                   </CButton>
                 </div>
 
-                <div class="d-flex align-items-center mt-3">
-                  <CButton size="sm" @click="decreaseQty(index)">−</CButton>
-                  <span class="mx-4 fw-medium">{{ item.quantity }}</span>
-                  <CButton size="sm" @click="increaseQty(index)">+</CButton>
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="btn-group btn-group-sm">
+                    <CButton @click="decreaseQty(index)">−</CButton>
+                    <CButton disabled class="px-3 bg-white text-dark border">
+                      {{ item.quantity }}
+                    </CButton>
+                    <CButton @click="increaseQty(index)">+</CButton>
+                  </div>
 
-                  <div class="ms-auto text-success fw-bold">
-                     {{ formatCurrency((item.item_price * item.quantity).toFixed(2)) }}
+                  <div class="fw-semibold text-success small">
+                    {{ formatCurrency((item.item_price * item.quantity).toFixed(2)) }}
                   </div>
                 </div>
               </div>
             </div>
           </CCardBody>
 
-          <CCardFooter class="border-0 pt-3">
-            <div class="d-flex justify-content-between fs-5 mb-3">
-              <strong>Total</strong>
-              <strong class="text-primary"
-                > {{ formatCurrency(cartTotal.toFixed(2)) }}</strong
-              >
+          <CCardFooter class="bg-white border-top p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-semibold">Total</span>
+              <span class="fw-bold text-primary fs-6">
+                {{ formatCurrency(cartTotal.toFixed(2)) }}
+              </span>
             </div>
 
             <CButton
               color="success"
-              class="w-100 py-3 fw-semibold"
+              class="w-100 py-2 fw-semibold"
               :disabled="cart.length === 0"
               @click="placeOrder"
             >
@@ -341,16 +373,3 @@ const placeOrder = () => {
     </CRow>
   </CContainer>
 </template>
-
-<style scoped>
-.menu-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12) !important;
-}
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

@@ -51,97 +51,136 @@ const submit = () => {
     });
 };
 </script>
-
 <template>
   <Head>
     <title>Edit Restaurant - {{ page.props.app?.title || "Restaurant" }}</title>
   </Head>
 
-  <CContainer fluid class="bg-grey rounded-3 shadow-2xl p-4 mt-4">
-    <div class="border rounded-3 p-4">
-      <CForm @submit.prevent="submit">
-        <CHeader class="mb-5 text-2xl text-center fw-bold border-none">
-          Edit the general information about your restaurant
-        </CHeader>
+  <CContainer class="py-4">
 
-        <!-- Name -->
-        <div class="mb-3">
-          <CFormLabel for="name">Restaurant Name</CFormLabel>
-          <CFormInput
-            id="name"
-            v-model="form.name"
-            :invalid="!!form.errors.name"
-          />
-          <CFormFeedback invalid>{{ form.errors.name }}</CFormFeedback>
+    <!-- HEADER -->
+    <div class="mb-4">
+      <h3 class="fw-bold mb-1">Restaurant Settings</h3>
+      <div class="text-muted">
+        Manage your restaurant profile and branding in one place
+      </div>
+    </div>
+
+    <!-- SINGLE FORM SURFACE -->
+    <CForm @submit.prevent="submit">
+
+      <CCard class="border-0 shadow-lg rounded-3 overflow-hidden">
+
+        <!-- SECTION: GENERAL INFO -->
+        <div class="p-4 border-bottom">
+          <h6 class="fw-semibold mb-3">General Information</h6>
+
+          <CRow class="g-3">
+
+            <CCol md="12">
+              <CFormLabel>Restaurant Name</CFormLabel>
+              <CFormInput
+                v-model="form.name"
+                :invalid="!!form.errors.name"
+              />
+              <CFormFeedback invalid>
+                {{ form.errors.name }}
+              </CFormFeedback>
+            </CCol>
+
+            <CCol md="6">
+              <CFormLabel>Phone</CFormLabel>
+              <CFormInput
+                v-model="form.phone"
+                :invalid="!!form.errors.phone"
+              />
+              <CFormFeedback invalid>
+                {{ form.errors.phone }}
+              </CFormFeedback>
+            </CCol>
+
+            <CCol md="6">
+              <CFormLabel>Email</CFormLabel>
+              <CFormInput
+                type="email"
+                v-model="form.email"
+                :invalid="!!form.errors.email"
+              />
+              <CFormFeedback invalid>
+                {{ form.errors.email }}
+              </CFormFeedback>
+            </CCol>
+
+            <CCol md="12">
+              <CFormLabel>Address</CFormLabel>
+              <CFormInput
+                v-model="form.address"
+                :invalid="!!form.errors.address"
+              />
+              <CFormFeedback invalid>
+                {{ form.errors.address }}
+              </CFormFeedback>
+            </CCol>
+
+          </CRow>
         </div>
 
-        <!-- Phone -->
-        <div class="mb-3">
-          <CFormLabel for="phone">Phone Number</CFormLabel>
-          <CFormInput
-            id="phone"
-            type="tel"
-            v-model="form.phone"
-            :invalid="!!form.errors.phone"
-          />
-          <CFormFeedback invalid>{{ form.errors.phone }}</CFormFeedback>
-        </div>
+        <!-- SECTION: BRANDING -->
+        <div class="p-4 border-bottom text-center">
+          <h6 class="fw-semibold mb-3 text-start">Branding</h6>
 
-        <!-- Address -->
-        <div class="mb-3">
-          <CFormLabel for="address">Address</CFormLabel>
-          <CFormInput
-            id="address"
-            v-model="form.address"
-            :invalid="!!form.errors.address"
-          />
-          <CFormFeedback invalid>{{ form.errors.address }}</CFormFeedback>
-        </div>
-
-        <!-- Email -->
-        <div class="mb-3">
-          <CFormLabel for="email">Email</CFormLabel>
-          <CFormInput
-            id="email"
-            type="email"
-            v-model="form.email"
-            :invalid="!!form.errors.email"
-          />
-          <CFormFeedback invalid>{{ form.errors.email }}</CFormFeedback>
-        </div>
-
-        <!-- Logo -->
-        <div class="mb-4">
-          <CFormLabel for="logo">Company Logo (Optional)</CFormLabel>
-
-          <!-- Current logo -->
           <div v-if="restaurant.logo" class="mb-3">
-            <small class="text-muted d-block mb-1">Current Logo:</small>
-            <img
-              :src="`/storage/${restaurant.logo}`"
-              alt="Current Logo"
-              style="max-height: 100px; border-radius: 8px; object-fit: contain"
-            />
+            <div class="text-muted small mb-2">Current Logo</div>
+
+            <div class="p-3 bg-light border rounded-3 shadow-sm d-inline-block">
+              <img
+                :src="`/storage/${restaurant.logo}`"
+                style="max-height: 110px; object-fit: contain"
+              />
+            </div>
           </div>
 
-          <!-- File input -->
+          <CFormLabel class="d-block mb-2 fw-semibold text-start">
+            Upload New Logo
+          </CFormLabel>
+
           <CFormInput
-            id="logo"
             type="file"
             accept="image/*"
             @change="(e) => (form.logo = e.target.files?.[0] || null)"
             :invalid="!!form.errors.logo"
           />
-          <CFormFeedback invalid>{{ form.errors.logo }}</CFormFeedback>
+
+          <CFormFeedback invalid>
+            {{ form.errors.logo }}
+          </CFormFeedback>
+
+          <div class="text-muted small mt-2 text-start">
+            Recommended: square PNG logo for best quality
+          </div>
         </div>
 
-        <!-- Submit -->
-        <div class="mt-4">
-          <CButton type="submit" color="primary" :disabled="form.processing">
+        <!-- SECTION: ACTION BAR (INSIDE SAME FORM) -->
+        <div class="p-4 d-flex justify-content-end align-items-center gap-3 bg-light">
+
+          <div class="text-muted small">
+            Make sure all details are correct before saving
+          </div>
+
+          <CButton
+            type="submit"
+            color="primary"
+            size="lg"
+            class="px-4 fw-semibold"
+            :disabled="form.processing"
+          >
             {{ form.processing ? "Saving..." : "Save Changes" }}
           </CButton>
+
         </div>
-      </CForm>
-    </div>
+
+      </CCard>
+
+    </CForm>
   </CContainer>
 </template>

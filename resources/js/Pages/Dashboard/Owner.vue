@@ -19,7 +19,6 @@ defineOptions({
   layout: AuthenticatedLayout,
 });
 
-
 const props = defineProps({
   kpis: Object,
   sales_trend: Object,
@@ -39,123 +38,168 @@ const topItemsChart = {
   ],
 };
 </script>
-
 <template>
   <div>
-    <h1 class="mb-4">Restaurant Dashboard</h1>
+    <!-- HEADER -->
+    <div class="mb-4">
+      <h3 class="fw-semibold mb-1">Restaurant Dashboard</h3>
+      <div class="text-muted small">
+        Real-time overview of revenue, orders, and operations
+      </div>
+    </div>
 
-    <!-- KPI Cards -->
-    <CRow class="mb-4">
+    <!-- ================= KPI ================= -->
+    <CRow class="g-4 mb-3">
       <CCol sm="6" lg="3">
         <CWidgetStatsF
           color="primary"
           :value="formatCurrency(kpis.revenue_today)"
-          title="Revenue Today"
+          class="shadow-lg"
+          title="Today Revenue"
         >
           <template #icon>
-             <CIcon name="cil-cash" ></CIcon>
+            <CIcon name="cil-cash" />
           </template>
         </CWidgetStatsF>
       </CCol>
+
       <CCol sm="6" lg="3">
         <CWidgetStatsF
+          class="shadow-lg"
           color="success"
           :value="formatCurrency(kpis.revenue_month)"
-          title="This Month"
+          title="Monthly Revenue"
         >
-         <template #icon>
-          <CIcon name="cil-cash"></CIcon></template>
+          <template #icon>
+            <CIcon name="cil-graph" />
+          </template>
         </CWidgetStatsF>
       </CCol>
+
       <CCol sm="6" lg="3">
         <CWidgetStatsF
           color="info"
+          class="shadow-lg"
           :value="kpis.orders_today.toString()"
           title="Orders Today"
         >
-         <template #icon>
-           <CIcon name="cil-cart"></CIcon>
-         </template>
+          <template #icon>
+            <CIcon name="cil-cart" />
+          </template>
         </CWidgetStatsF>
       </CCol>
+
       <CCol sm="6" lg="3">
         <CWidgetStatsF
+          class="shadow-lg"
           color="warning"
           :value="formatCurrency(kpis.avg_order_value)"
           title="Avg Order Value"
         >
           <template #icon>
-              <CIcon name="cil-cart"></CIcon>
+            <CIcon name="cil-speedometer" />
           </template>
         </CWidgetStatsF>
       </CCol>
     </CRow>
 
-    <CRow>
-      <!-- Sales Trend -->
+    <!-- ================= MAIN INSIGHT ROW ================= -->
+    <CRow class="g-4">
+      <!-- SALES TREND -->
       <CCol lg="8">
-        <CCard>
-          <CCardHeader>
-            <strong>Daily Sales Trend (Last 30 Days)</strong>
+        <CCard class="border-0 shadow-lg h-100">
+          <CCardHeader class="border-bottom">
+            <div class="fw-semibold">Sales Performance</div>
+            <div class="text-muted small">Last 30 days revenue trend</div>
           </CCardHeader>
+
           <CCardBody>
             <CChartLine :data="sales_trend" />
           </CCardBody>
         </CCard>
       </CCol>
 
-      <!-- Table Utilization -->
+      <!-- TABLE STATUS -->
       <CCol lg="4">
-        <CCard>
-          <CCardHeader>
-            <strong>Table Utilization</strong>
+        <CCard class="border-0 shadow-lg h-100 text-center">
+          <CCardHeader class="border-bottom text-start">
+            <div class="fw-semibold">Table Utilization</div>
+            <div class="text-muted small">Current occupancy status</div>
           </CCardHeader>
-          <CCardBody class="text-center">
-            <h1 class="display-4">{{ table_stats.occupancy_rate }}%</h1>
-            <p class="text-muted">
+
+          <CCardBody class="d-flex flex-column justify-content-center">
+            <div class="display-5 fw-bold text-primary mb-2">
+              {{ table_stats.occupancy_rate }}%
+            </div>
+
+            <div class="text-muted">
               {{ table_stats.occupied }} / {{ table_stats.total }} tables
-              booked
-            </p>
+              occupied
+            </div>
           </CCardBody>
         </CCard>
       </CCol>
     </CRow>
 
-    <CRow class="mt-4">
-      <!-- Top Menu Items -->
+    <!-- ================= BOTTOM INSIGHTS ================= -->
+    <CRow class="g-4 mt-1">
+      <!-- TOP ITEMS -->
       <CCol md="6">
-        <CCard>
-          <CCardHeader><strong>Top 5 Selling Items</strong></CCardHeader>
+        <CCard class="border-0 shadow-lg h-100">
+          <CCardHeader class="border-bottom">
+            <div class="fw-semibold">Top Selling Items</div>
+            <div class="text-muted small">Revenue contribution breakdown</div>
+          </CCardHeader>
+
           <CCardBody>
             <CChartDoughnut :data="topItemsChart" />
           </CCardBody>
         </CCard>
       </CCol>
 
-      <!-- Recent Orders -->
+      <!-- RECENT ORDERS -->
       <CCol md="6">
-        <CCard>
-          <CCardHeader><strong>Recent Orders</strong></CCardHeader>
-          <CCardBody>
-            <table class="table table-sm">
-              <thead>
+        <CCard class="border-0 shadow-lg h-100">
+          <CCardHeader class="border-bottom">
+            <div class="fw-semibold">Recent Orders</div>
+            <div class="text-muted small">Latest activity in the system</div>
+          </CCardHeader>
+
+          <CCardBody class="p-0">
+            <table class="table table-hover table-sm mb-0">
+              <thead class="table-light">
                 <tr>
-                  <th>Order #</th>
+                  <th>Order</th>
                   <th>Table</th>
                   <th>Amount</th>
                   <th>Status</th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr v-for="order in recent_orders" :key="order.id">
-                  <td>{{ order.order_number }}</td>
-                  <td>{{ order.table?.table_number ?? "Takeaway" }}</td>
-                  <td>{{ formatCurrency(order.total_amount) }}</td>
+                  <td class="fw-medium">
+                    {{ order.order_number }}
+                  </td>
+
+                  <td>
+                    {{ order.table?.table_number ?? "Takeaway" }}
+                  </td>
+
+                  <td class="text-success fw-semibold">
+                    {{ formatCurrency(order.total_amount) }}
+                  </td>
+
                   <td>
                     <span
-                      :class="`badge bg-${
-                        order.status === 'completed' ? 'success' : 'warning'
-                      }`"
+                      class="badge"
+                      :class="
+                        order.status === 'completed'
+                          ? 'bg-success'
+                          : order.status === 'pending'
+                          ? 'bg-warning text-dark'
+                          : 'bg-secondary'
+                      "
                     >
                       {{ order.status }}
                     </span>

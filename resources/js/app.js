@@ -1,6 +1,7 @@
 import "./bootstrap";
-import "@coreui/coreui/dist/css/coreui.min.css";
+import "bootstrap-icons/font/bootstrap-icons.min.css"
 import "../css/app.css";
+import "@coreui/coreui/dist/css/coreui.min.css";
 
 import { capitalize, createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";

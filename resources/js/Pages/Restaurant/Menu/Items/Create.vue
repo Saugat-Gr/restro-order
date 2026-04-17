@@ -36,113 +36,152 @@ const createItem = () => {
   form.post(route("menu.menu-items.store"));
 };
 </script>
-
 <template>
   <Head>
     <title>{{ page.props.app.title }}</title>
   </Head>
 
-  <CContainer class="border rounded-3 shadow-lg p-5">
-    
-    <Link href="/menu/items">
-      <CButton class="float-end" color="primary">Back</CButton>
-    </Link>
+  <CContainer class="py-4">
 
-    <CHeader class="border-none justify-center fw-bold">
-      Create an Item
-    </CHeader>
+    <!-- Card Form -->
+    <div class="bg-white border rounded-4 shadow-lg p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold mb-0">Create Item</h4>
+          <small class="text-medium-emphasis">Add a new menu item</small>
+        </div>
 
-    <!-- ✅ submit handled here -->
-    <CForm @submit.prevent="createItem">
-      <div class="mb-3">
-        <CFormLabel>Item Name</CFormLabel>
-        <CFormInput
-          type="text"
-          v-model="form.item_name"
-          :invalid="!!form.errors.item_name"
-        />
-        <CFormFeedback invalid>
-          {{ form.errors.item_name }}
-        </CFormFeedback>
+        <Link href="/menu/menu-items">
+          <CButton color="primary">Back</CButton>
+        </Link>
       </div>
 
-      <div class="mb-3">
-        <CFormLabel>Price</CFormLabel>
-        <CFormInput
-          type="number"
-          v-model="form.price"
-          :invalid="!!form.errors.price"
-        />
-        <CFormFeedback invalid>
-          {{ form.errors.price }}
-        </CFormFeedback>
-      </div>
+      <CForm @submit.prevent="createItem">
+        <!-- Basic Info -->
+        <div class="mb-4">
+          <h6 class="fw-semibold mb-3 text-medium-emphasis">Basic Info</h6>
 
-      <div class="mb-3">
-        <CFormLabel>Image</CFormLabel>
-        <CFormInput
-          type="file"
-          @change="(e) => (form.image = e.target.files[0])"
-          :invalid="!!form.errors.image"
-        />
-        <CFormFeedback invalid>
-          {{ form.errors.image }}
-        </CFormFeedback>
-      </div>
+          <div class="mb-3">
+            <CFormLabel>Item Name</CFormLabel>
+            <CFormInput
+              v-model="form.item_name"
+              :invalid="!!form.errors.item_name"
+              placeholder="e.g. Chicken Burger"
+            />
+            <CFormFeedback invalid>
+              {{ form.errors.item_name }}
+            </CFormFeedback>
+          </div>
+        </div>
 
-      <div class="mb-3">
-        <CFormLabel>Category</CFormLabel>
-        <CFormSelect
-          v-model="form.menu_item_category_id"
-          :invalid="!!form.errors.menu_item_category_id"
+        <!-- Pricing & Category -->
+        <div class="mb-4">
+          <h6 class="fw-semibold mb-3 text-medium-emphasis">
+            Pricing & Classification
+          </h6>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <CFormLabel>Price</CFormLabel>
+              <CFormInput
+                type="number"
+                v-model="form.price"
+                :invalid="!!form.errors.price"
+                placeholder="0.00"
+              />
+              <CFormFeedback invalid>
+                {{ form.errors.price }}
+              </CFormFeedback>
+            </div>
+
+            <div class="col-md-4">
+              <CFormLabel>Category</CFormLabel>
+              <CFormSelect
+                v-model="form.menu_item_category_id"
+                :invalid="!!form.errors.menu_item_category_id"
+              >
+                <option disabled value="">Select</option>
+                <option
+                  v-for="category in categories"
+                  :key="category.id"
+                  :value="category.id"
+                >
+                  {{ category.name }}
+                </option>
+              </CFormSelect>
+              <CFormFeedback invalid>
+                {{ form.errors.menu_item_category_id }}
+              </CFormFeedback>
+            </div>
+
+            <div class="col-md-4">
+              <CFormLabel>Status</CFormLabel>
+              <CFormSelect
+                v-model="form.status"
+                :invalid="!!form.errors.status"
+              >
+                <option disabled value="">Select</option>
+                <option
+                  v-for="status in statuses"
+                  :key="status"
+                  :value="status"
+                >
+                  {{ status.toUpperCase() }}
+                </option>
+              </CFormSelect>
+              <CFormFeedback invalid>
+                {{ form.errors.status }}
+              </CFormFeedback>
+            </div>
+          </div>
+        </div>
+
+        <!-- Media -->
+        <div class="mb-4">
+          <h6 class="fw-semibold mb-3 text-medium-emphasis">Media</h6>
+
+          <CFormLabel>Upload Image</CFormLabel>
+          <CFormInput
+            type="file"
+            @change="(e) => (form.image = e.target.files[0])"
+            :invalid="!!form.errors.image"
+          />
+          <CFormFeedback invalid>
+            {{ form.errors.image }}
+          </CFormFeedback>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <h6 class="fw-semibold mb-3 text-medium-emphasis">Description</h6>
+
+          <vue-easymde
+            v-model="form.description"
+            :invalid="!!form.errors.description"
+          />
+          <CFormFeedback invalid>
+            {{ form.errors.description }}
+          </CFormFeedback>
+        </div>
+
+        <!-- Actions -->
+        <div
+          class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top"
         >
-          <option disabled value="" selected>Select Category</option>
-          <option
-            v-for="category in categories"
-            :key="category.id"
-            :value="category.id"
+          <small class="text-medium-emphasis">
+            Make sure all fields are filled correctly
+          </small>
+
+          <CButton
+            type="submit"
+            color="primary"
+            class="px-4"
+            :disabled="form.processing"
           >
-            {{ category.name }}
-          </option>
-        </CFormSelect>
-        <CFormFeedback invalid>
-          {{ form.errors.menu_item_category_id }}
-        </CFormFeedback>
-      </div>
-
-      <div class="mb-3">
-        <CFormLabel>Status</CFormLabel>
-        <CFormSelect v-model="form.status" :invalid="!!form.errors.status">
-          <option disabled value="" selected>Select Status</option>
-          <option v-for="status in statuses" :key="status" :value="status">
-            {{ status.toUpperCase() }}
-          </option>
-        </CFormSelect>
-        <CFormFeedback invalid>
-          {{ form.errors.status }}
-        </CFormFeedback>
-      </div>
-
-      <div class="mb-3">
-        <CFormLabel>Description</CFormLabel>
-        <vue-easymde
-          v-model="form.description"
-          :invalid="!!form.errors.description"
-        />
-        <CFormFeedback invalid>
-          {{ form.errors.description }}
-        </CFormFeedback>
-      </div>
-
-      <div class="mb-3">
-        <CButton
-          type="submit"
-          color="success"
-          class="text-white float-end form-control"
-        >
-          Create
-        </CButton>
-      </div>
-    </CForm>
+            {{ form.processing ? "Creating..." : "Create Item" }}
+          </CButton>
+        </div>
+      </CForm>
+    </div>
   </CContainer>
 </template>

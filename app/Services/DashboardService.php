@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Enums\TableStatus;
+use App\Enums\TransactionStatus;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\Table;
 use App\Models\OrderItem;
-use App\Models\MenuItem;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +18,6 @@ class DashboardService
     {
         $now = Carbon::now();
 
-        // KPI Calculations
         $revenueToday = Transaction::whereDate('paid_at', $now->toDateString())
             ->where('status', 'completed')
             ->sum('amount');
@@ -25,7 +25,7 @@ class DashboardService
         $revenueThisMonth = Transaction::
             whereMonth('paid_at', $now->month)
             ->whereYear('paid_at', $now->year)
-            ->where('status', 'completed')
+            ->where('status', TransactionStatus::COMPLETED)
             ->sum('amount');
 
         $ordersToday = Order::where('restaurant_id', $restaurantId)
@@ -33,23 +33,21 @@ class DashboardService
             ->count();
 
         $totalCompletedOrders = Order::
-            where('status', 'completed')
+            where('status', OrderStatus::COMPLETED)
             ->count();
 
         $avgOrderValue = $totalCompletedOrders > 0
-            ? Transaction::where('status', 'completed')
+            ? Transaction::where('status', TransactionStatus::COMPLETED)
                 ->avg('amount')
             : 0;
 
-        // Sales Trend - Last 30 Days
         $salesTrend = Transaction::selectRaw('DATE(paid_at) as date, SUM(amount) as revenue')
-            ->where('status', 'completed')
+            ->where('status', TransactionStatus::COMPLETED)
             ->where('paid_at', '>=', $now->copy()->subDays(30))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Top 5 Menu Items by Revenue (this month)
         $topItems = OrderItem::select(
             'menu_items.item_name',
             DB::raw('SUM(order_items.quantity * order_items.item_price) as revenue'),
@@ -63,13 +61,11 @@ class DashboardService
             ->limit(5)
             ->get();
 
-        // Recent Orders
         $recentOrders = Order::with(['orderItems.menuItem', 'table'])
             ->latest()
             ->take(10)
             ->get();
 
-        // Table Utilization
         $totalTables = Table::count();
         $occupiedTables = Table::where('status', TableStatus::BOOKED)
             ->count();

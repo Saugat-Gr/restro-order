@@ -77,7 +77,7 @@ class OrderController extends Controller
         try {
             $this->orderService->updateOrder($order, $request->validated());
 
-            return redirect()->route('orders.search')
+            return redirect()->back()
                 ->with('success', 'Order updated successfully.');
         } catch (Exception $e) {
             Log::error($e->getMessage());

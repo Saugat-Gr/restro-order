@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof HttpException && $exception->getStatusCode() === 403) {
-            return redirect()->back() // or any safe route
+            return redirect()->route('welcome') // or any safe route
                 ->with('error', 'You do not have permission to perform this action.');
         }
         if ($exception instanceof MethodNotAllowedHttpException) {

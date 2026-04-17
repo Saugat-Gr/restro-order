@@ -49,6 +49,10 @@ class Order extends Model
         return $this->belongsTo(Table::class, 'table_id');
     }
 
+    public function restaurant(){
+         return $this->belongsTo(Restaurant::class);
+    }
+
     public function getStatusColorAttribute()
     {
         return match ($this->status) {

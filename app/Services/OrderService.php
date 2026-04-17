@@ -50,40 +50,46 @@ class OrderService
 
     public function createOrder(array $validated): Order
     {
-        return DB::transaction(function () use ($validated) {
+        return DB::transaction(
+            function () use ($validated) {
 
-            $menuItems = MenuItem::whereIn('id', collect($validated['items'])->pluck('menu_item_id'))
-                ->get()->keyBy('id');
+                $menuItems = MenuItem::whereIn('id', collect($validated['items'])->pluck('menu_item_id'))
+                    ->get()->keyBy('id');
 
-            $order = $this->repository->create([
-                'restaurant_id' => auth()->user()->restaurant_id,
-                'table_id' => $validated['table_id'] ?? null,
-                'created_by' => auth()->id(),
-                'status' => OrderStatus::IN_PROGRESS,
-                'total_amount' => 0,
-            ]);
+                $order = $this->repository->create([
+                    'restaurant_id' => auth()->user()->restaurant_id,
+                    'table_id' => $validated['table_id'] ?? null,
+                    'created_by' => auth()->id(),
+                    'status' => OrderStatus::IN_PROGRESS,
+                    'total_amount' => 0,
+                ]);
 
-            $table_id = $validated['table_id'];
-            $staff_id = $validated['staff_id'] ?? auth()->user()->id;
+                if (!empty($validated['table_id'])) {
+                    $table_id = $validated['table_id'];
+                    $staff_id = $validated['staff_id'] ?? auth()->user()->id;
 
-            Table::findOrFail($table_id)->update([
-                'status' => TableStatus::BOOKED,
-                'assigned_staff_id' => $staff_id
-            ]);
+                    Table::findOrFail($table_id)->update([
+                        'status' => TableStatus::BOOKED,
+                        'assigned_staff_id' => $staff_id
+                    ]);
+                }
 
-            $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
+                $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
 
-            $this->repository->update($order, ['total_amount' => $total]);
+                $this->repository->update($order, ['total_amount' => $total]);
 
-            return $order->fresh(['orderItems', 'table', 'user']);
-        });
+                return $order->fresh(['orderItems', 'table', 'user']);
+            }
+        )
+
+        ;
     }
 
     public function updateOrder(Order $order, array $validated): Order
     {
 
-        if ($order->status === OrderStatus::COMPLETED) {
-            throw new \DomainException('Completed orders cannot be updated.');
+        if ($order->status === OrderStatus::COMPLETED || $order->status === OrderStatus::CANCELLED) {
+            throw new \DomainException('Order cannot be updated.');
         }
 
         return DB::transaction(function () use ($validated, $order) {

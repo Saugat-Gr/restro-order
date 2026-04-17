@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {
+  CButton,
   CContainer,
   CFormInput,
   CFormLabel,
@@ -59,26 +60,13 @@ watch(
   { deep: true }
 );
 </script>
-
 <template>
-  <CContainer>
-    <div class="d-flex justify-between align-items-center gap-3 mb-3">
-      
-      <!-- Per Page -->
-      <div>
-        <CFormLabel>Items Per Page</CFormLabel>
-        <CFormSelect v-model="filters.perPage">
-          <option
-            v-for="value in perPageValues"
-            :key="value"
-            :value="String(value)"
-          >
-            {{ value }}
-          </option>
-        </CFormSelect>
-      </div>
+  <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
 
-      <!-- Search -->
+    <!-- ================= FILTER BAR ================= -->
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
+
+      <!-- SEARCH -->
       <div class="flex-grow-1 text-center">
         <CFormInput
           class="w-50 mx-auto"
@@ -87,10 +75,10 @@ watch(
         />
       </div>
 
-      <!-- Transaction Method -->
+      <!-- METHOD -->
       <div>
-        <CFormLabel>Transaction Method</CFormLabel>
-        <CFormSelect v-model="filters.transaction_method">
+        <CFormLabel class="text-medium-emphasis">Transaction Method</CFormLabel>
+        <CFormSelect v-model="filters.transaction_method" >
           <option
             v-for="transaction in props.transaction_methods"
             :key="transaction"
@@ -103,14 +91,17 @@ watch(
 
     </div>
 
-    <!-- Table -->
-    <CTable hover bordered>
-      <CTableCaption>Transactions</CTableCaption>
+    <!-- ================= TABLE ================= -->
+    <CTable hover responsive align="middle" class="mb-0">
+
+      <CTableCaption class="text-medium-emphasis">
+        Transactions
+      </CTableCaption>
 
       <CTableHead>
-        <CTableRow>
+        <CTableRow class="text-medium-emphasis">
           <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Transaction Number</CTableHeaderCell>
+          <CTableHeaderCell>Transaction</CTableHeaderCell>
           <CTableHeaderCell>Processed By</CTableHeaderCell>
           <CTableHeaderCell>Method</CTableHeaderCell>
           <CTableHeaderCell>Amount</CTableHeaderCell>
@@ -123,6 +114,8 @@ watch(
           v-for="(transaction, index) in transactions"
           :key="transaction.id"
         >
+
+          <!-- Index -->
           <CTableDataCell>
             {{
               (props.transactions.current_page - 1) *
@@ -132,54 +125,93 @@ watch(
             }}
           </CTableDataCell>
 
-          <CTableDataCell>
+          <!-- Number -->
+          <CTableDataCell class="fw-semibold">
             {{ transaction.transaction_number }}
           </CTableDataCell>
 
+          <!-- User -->
           <CTableDataCell>
             {{ transaction.user.name }}
           </CTableDataCell>
 
+          <!-- Method -->
           <CTableDataCell>
-            {{ $capitalize(transaction.payment_method) }}
+            <span class="text-medium-emphasis">
+              {{ $capitalize(transaction.payment_method) }}
+            </span>
           </CTableDataCell>
 
-          <CTableDataCell>
+          <!-- Amount -->
+          <CTableDataCell class="fw-medium">
             {{ formatCurrency(transaction.amount) }}
           </CTableDataCell>
 
+          <!-- Status -->
           <CTableDataCell>
             {{ $capitalize(transaction.status) }}
           </CTableDataCell>
+
         </CTableRow>
       </CTableBody>
     </CTable>
 
-    <!-- Pagination -->
-    <div v-if="props.transactions.last_page > 1" class="mt-3">
-      <CPagination >
+    <!-- ================= PAGINATION ================= -->
+    <div
+      v-if="props.transactions.last_page >= 1"
+      class="mt-4 d-flex justify-content-end align-items-center flex-wrap gap-3"
+    >
 
-        <!-- Previous -->
-        <Link
-          v-if="props.transactions.prev_page_url"
-          :href="props.transactions.prev_page_url"
+      <!-- KEEP STRUCTURE SAME (just style tweak) -->
+      <CPagination class="mb-0">
+
+        <CPaginationItem
+          color="light"
+          :disabled="!props.transactions.prev_page_url"
         >
-          <CPaginationItem>
+          <Link
+            v-if="props.transactions.prev_page_url"
+            :href="props.transactions.prev_page_url"
+            class="text-decoration-none"
+          >
             Previous
-          </CPaginationItem>
-        </Link>
+          </Link>
+          <span v-else>Previous</span>
+        </CPaginationItem>
 
-        <!-- Next -->
-        <Link
-          v-if="props.transactions.next_page_url"
-          :href="props.transactions.next_page_url"
+        <CPaginationItem
+          color="light"
+          :disabled="!props.transactions.next_page_url"
         >
-          <CPaginationItem>
+          <Link
+            v-if="props.transactions.next_page_url"
+            :href="props.transactions.next_page_url"
+            class="text-decoration-none"
+          >
             Next
-          </CPaginationItem>
-        </Link>
+          </Link>
+          <span v-else>Next</span>
+        </CPaginationItem>
 
       </CPagination>
+
+      <!-- ITEMS PER PAGE (unchanged position) -->
+      <div class="d-flex align-items-center gap-2">
+        <CFormLabel class="mb-0 text-medium-emphasis">
+          Items:
+        </CFormLabel>
+
+        <CFormSelect v-model="filters.perPage" style="width: 100px">
+          <option
+            v-for="value in perPageValues"
+            :key="value"
+            :value="String(value)"
+          >
+            {{ value }} per page
+          </option>
+        </CFormSelect>
+      </div>
+
     </div>
 
   </CContainer>

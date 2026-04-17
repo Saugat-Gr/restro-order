@@ -19,7 +19,7 @@ const logo = page.props.restaurant
 const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
 const sidebarUnfoldable = computed(() => store.getters["sidebar/unfoldable"]);
 
-const link = (page.props.auth.user.role === 'staff' || page.props.auth.user.role) === 'staff' ? '/dashboard' : '/super-admin/dashboard';
+const link = (page.props.auth.user.role === 'staff' || page.props.auth.user.role) === 'owner' ? '/dashboard' : '/super-admin/dashboard';
 
 // Methods to dispatch actions
 const toggleSidebar = (value) => store.dispatch("sidebar/toggleSidebar", value);

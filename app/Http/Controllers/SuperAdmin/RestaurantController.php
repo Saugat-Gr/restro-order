@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers\SuperAdmin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SuperAdmin\Restaurant\CreateRequest;
+use App\Models\Restaurant;
+use App\Services\SuperAdmin\RestaurantService;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class RestaurantController extends Controller
+{
+    public function __construct(protected RestaurantService $restaurantService)
+    {
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+
+        $status = $request->get('status', 'all');
+
+        $restaurants = $this->restaurantService->getRestaurantWithOwner($status);
+
+
+        return Inertia::render('SuperAdmin/Restaurant/Index', [
+            "app" => [
+                "title" => "Restaurants"
+            ],
+            "restaurants" => $restaurants
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(CreateRequest $request)
+    {
+        $this->restaurantService->createRestaurant($request);
+
+        return redirect()->route('restaurants.create')->with('success', 'Restaurant Created');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Restaurant $restaurant)
+    {
+
+
+        return Inertia::render('SuperAdmin/Restaurant/Show', [
+            "app" => [
+                "title" => $restaurant->name
+            ],
+            "show_restaurant" => $restaurant->load('user')
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Restaurant $restaurant)
+    {
+        $this->restaurantService->updateRequest($request, $restaurant);
+
+        return redirect()->back()->with('success', 'Restaurant Status Updated');
+
+    }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}

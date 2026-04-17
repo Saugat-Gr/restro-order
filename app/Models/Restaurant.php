@@ -16,7 +16,8 @@ class Restaurant extends Model
     'phone',
     'owner_id',
     'email',
-    'logo'
+    'logo',
+    'status'
   ];
 
 
@@ -24,5 +25,14 @@ class Restaurant extends Model
   {
     return $this->hasOne(User::class, 'restaurant_id');
   }
+
+  public function orders(){
+     return $this->hasMany(Order::class);
+  }
+
+  public function transactions()
+{
+    return $this->hasManyThrough(Transaction::class, Order::class);
+}
 
 }

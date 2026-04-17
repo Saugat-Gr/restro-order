@@ -15,3 +15,8 @@ export const formatCurrency = (amount) => {
         currency: "NPR",
     }).format(amount);
 };
+
+export const removeUnderScore = (word) => {
+    if (!word || typeof word !== "string") return "";
+    return word.replaceAll("_", " ");
+};

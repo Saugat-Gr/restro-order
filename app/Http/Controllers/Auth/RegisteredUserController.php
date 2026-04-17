@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,33 +34,33 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'avatar' => ['nullable', 'image', 'max:2048'],
+            ]);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'avatar' => ['nullable', 'image', 'max:2048'],
-        ]);
+            $filePath = null;
 
-        $filePath = null;
+            if ($request->hasFile('avatar')) {
+                $filePath = $request->file('avatar')->store('user/avatars', 'public');
+            }
 
-        if ($request->hasFile('avatar')) {
-            $filePath = $request->file('avatar')->store('user/avatars', 'public');
-        }
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'avatar' => $filePath,
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'avatar' => $filePath,
-        ]);
+            $user->assignRole(UserRole::OWNER->value);
 
-        $user->assignRole(UserRole::OWNER->value);
+            event(new Registered($user));
 
-        event(new Registered($user));
+            // Auth::login($user);
 
-        Auth::login($user);
-
-        return redirect()->route('restaurant.create');
+            return redirect()->route('owners.create')->with('success', "User Created Successfully.");
+        
     }
 }

@@ -16,14 +16,13 @@ class RestaurantService
 
     public function __construct(RestaurantInterface $restaurantRepository)
     {
-         $this->restaurantRepository = $restaurantRepository;
+        $this->restaurantRepository = $restaurantRepository;
     }
 
     public function storeRestaurant(CreateRequest $request)
     {
         try {
             $validated_data = $request->validated();
-            $validated_data['owner_id'] = auth()->id();
 
             if ($request->hasFile('logo')) {
                 $validated_data['logo'] = $request->file('logo')->store('restaurant/logos', 'public');
@@ -31,13 +30,13 @@ class RestaurantService
 
             $this->restaurantRepository->createRestaurant($validated_data);
 
-            return redirect()->route('dashboard');
+            return redirect()->back()->with('success', 'Restaurant Created.');
         } catch (QueryException $e) {
-            Log::error('Error creating restaurant: ' . $e->getMessage());
-            return redirect()->route('welcome');
+            Log::info($e->getMessage());
+            return redirect()->back()->with('error', 'Restaurant May Be Already Created.');
         } catch (Exception $e) {
             Log::error('Unexpected error creating restaurant: ' . $e->getMessage());
-            return redirect()->route('welcome');
+            return redirect()->back()->with('error', 'Could Not Create Restaurant.');
         }
     }
 

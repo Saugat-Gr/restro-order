@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency, removeUnderScore } from "@/utils/format";
 import CIcon from "@coreui/icons-vue";
 import {
   CButton,
@@ -23,8 +23,6 @@ defineOptions({
   layout: AuthenticatedLayout,
 });
 
-
-
 const props = defineProps({
   orders: Array,
   order_statuses: Array,
@@ -46,21 +44,24 @@ const update = (orderId, status) => {
   });
 };
 </script>
-
 <template>
-  <CContainer class="shadow-lg p-5 rounded-2">
-    <CTable caption="top" hover bordered>
-      <CTableCaption>Recent 10 Orders</CTableCaption>
+  <CContainer class="border rounded-4 shadow-lg mt-4 p-4">
+    <CTable hover responsive align="middle" class="mb-0">
+      <CTableCaption class="text-medium-emphasis">
+        Recent 10 Orders
+      </CTableCaption>
 
       <CTableHead>
-        <CTableRow>
+        <CTableRow class="text-medium-emphasis">
           <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Order Number</CTableHeaderCell>
+          <CTableHeaderCell>Order</CTableHeaderCell>
           <CTableHeaderCell>Status</CTableHeaderCell>
           <CTableHeaderCell>Amount</CTableHeaderCell>
           <CTableHeaderCell>Created By</CTableHeaderCell>
           <CTableHeaderCell>Table</CTableHeaderCell>
-          <CTableHeaderCell width="180">Actions</CTableHeaderCell>
+          <CTableHeaderCell class="text-end" width="120">
+            Actions
+          </CTableHeaderCell>
         </CTableRow>
       </CTableHead>
 
@@ -72,19 +73,20 @@ const update = (orderId, status) => {
           </CTableHeaderCell>
 
           <!-- Order Number -->
-          <CTableDataCell class="fw-medium">
+          <CTableDataCell class="fw-semibold">
             {{ order.order_number }}
           </CTableDataCell>
 
-          <!-- ✅ Status Dropdown -->
+          <!-- Status -->
           <CTableDataCell>
-            <CDropdown class="w-full">
+            <CDropdown>
               <CDropdownToggle
-                color="secondary"
                 size="sm"
+                color="primary"
+                variant="outline"
                 :disabled="updateStatus.processing"
               >
-                {{ $capitalize(order.status) }}
+                {{ $capitalize(removeUnderScore(order.status)) }}
               </CDropdownToggle>
 
               <CDropdownMenu>
@@ -93,16 +95,16 @@ const update = (orderId, status) => {
                   :key="status"
                   :active="order.status === status"
                   @click="update(order.id, status)"
-                  :disabled="order.status === 'completed'"
+                  :disabled="order.status === 'completed' || order.status === 'cancelled'"
                 >
-                  {{ $capitalize(status) }}
+                  {{ $capitalize(removeUnderScore(status)) }}
                 </CDropdownItem>
               </CDropdownMenu>
             </CDropdown>
           </CTableDataCell>
 
           <!-- Amount -->
-          <CTableDataCell>
+          <CTableDataCell class="fw-medium">
             {{ formatCurrency(order.total_amount) }}
           </CTableDataCell>
 
@@ -113,13 +115,15 @@ const update = (orderId, status) => {
 
           <!-- Table -->
           <CTableDataCell>
-            {{ order.table?.table_number || "TAKE-AWAY" }}
+            <span class="text-medium-emphasis">
+              {{ order.table?.table_number || "TAKE-AWAY" }}
+            </span>
           </CTableDataCell>
 
           <!-- Actions -->
-          <CTableDataCell>
+          <CTableDataCell class="text-end">
             <Link :href="route('orders.edit', order.id)">
-              <CButton color="secondary" size="sm" variant="outline">
+              <CButton size="sm" color="secondary" variant="outline">
                 <CIcon name="cil-pencil" />
               </CButton>
             </Link>

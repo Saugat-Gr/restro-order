@@ -34,8 +34,8 @@ defineOptions({
 const page = usePage();
 const user = page.props.auth.user;
 
-const canCreate = user.permissions.includes('create-table');
-const canUpdate = user.permissions.includes('update-table');
+const canCreate = user.permissions.includes("create-table");
+const canUpdate = user.permissions.includes("update-table");
 
 const props = defineProps({
   tables: Array,
@@ -129,30 +129,18 @@ const confirmDelete = () => {
   });
 };
 </script>
-
 <template>
-  <CContainer class="p-5 border rounded-1 shadow-lg">
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <CButton color="secondary" @click="resetFilters()">
-          Reset Filters
-        </CButton>
-      </div>
+  <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
 
-      <div class="flex-grow-1 d-flex align-items-center justify-center">
-        <CCol lg="4">
-          <CFormInput
-            placeholder="Search Table Number..."
-            v-model="filters.table_number"
-          ></CFormInput>
-        </CCol>
-      </div>
+    <!-- ================= HEADER ================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
-      <div class="flex items-center gap-2">
+      <!-- LEFT FILTERS -->
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+
         <!-- STATUS FILTER -->
         <CDropdown>
-          <CDropdownToggle color="secondary">
+          <CDropdownToggle color="secondary" variant="outline">
             {{ filters.status ? $capitalize(filters.status) : "Select Status" }}
           </CDropdownToggle>
           <CDropdownMenu>
@@ -167,50 +155,84 @@ const confirmDelete = () => {
           </CDropdownMenu>
         </CDropdown>
 
-        <!-- ADD TABLE -->
+        <!-- RESET -->
+        <CButton color="secondary" variant="outline" @click="resetFilters">
+          Reset Filters
+        </CButton>
+
+      </div>
+
+      <!-- SEARCH (same position) -->
+      <div class="flex-grow-1 d-flex align-items-center justify-center">
+        <CCol lg="4">
+          <CFormInput
+            placeholder="Search Table Number..."
+            v-model="filters.table_number"
+          />
+        </CCol>
+      </div>
+
+      <!-- CREATE -->
+      <div>
         <Link :href="route('tables.create')" v-if="canCreate">
-          <CButton color="primary">
+          <CButton class="d-flex align-items-center gap-2 px-3" color="primary">
             <CIcon name="cil-plus" />
             Add Table
           </CButton>
         </Link>
       </div>
+
     </div>
 
-    <!-- TABLE -->
-    <CTable caption="top" hover bordered>
-      <CTableCaption>Tables</CTableCaption>
+    <!-- ================= TABLE ================= -->
+    <CTable hover responsive align="middle" class="mb-0">
+
+      <CTableCaption class="text-medium-emphasis">
+        Tables
+      </CTableCaption>
 
       <CTableHead>
-        <CTableRow>
+        <CTableRow class="text-medium-emphasis">
           <CTableHeaderCell>#</CTableHeaderCell>
           <CTableHeaderCell>Table Number</CTableHeaderCell>
           <CTableHeaderCell>Capacity</CTableHeaderCell>
           <CTableHeaderCell>Status</CTableHeaderCell>
           <CTableHeaderCell>Assigned To</CTableHeaderCell>
-          <CTableHeaderCell v-if="canUpdate">Actions</CTableHeaderCell>
+          <CTableHeaderCell v-if="canUpdate" class="text-end">
+            Actions
+          </CTableHeaderCell>
         </CTableRow>
       </CTableHead>
 
       <CTableBody>
         <CTableRow v-for="(table, index) in tables" :key="table.id">
-          <CTableDataCell
-            >{{   (props.tables.current_page - 1) * props.tables.per_page + index + 1
-            }}</CTableDataCell
-          >
 
+          <!-- Index -->
           <CTableDataCell>
+            {{
+              (props.tables.current_page - 1) *
+                props.tables.per_page +
+              index +
+              1
+            }}
+          </CTableDataCell>
+
+          <!-- Table Number -->
+          <CTableDataCell class="fw-semibold">
             {{ table.table_number }}
           </CTableDataCell>
 
+          <!-- Capacity -->
           <CTableDataCell>
             {{ table.capacity }}
           </CTableDataCell>
 
+          <!-- Status -->
           <CTableDataCell>
             <CFormSelect
               :model-value="table.status"
               @change="(e) => updateStatus(table, e.target.value)"
+              size="sm"
             >
               <option v-for="status in statuses" :key="status" :value="status">
                 {{ $capitalize(status) }}
@@ -218,48 +240,72 @@ const confirmDelete = () => {
             </CFormSelect>
           </CTableDataCell>
 
+          <!-- Assigned -->
           <CTableDataCell>
-            {{ table?.user?.name || "NONE" }}
+            <span class="text-medium-emphasis">
+              {{ table?.user?.name || "NONE" }}
+            </span>
           </CTableDataCell>
 
-          <!-- ACTIONS -->
-          <CTableDataCell v-if="canUpdate">
-            <Link :href="route('tables.edit', table.id)">
-              <CButton color="primary" variant="outline">
-                <CIcon name="cil-pencil" />
+          <!-- Actions -->
+          <CTableDataCell v-if="canUpdate" class="text-end">
+            <div class="d-flex justify-content-end gap-2">
+
+              <Link :href="route('tables.edit', table.id)">
+                <CButton size="sm" color="secondary" variant="outline">
+                  <CIcon name="cil-pencil" />
+                </CButton>
+              </Link>
+
+              <CButton
+                size="sm"
+                color="danger"
+                variant="outline"
+                @click="openDeleteModal(table)"
+              >
+                <CIcon name="cil-trash" />
               </CButton>
-            </Link>
 
-            <CButton
-              color="danger"
-              variant="outline"
-              class="ml-2 hover:text-white"
-              @click="openDeleteModal(table)"
-            >
-              <CIcon name="cil-trash" />
-            </CButton>
+            </div>
           </CTableDataCell>
+
         </CTableRow>
       </CTableBody>
     </CTable>
 
-    <CPagination aria-label="Page navigation" v-if="props.tables.current_page < props.tables.last_page">
-      <Link :href="props.tables.prev_page_url">
-        <CPaginationItem :disabled="!props.tables.prev_page_url">
-          Previous Page
-        </CPaginationItem>
-      </Link>
+    <!-- ================= PAGINATION (UNCHANGED STRUCTURE) ================= -->
+   <div
+  class="d-flex justify-content-end mt-4"
+  v-if="props.tables.current_page <= props.tables.last_page"
+>
+  <CPagination aria-label="Page navigation">
 
-      <Link :href="props.tables.next_page_url">
-        <CPaginationItem :disabled="!props.tables.next_page_url">
-          Next Page
-        </CPaginationItem>
-      </Link>
-    </CPagination>
-    <!-- EMPTY STATE -->
+    <Link :href="props.tables.prev_page_url">
+      <CPaginationItem
+        color="light"
+        :disabled="!props.tables.prev_page_url"
+      >
+        Previous Page
+      </CPaginationItem>
+    </Link>
+
+    <Link :href="props.tables.next_page_url">
+      <CPaginationItem
+        color="light"
+        :disabled="!props.tables.next_page_url"
+      >
+        Next Page
+      </CPaginationItem>
+    </Link>
+
+  </CPagination>
+</div>
+
+    <!-- EMPTY -->
     <div v-if="tables.length === 0" class="text-center text-muted my-5">
-      <h1>No Tables</h1>
+      <h5 class="mb-0">No Tables Found</h5>
     </div>
+
   </CContainer>
 
   <!-- DELETE CONFIRM -->

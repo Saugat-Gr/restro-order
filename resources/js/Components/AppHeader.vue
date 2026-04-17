@@ -54,7 +54,7 @@ onMounted(() => {
         <li class="nav-item py-1">
           <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
         </li>
-        <CDropdown variant="nav-item" placement="bottom-end">
+        <CDropdown variant="nav-item" placement="bottom-end" class="z-10">
           <CDropdownToggle :caret="false">
             <CIcon v-if="colorMode === 'dark'" icon="cil-moon" size="lg" />
             <CIcon v-else-if="colorMode === 'light'" icon="cil-sun" size="lg" />

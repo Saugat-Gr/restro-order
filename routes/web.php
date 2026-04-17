@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
+use App\Http\Controllers\SuperAdmin\RestaurantController as SuperAdminRestaurantController;
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuItemCategoryController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\SuperAdmin\OwnerController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -33,29 +37,37 @@ Route::get('/', function () {
 
 // Super-Admin: 
 
-Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(function(){
-     Route::get('/dashboard', [SuperAdminDashboard::class, 'index']);
+Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(function () {
+    Route::get('/dashboard', [SuperAdminDashboard::class, 'index']);
+    Route::resource('/owners', OwnerController::class);
+    Route::resource('/restaurants', SuperAdminRestaurantController::class);
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('superadmin.analytics');
 
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    //  Login Routes:
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
 //  Owner and Staffs
 Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->group(function () {
 
-    //  Login Routes:
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 
     //  Dashboard Routes:
-       Route::get(
-            '/dashboard',
-            [DashboardController::class, 'index']
-        )->name('dashboard');
+    Route::get(
+        '/dashboard',
+        [DashboardController::class, 'index']
+    )->name('dashboard');
 
     Route::middleware('ensure.user.has.restaurant')->group(function () {
 
-     
+
 
 
         //  Restaurant Routes:
@@ -76,7 +88,7 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
         });
 
         // Tables Routes:
-        Route::resource('tables', TableController::class)->only(['index','create','edit','update','destroy' ,'store']);
+        Route::resource('tables', TableController::class)->only(['index', 'create', 'edit', 'update', 'destroy', 'store']);
 
         // Order Routes:
         Route::get('/orders/search', [OrderController::class, 'searchOrder'])->name('orders.search');
@@ -88,14 +100,14 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
     });
 
     //    Restaurant Create and Store Routes:
-    Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
-    Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
 
 });
+Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
+Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
 
 
-Route::fallback(function(){
-     return redirect()->back()->with('error','Page Not Found');  
+Route::fallback(function () {
+    return redirect()->route('welcome')->with('error', 'Page Not Found');
 });
 
 require __DIR__ . '/auth.php';

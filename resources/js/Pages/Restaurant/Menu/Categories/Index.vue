@@ -23,6 +23,7 @@ import {
   CFormInput,
   CFormLabel,
 } from "@coreui/vue";
+import CIcon from "@coreui/icons-vue";
 
 defineOptions({
   layout: AuthenticatedLayout,
@@ -36,7 +37,7 @@ const page = usePage();
 
 const user = page.props.auth.user;
 
-const canCreate = user.permissions.includes('create-category');
+const canCreate = user.permissions.includes("create-category");
 
 /* ---------------- FORMS ---------------- */
 const createForm = useForm({
@@ -56,11 +57,15 @@ const deleteForm = useForm({
 /* ---------------- STATE ---------------- */
 const isEditModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
+const isCreateModalOpen = ref(false);
 
 /* ---------------- CREATE ---------------- */
 const createCategory = () => {
   createForm.post(route("menu.category.store"), {
-    onSuccess: () => createForm.reset(),
+    onSuccess: () => {
+      closeModal();
+      createForm.reset();
+    },
   });
 };
 
@@ -94,38 +99,17 @@ const deleteCategory = () => {
 const closeModal = () => {
   isEditModalOpen.value = false;
   isDeleteModalOpen.value = false;
+  isCreateModalOpen.value = false;
 
+  createForm.reset();
   editForm.reset();
   deleteForm.reset();
 };
 </script>
-
 <template>
-  <!-- CREATE -->
-  <CContainer class="border rounded-3 shadow-lg p-4" v-if="canCreate">
-    <CHeader class="d-flex justify-content-center border-none">
-      <h4 class="text-dark">Create Menu Category</h4>
-    </CHeader>
+  <!-- ================= MODALS ================= -->
 
-    <CForm @submit.prevent="createCategory">
-      <div class="mb-3">
-        <CFormLabel>Category Name</CFormLabel>
-        <CFormInput
-          v-model="createForm.name"
-          :invalid="createForm.errors.name"
-        />
-        <div v-if="createForm.errors.name" class="invalid-feedback d-block">
-          {{ createForm.errors.name }}
-        </div>
-      </div>
-
-      <CButton color="primary" type="submit" :disabled="createForm.processing">
-        {{ createForm.processing ? "Creating..." : "Create Category" }}
-      </CButton>
-    </CForm>
-  </CContainer>
-
-  <!-- EDIT MODAL -->
+  <!-- EDIT -->
   <CModal backdrop="static" :visible="isEditModalOpen" @close="closeModal">
     <CModalHeader>
       <CModalTitle>Edit Category</CModalTitle>
@@ -133,21 +117,20 @@ const closeModal = () => {
 
     <CModalBody>
       <CForm @submit.prevent="updateCategory">
-        <div class="mb-3">
-          <CFormLabel>Category Name</CFormLabel>
-          <CFormInput
-            v-model="editForm.name"
-            :invalid="editForm.errors.name"
-          />
-          <div v-if="editForm.errors.name" class="invalid-feedback d-block">
-            {{ editForm.errors.name }}
-          </div>
+        <CFormLabel>Category Name</CFormLabel>
+        <CFormInput
+          v-model="editForm.name"
+          :invalid="editForm.errors.name"
+          placeholder="Enter category name"
+        />
+        <div v-if="editForm.errors.name" class="invalid-feedback d-block">
+          {{ editForm.errors.name }}
         </div>
       </CForm>
     </CModalBody>
 
     <CModalFooter>
-      <CButton color="secondary" @click="closeModal">Cancel</CButton>
+      <CButton color="light" @click="closeModal">Cancel</CButton>
 
       <CButton
         color="warning"
@@ -159,63 +142,133 @@ const closeModal = () => {
     </CModalFooter>
   </CModal>
 
-  <!-- DELETE MODAL -->
+  <!-- CREATE -->
+  <CModal backdrop="static" :visible="isCreateModalOpen" @close="closeModal">
+    <CModalHeader>
+      <CModalTitle>Create Category</CModalTitle>
+    </CModalHeader>
+
+    <CModalBody>
+      <CForm @submit.prevent="createCategory">
+        <CFormLabel>Category Name</CFormLabel>
+        <CFormInput
+          v-model="createForm.name"
+          :invalid="createForm.errors.name"
+          placeholder="e.g. Drinks, Snacks"
+        />
+        <div v-if="createForm.errors.name" class="invalid-feedback d-block">
+          {{ createForm.errors.name }}
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <CButton color="light" @click="closeModal">Cancel</CButton>
+
+          <CButton
+            color="primary"
+            type="submit"
+            :disabled="createForm.processing"
+          >
+            {{ createForm.processing ? "Creating..." : "Create" }}
+          </CButton>
+        </div>
+      </CForm>
+    </CModalBody>
+  </CModal>
+
+  <!-- DELETE -->
   <CModal backdrop="static" :visible="isDeleteModalOpen" @close="closeModal">
     <CModalHeader>
       <CModalTitle>Delete Category</CModalTitle>
     </CModalHeader>
 
     <CModalBody>
-      <p>
-        Are you sure you want to delete:
-        <strong>{{ deleteForm.name }}</strong> ?
+      <p class="mb-0">
+        Are you sure you want to delete
+        <strong>{{ deleteForm.name }}</strong
+        >?
       </p>
     </CModalBody>
 
     <CModalFooter>
-      <CButton color="secondary" @click="closeModal">Cancel</CButton>
+      <CButton color="light" @click="closeModal">Cancel</CButton>
 
-      <CButton color="danger" @click="deleteCategory">
-        Delete
-      </CButton>
+      <CButton color="danger" @click="deleteCategory"> Delete </CButton>
     </CModalFooter>
   </CModal>
 
-  <!-- TABLE -->
-  <CContainer class="border rounded-3 shadow-lg mt-4 p-4">
-    <CTable caption="top" hover bordered>
-      <CTableCaption>List of Categories</CTableCaption>
+  <!-- ================= PAGE ================= -->
 
-      <CTableHead>
-        <CTableRow>
-          <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Name</CTableHeaderCell>
-          <CTableHeaderCell>Items</CTableHeaderCell>
-          <CTableHeaderCell v-if="canCreate">Actions</CTableHeaderCell>
-        </CTableRow>
-      </CTableHead>
+  <CContainer class="py-4">
+    <!-- Card Table -->
+    <div class=" border rounded-4 shadow-lg p-5">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold mb-0">Categories</h4>
+          <small class="text-medium-emphasis">
+            Manage your menu categories
+          </small>
+        </div>
 
-      <CTableBody>
-        <CTableRow v-for="(category, index) in categories" :key="category.id">
-          <CTableHeaderCell>{{ index + 1 }}</CTableHeaderCell>
-          <CTableDataCell>{{ category.name }}</CTableDataCell>
-          <CTableDataCell>{{ category.menu_items_count }}</CTableDataCell>
+        <CButton
+          v-if="canCreate"
+          color="primary"
+          class="d-flex align-items-center gap-2"
+          @click="isCreateModalOpen = true"
+        >
+          <CIcon name="cil-plus" />
+          Create Category
+        </CButton>
+      </div>
 
-          <CTableDataCell v-if="canCreate">
-            <CButton
-              color="danger"
-              class="me-2"
-              @click="openDeleteModal(category)"
-            >
-              Delete
-            </CButton>
+      <CTable hover responsive align="middle" class="mb-0">
+        <CTableHead>
+          <CTableRow class="text-medium-emphasis">
+            <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell>Name</CTableHeaderCell>
+            <CTableHeaderCell>Items</CTableHeaderCell>
+            <CTableHeaderCell v-if="canCreate" class="text-end">
+              Actions
+            </CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
 
-            <CButton color="warning" @click="openEditModal(category)">
-              Edit
-            </CButton>
-          </CTableDataCell>
-        </CTableRow>
-      </CTableBody>
-    </CTable>
+        <CTableBody>
+          <CTableRow v-for="(category, index) in categories" :key="category.id">
+            <CTableHeaderCell>{{ index + 1 }}</CTableHeaderCell>
+
+            <CTableDataCell class="fw-semibold">
+              {{ category.name }}
+            </CTableDataCell>
+
+            <CTableDataCell>
+              {{ category.menu_items_count }}
+            </CTableDataCell>
+
+            <CTableDataCell v-if="canCreate" class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <CButton
+                  color="secondary"
+                  variant="outline"
+                  size="sm"
+                  @click="openEditModal(category)"
+                >
+                  <CIcon name="cil-pencil" />
+                </CButton>
+
+                <CButton
+                  color="danger"
+                  variant="outline"
+                  size="sm"
+                  @click="openDeleteModal(category)"
+                >
+                  <CIcon name="cil-trash" />
+                </CButton>
+              </div>
+            </CTableDataCell>
+          </CTableRow>
+        </CTableBody>
+      </CTable>
+    </div>
   </CContainer>
 </template>

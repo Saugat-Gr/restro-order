@@ -27,6 +27,7 @@ class CreateRequest extends FormRequest
             'phone' => 'nullable|string|size:10',
             'address' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:png,jpg,gif,svg|max:2048',
+            'owner_id' => 'required|exists:users,id'
         ];
     }
 }

@@ -18,8 +18,8 @@ class EnsureActiveRestaurant
     {
         $user = $request->user();
 
-        if($user->restaurant->status !== Status::ACTIVE){
-              return redirect()->back()->with('error', 'Restaurant is in-active');
+        if($user->restaurant->status !== Status::ACTIVE->value || $user->status !== Status::ACTIVE->value){
+              return redirect()->route('welcome')->with('error', 'Restaurant or User is in-active');
         }
 
 

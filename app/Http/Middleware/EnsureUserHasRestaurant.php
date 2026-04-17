@@ -32,9 +32,7 @@ class EnsureUserHasRestaurant
             return redirect()->route('restaurant.create');
         }
 
-        if($user->restaurant->status !== Status::ACTIVE){
-              return redirect()->route('welcome')->with('error', "Restaurant is in-active");
-        }
+     
 
         return $next($request);
     }

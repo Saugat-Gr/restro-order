@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Services\SuperAdmin\DashboardService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -14,10 +15,19 @@ class DashboardController extends Controller
    public function __construct(DashboardService $dashboardService)
    {
       $this->dashboardService = $dashboardService;
+
    }
 
    public function index()
    {
-      $this->dashboardService->getMetrics();
+       $data = $this->dashboardService->getMetrics();
+
+      return Inertia::render('SuperAdmin/Dashboard/Index', 
+      [
+         ...$data,
+          "app" => [
+            "title" => "Super Dashboard"
+          ]
+      ]);
    }
 }

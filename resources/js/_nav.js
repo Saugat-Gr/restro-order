@@ -6,7 +6,7 @@ export default function getNav(page) {
             icon: "cil-home",
             roles: ["owner"],
         },
-          {
+        {
             name: "Dashboard",
             to: "/super-admin/dashboard",
             icon: "cil-home",
@@ -15,21 +15,51 @@ export default function getNav(page) {
 
         {
             component: "CNavTitle",
-            name: "Users",
+            name: "Application",
             roles: ["super-admin"],
         },
 
         {
+            component: "CNavGroup",
             name: "Owners",
-            to: "/owners",
-            icon: "cil-people",
+            icon: "cil-industry",
             roles: ["super-admin"],
+
+            items: [
+                {
+                    name: "Owners",
+                    to: "/super-admin/owners",
+                    icon: "cil-people",
+                    roles: ["super-admin"],
+                },
+                {
+                    name: "Create Owner",
+                    to: "/super-admin/owners/create",
+                    icon: "cil-plus",
+                    roles: ["super-admin"],
+                },
+            ],
         },
+
+        {
+            name: "Restaurants",
+            to: "/super-admin/restaurants",
+            icon: "cil-building",
+            roles: ["super-admin"]
+        },
+
+        {
+             name: "Analytics",
+             to: "/super-admin/analytics",
+             icon: "cil-chart-line",
+             roles:["super-admin"]
+        },
+        
 
         {
             component: "CNavTitle",
             name: "Feature",
-            roles: ["owner","staff"],
+            roles: ["owner", "staff"],
         },
 
         {
@@ -49,7 +79,7 @@ export default function getNav(page) {
                 {
                     name: "Items",
                     to: "/menu/menu-items",
-                    roles: ["owner","staff"],
+                    roles: ["owner", "staff"],
                     icon: "cil-minus",
                 },
             ],
@@ -74,7 +104,7 @@ export default function getNav(page) {
                     to: "/orders/create",
                     roles: ["owner", "staff"],
                     icon: "cil-plus",
-                    permission: ["create-order"]
+                    permission: ["create-order"],
                 },
 
                 {
@@ -82,11 +112,10 @@ export default function getNav(page) {
                     to: "/orders/search",
                     roles: ["owner", "staff"],
                     icon: "cil-magnifying-glass",
-                    permission: ['search-order']
+                    permission: ["search-order"],
                 },
             ],
         },
-
 
         {
             name: "Tables",
@@ -96,12 +125,11 @@ export default function getNav(page) {
         },
 
         {
-             name: "Transactions",
-             icon: "cib-cashapp",
-             to: "/transactions",
-             roles: ["owner"]
+            name: "Transactions",
+            icon: "cib-cashapp",
+            to: "/transactions",
+            roles: ["owner"],
         },
-        
 
         {
             component: "CNavTitle",
@@ -118,7 +146,7 @@ export default function getNav(page) {
                 {
                     name: "General",
                     to: `/restaurant/${page.props.auth.user.restaurant_id}/edit`,
-                    roles: ["owner", "super-admin"],
+                    roles: ["owner"],
                     icon: "cil-smile",
                 },
             ],

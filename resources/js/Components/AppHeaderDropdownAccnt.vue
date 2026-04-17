@@ -13,7 +13,7 @@ const itemsCount = 42;
 </script>
 
 <template>
-  <CDropdown placement="bottom-end" variant="nav-item">
+  <CDropdown placement="bottom-end" variant="nav-item" class="z-10">
     <CDropdownToggle class="py-0 pe-0" :caret="false">
       <CAvatar :src="avatar" size="md" />
     </CDropdownToggle>
