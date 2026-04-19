@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Events\Order\OrderCompleted;
 use App\Http\Requests\Order\CreateRequest;
 use App\Http\Requests\Order\UpdateRequest;
 use App\Models\Order;
@@ -75,8 +76,7 @@ class OrderController extends Controller
     public function update(UpdateRequest $request, Order $order)
     {
         try {
-            $this->orderService->updateOrder($order, $request->validated());
-
+            $order = $this->orderService->updateOrder($order, $request->validated());
             return redirect()->back()
                 ->with('success', 'Order updated successfully.');
         } catch (Exception $e) {

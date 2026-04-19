@@ -100,7 +100,7 @@ const createItem = () => {
                 v-model="form.menu_item_category_id"
                 :invalid="!!form.errors.menu_item_category_id"
               >
-                <option disabled value="">Select</option>
+                <option selected value="">Select</option>
                 <option
                   v-for="category in categories"
                   :key="category.id"
@@ -120,7 +120,7 @@ const createItem = () => {
                 v-model="form.status"
                 :invalid="!!form.errors.status"
               >
-                <option disabled value="">Select</option>
+                <option selected value="">Select</option>
                 <option
                   v-for="status in statuses"
                   :key="status"

@@ -4,10 +4,14 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Enums\TableStatus;
+use App\Events\Order\OrderCancelled;
+use App\Events\Order\OrderReady;
+use App\Events\OrderCompleted;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\Table;
 use App\Models\Transaction;           // ← new
+use App\Events\Order\OrderCreated;
 use App\Repositories\Order\OrderInterface;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +82,8 @@ class OrderService
 
                 $this->repository->update($order, ['total_amount' => $total]);
 
+                event(new OrderCreated($order));
+
                 return $order->fresh(['orderItems', 'table', 'user']);
             }
         )
@@ -88,7 +94,86 @@ class OrderService
     public function updateOrder(Order $order, array $validated): Order
     {
 
-        if ($order->status === OrderStatus::COMPLETED || $order->status === OrderStatus::CANCELLED) {
+        // if ($order->status === OrderStatus::COMPLETED || $order->status === OrderStatus::CANCELLED) {
+
+        //     throw new \DomainException('Order cannot be updated.');
+        // }
+
+        // return DB::transaction(function () use ($validated, $order) {
+
+        //     $updates = [];
+
+        //     // 1. Partial field updates (table + status)
+        //     if (!empty($validated['table_id'])) {
+        //         $updates['table_id'] = $validated['table_id'];
+        //     }
+        //     if (!empty($validated['status'])) {
+        //         $updates['status'] = $validated['status'];
+        //     }
+
+        //     // 2. Rebuild items ONLY if 'items' key is explicitly sent (full edit form)
+        //     $shouldRebuildItems = array_key_exists('items', $validated);
+
+        //     if ($shouldRebuildItems) {
+        //         $order->orderItems()->delete();   // safe because we're in transaction
+
+        //         if (empty($validated['items'])) {
+        //             $updates['total_amount'] = 0;
+        //         } else {
+        //             $menuItems = MenuItem::whereIn(
+        //                 'id',
+        //                 collect($validated['items'])->pluck('menu_item_id')
+        //             )->get()->keyBy('id');
+
+        //             $total = $this->syncOrderItems($order, $validated['items'], $menuItems);
+        //             $updates['total_amount'] = $total;
+        //         }
+        //     }
+
+        //     // 3. CREATE TRANSACTION only when status becomes COMPLETED
+        //     if (
+        //         isset($validated['status']) &&
+        //         $validated['status'] === OrderStatus::COMPLETED->value &&
+        //         $order->status !== OrderStatus::COMPLETED
+        //     ) {
+
+        //         if ($order->table_id) {
+        //             $table = ($order->table_id);
+
+        //             Table::findOrFail($table)->update([
+        //                 'status' => TableStatus::AVAILABLE,
+        //                 'assigned_staff_id' => NULL,
+        //             ]);
+        //         }
+
+        //         $paymentMethod = $validated['payment_method'] ?? 'cash';
+
+        //         Transaction::create([
+        //             'restaurant_id' => auth()->user()->restaurant_id,
+        //             'order_id' => $order->id,
+        //             'processed_by' => auth()->id(),
+        //             'amount' => $updates['total_amount'] ?? $order->total_amount,
+        //             'payment_method' => $paymentMethod,
+        //             'paid_at' => now(),
+        //         ]);
+        //     }
+
+        //     // 4. Apply updates if any
+        //     if (!empty($updates)) {
+        //         $this->repository->update($order, $updates);
+        //     }
+
+        //     // return $order->fresh(['orderItems', 'table', 'user', 'transaction']);
+
+        //     return $order->fresh(['orderItems', 'table', 'user']);
+
+        // });
+
+
+        if (
+            $order->status === OrderStatus::COMPLETED ||
+            $order->status === OrderStatus::CANCELLED
+        ) {
             throw new \DomainException('Order cannot be updated.');
         }
 
@@ -96,19 +181,39 @@ class OrderService
 
             $updates = [];
 
-            // 1. Partial field updates (table + status)
+            $newStatus = $validated['status'] ?? $order->status;
+
+            $transition = null;
+
+            if (
+                $newStatus === OrderStatus::COMPLETED->value &&
+                $order->status !== OrderStatus::COMPLETED
+            ) {
+                $transition = OrderStatus::COMPLETED->value;
+            } elseif (
+                $newStatus === OrderStatus::CANCELLED->value &&
+                $order->status !== OrderStatus::CANCELLED
+            ) {
+                $transition = OrderStatus::CANCELLED->value;
+            } elseif (
+                $newStatus === OrderStatus::READY->value &&
+                $order->status !== OrderStatus::READY
+            ) {
+                $transition = OrderStatus::READY->value;
+            }
+
             if (!empty($validated['table_id'])) {
                 $updates['table_id'] = $validated['table_id'];
             }
+
             if (!empty($validated['status'])) {
                 $updates['status'] = $validated['status'];
             }
 
-            // 2. Rebuild items ONLY if 'items' key is explicitly sent (full edit form)
             $shouldRebuildItems = array_key_exists('items', $validated);
 
             if ($shouldRebuildItems) {
-                $order->orderItems()->delete();   // safe because we're in transaction
+                $order->orderItems()->delete();
 
                 if (empty($validated['items'])) {
                     $updates['total_amount'] = 0;
@@ -123,19 +228,18 @@ class OrderService
                 }
             }
 
-            // 3. CREATE TRANSACTION only when status becomes COMPLETED
-            if (
-                isset($validated['status']) &&
-                $validated['status'] === OrderStatus::COMPLETED->value &&
-                $order->status !== OrderStatus::COMPLETED
-            ) {
+            if (!empty($updates)) {
+                $this->repository->update($order, $updates);
+            }
+
+            $order = $order->fresh(['orderItems', 'table', 'user']);
+
+            if ($transition === OrderStatus::COMPLETED->value) {
 
                 if ($order->table_id) {
-                    $table = ($order->table_id);
-
-                    Table::findOrFail($table)->update([
+                    Table::findOrFail($order->table_id)->update([
                         'status' => TableStatus::AVAILABLE,
-                        'assigned_staff_id' => NULL,
+                        'assigned_staff_id' => null,
                     ]);
                 }
 
@@ -149,17 +253,28 @@ class OrderService
                     'payment_method' => $paymentMethod,
                     'paid_at' => now(),
                 ]);
+
+                DB::afterCommit(function () use ($order) {
+                    event(new \App\Events\Order\OrderCompleted($order));
+                });
             }
 
-            // 4. Apply updates if any
-            if (!empty($updates)) {
-                $this->repository->update($order, $updates);
+            if ($transition === OrderStatus::CANCELLED->value) {
+
+                DB::afterCommit(function () use ($order) {
+                    event(new OrderCancelled($order));
+                });
             }
 
-            // return $order->fresh(['orderItems', 'table', 'user', 'transaction']);
-            return $order->fresh(['orderItems', 'table', 'user']);
+            if ($transition === OrderStatus::READY->value) {
+                DB::afterCommit(function () use ($order) {
+                    event(new OrderReady($order));
+                });
+            }
 
+            return $order;
         });
+
     }
 
     /**

@@ -13,26 +13,19 @@ class MenuItemRepository implements MenuItemInterface
 
     public function createItem($data)
     {
-        try {
-            $menu_item = MenuItem::create($data);
-            return $menu_item;
-        } catch (QueryException $e) {
-            throw $e;
-        } catch (Exception $e) {
-            throw $e;
-        }
-
-
+        $menu_item = MenuItem::create($data);
+        return $menu_item;
     }
 
     public function updateItem($data, $item)
     {
         $item->update($data);
-        return redirect()->route('menu.menu-items.index');
+        return $item;
     }
     public function deleteItem(MenuItem $item)
     {
-        return $item->delete();
+         $item->delete();
+       return  $item;
     }
 
     public function getAll()
@@ -67,8 +60,8 @@ class MenuItemRepository implements MenuItemInterface
         $perPage = (int) ($filters['perPage'] ?? $perPage);
 
         return $query
-    ->orderBy('id', 'desc') // 🔥 REQUIRED
-    ->paginate($perPage)
-    ->withQueryString();
+            ->orderBy('id', 'desc') 
+            ->paginate($perPage)
+            ->withQueryString();
     }
 }

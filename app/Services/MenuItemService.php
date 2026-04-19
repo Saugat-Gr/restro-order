@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Events\Menu\Item\InStock;
+use App\Events\Menu\Item\ItemAdded;
+use App\Events\Menu\Item\ItemRemoved;
+use App\Events\Menu\Item\OutOfStock;
 use App\Http\Requests\MenuItem\CreateRequest;
 use App\Http\Requests\MenuItem\UpdateRequest;
 use App\Models\MenuItem;
@@ -42,16 +46,17 @@ class MenuItemService
             $validated_data['restaurant_id'] = auth()->user()->restaurant_id;
             $validated_data['is_in_stock'] = true;
 
-            
-            return $this->menuItemRepo->createItem($validated_data);
+
+            $item = $this->menuItemRepo->createItem($validated_data);
+
+            event(new ItemAdded($item));
+
+            return $item;
 
         } catch (QueryException $e) {
-            Log::error($e);
-            return redirect()->route('menu.items.index');
+            throw $e;
         } catch (Exception $e) {
-            Log::error($e);
-            return redirect()->route('menu.items.index');
-
+            throw $e;
         }
     }
 
@@ -60,17 +65,29 @@ class MenuItemService
     {
         $validated_data = $request->validated();
 
-
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('restaurant/items/images', 'public');
             $validated_data['image'] = $path;
         }
 
-        return $this->menuItemRepo->updateItem($validated_data, $menuItem);
+        $item = $this->menuItemRepo->updateItem($validated_data, $menuItem);
+
+
+        if (isset($validated_data['is_in_stock']) && $validated_data['is_in_stock'] !== true) {
+            event(new OutOfStock($item));
+        }
+
+         if (isset($validated_data['is_in_stock']) && $validated_data['is_in_stock'] === true) {
+            event(new InStock($item));
+        }
+
+        return $item;
     }
+
     public function destroy(MenuItem $item)
     {
-        return $this->menuItemRepo->deleteItem($item);
+        $item =  $this->menuItemRepo->deleteItem($item);
+        event(new ItemRemoved($item));
     }
 
     public function getAll()

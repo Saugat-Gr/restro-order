@@ -1,11 +1,14 @@
 export default function getNav(page) {
     return [
+        //  Owner
         {
             name: "Dashboard",
             to: "/dashboard",
             icon: "cil-home",
             roles: ["owner"],
         },
+
+        //  Super-admin
         {
             name: "Dashboard",
             to: "/super-admin/dashboard",
@@ -18,6 +21,8 @@ export default function getNav(page) {
             name: "Application",
             roles: ["super-admin"],
         },
+
+        //  Owners
 
         {
             component: "CNavGroup",
@@ -41,20 +46,25 @@ export default function getNav(page) {
             ],
         },
 
+        //   Restaurants:
+
         {
             name: "Restaurants",
             to: "/super-admin/restaurants",
             icon: "cil-building",
-            roles: ["super-admin"]
+            roles: ["super-admin"],
         },
 
+        //  Analytics: Super-admin
+
         {
-             name: "Analytics",
-             to: "/super-admin/analytics",
-             icon: "cil-chart-line",
-             roles:["super-admin"]
+            name: "Analytics",
+            to: "/super-admin/analytics",
+            icon: "cil-chart-line",
+            roles: ["super-admin"],
         },
-        
+
+        //    Owner
 
         {
             component: "CNavTitle",
@@ -117,6 +127,7 @@ export default function getNav(page) {
             ],
         },
 
+        //  Tables:
         {
             name: "Tables",
             icon: "cil-view-module",
@@ -124,6 +135,7 @@ export default function getNav(page) {
             roles: ["owner", "staff"],
         },
 
+        //  Transactions:
         {
             name: "Transactions",
             icon: "cib-cashapp",
@@ -131,37 +143,53 @@ export default function getNav(page) {
             roles: ["owner"],
         },
 
+        //  Staffs:
         {
-             component: "CNavTitle",
-             name: "Manage Staffs",
-             roles: ["owner"],
+            component: "CNavTitle",
+            name: "Manage Staffs",
+            roles: ["owner"],
         },
 
         {
-              name: "Staffs",
-              icon: "cil-people",
-              to: "/staffs",
-              roles: ["owner"]
+            name: "Staffs",
+            icon: "cil-people",
+            to: "/staffs",
+            roles: ["owner"],
         },
 
         {
-              name: "Add Staff",
-              icon: "cil-plus",
-              to: "/staffs/create",
-              roles: ["owner"]
+            name: "Add Staff",
+            icon: "cil-plus",
+            to: "/staffs/create",
+            roles: ["owner"],
         },
 
+        //  Activity Logs:
+        {
+            component: "CNavTitle",
+            name: "Activity Logs",
+            roles: ["owner"],
+        },
+
+        {
+            name: "Logs",
+            icon: "cil-chart-line",
+            to: "/activity-logs",
+            roles: ["owner"],
+        },
+
+        //  App Configurations:
         {
             component: "CNavTitle",
             name: "App Configs",
-            roles: ["owner", "super-admin"],
+            roles: ["owner"],
         },
 
         {
             component: "CNavGroup",
             name: "Settings",
             icon: "cil-settings",
-            roles: ["owner", "super-admin"],
+            roles: ["owner"],
             items: [
                 {
                     name: "General",

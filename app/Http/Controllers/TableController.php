@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TableStatus;
+use App\Events\Table\TableAdded;
 use App\Http\Requests\Table\CreateRequest;
 use App\Http\Requests\Table\UpdateRequest;
 use App\Models\Table;
@@ -75,7 +76,8 @@ class TableController extends Controller
             $validated_data = $request->validated();
 
             $validated_data['restaurant_id'] = auth()->user()->restaurant_id;
-            Table::create($validated_data);
+            $table =  Table::create($validated_data);
+            event(new TableAdded($table));
             return redirect()->route('tables.index')->with('success', 'Table Created.');
         } catch (QueryException $e) {
             return redirect()->back()->with('error', 'Table Name Already Exists.');

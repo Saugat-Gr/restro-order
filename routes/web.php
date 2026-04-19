@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
@@ -59,6 +60,21 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->group(function () {
 
 
+    //   Notification Seen: 
+    Route::post('/notifications/{id}/read', function ($id, Request $request) {
+        $notification = auth()->user()
+            ->notifications()
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $notification->markAsRead();
+
+        return back();
+    });
+
+    //  Activity Log: 
+    Route::get('/activity-logs', ActivityLogController::class);
+
 
     //  Dashboard Routes:
     Route::get(
@@ -72,7 +88,7 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 
 
         //  Restaurant Routes:
-        Route::resource('restaurant', RestaurantController::class)->only(['index','edit','update']);
+        Route::resource('restaurant', RestaurantController::class)->only(['index', 'edit', 'update']);
 
         // Menu: 
         Route::prefix('menu')->name('menu.')->group(function () {
@@ -108,6 +124,7 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 });
 // Route::post('restaurant', [RestaurantController::class, 'store'])->name('restaurant.store');
 // Route::get('restaurant/create', [RestaurantController::class, 'create'])->name('restaurant.create');
+
 
 
 Route::fallback(function () {

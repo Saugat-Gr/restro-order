@@ -38,7 +38,7 @@ const canCreate = user.permissions.includes("create-table");
 const canUpdate = user.permissions.includes("update-table");
 
 const props = defineProps({
-  tables: Array,
+  tables: Object,
   statuses: Array,
   filters: Array,
 });
@@ -117,6 +117,7 @@ const confirmDelete = () => {
     },
   });
 };
+
 </script>
 <template>
   <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
@@ -266,8 +267,8 @@ const confirmDelete = () => {
 
     <Link :href="props.tables.prev_page_url">
       <CPaginationItem
-        color="light"
-        :disabled="!props.tables.prev_page_url"
+      color="light"
+      :disabled="!props.tables.prev_page_url"
       >
         Previous Page
       </CPaginationItem>

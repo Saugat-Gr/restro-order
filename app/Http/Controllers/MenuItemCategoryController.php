@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Menu\Category\CategoryAdded;
+use App\Events\Menu\Category\CategoryRemoved;
 use App\Models\MenuItemCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -46,7 +48,9 @@ class MenuItemCategoryController extends Controller
 
         $valdiated_data['restaurant_id'] = auth()->user()->restaurant_id;
 
-        MenuItemCategory::create($valdiated_data);
+        $category = MenuItemCategory::create($valdiated_data);
+
+        event(new CategoryAdded($category));
 
         return redirect()->route('menu.category')->with('success', 'Menu Category Created.');
 
@@ -75,10 +79,11 @@ class MenuItemCategoryController extends Controller
     public function update(Request $request, MenuItemCategory $menuItemCategory)
     {
         $validated_data = $request->validate([
-            'name' => 'required', Rule::unique('menu_item_categories', 'name')->ignore($menuItemCategory) ,
+            'name' => 'required',
+            Rule::unique('menu_item_categories', 'name')->ignore($menuItemCategory),
         ]);
-        
-         $updated = $menuItemCategory->update($validated_data);
+
+        $updated = $menuItemCategory->update($validated_data);
 
         return redirect()->route('menu.category')->with('success', 'Menu Category Updated.');
     }
@@ -89,12 +94,14 @@ class MenuItemCategoryController extends Controller
     public function destroy(MenuItemCategory $menuItemCategory)
     {
 
-        if($menuItemCategory->menuItems()->count() > 0){
-              return redirect()->back()->with('error', 'Cannot delete menu Category');
+        if ($menuItemCategory->menuItems()->count() > 0) {
+            return redirect()->back()->with('error', 'Cannot delete menu Category');
         }
 
-         $menuItemCategory->delete();
+        $menuItemCategory->delete();
 
-         return redirect()->route('menu.category')->with('success', 'Category Deleted Successfully.');
+        event(new CategoryRemoved($menuItemCategory));
+
+        return redirect()->route('menu.category')->with('success', 'Category Deleted Successfully.');
     }
 }

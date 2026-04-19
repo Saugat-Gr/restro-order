@@ -2,6 +2,39 @@
 
 namespace App\Providers;
 
+use App\Events\Menu\Category\CategoryAdded;
+use App\Events\Menu\Category\CategoryRemoved;
+use App\Events\Menu\Item\InStock;
+use App\Events\Menu\Item\ItemAdded;
+use App\Events\Menu\Item\ItemRemoved;
+use App\Events\Menu\Item\OutOfStock;
+use App\Events\Order\OrderCancelled;
+use App\Events\Order\OrderCompleted;
+use App\Events\Order\OrderCreated;
+use App\Events\Order\OrderReady;
+use App\Events\Table\TableAdded;
+use App\Listeners\Menu\Category\LogCategoryAdded;
+use App\Listeners\Menu\Category\LogCategoryRemoved;
+use App\Listeners\Menu\Category\SendCategoryAddedNotification;
+use App\Listeners\Menu\Category\SendCategoryRemovedNotification;
+use App\Listeners\Menu\Item\LogInStock;
+use App\Listeners\Menu\Item\LogItemAdded;
+use App\Listeners\Menu\Item\LogItemRemoved;
+use App\Listeners\Menu\Item\LogOutOfStock;
+use App\Listeners\Menu\Item\SendInStockNotification;
+use App\Listeners\Menu\Item\SendItemAddedNotification;
+use App\Listeners\Menu\Item\SendItemRemovedNotification;
+use App\Listeners\Menu\Item\SendOutOfStockNotification;
+use App\Listeners\Order\LogOrderActivity;
+use App\Listeners\Order\LogOrderCancelledActivity;
+use App\Listeners\Order\LogOrderCreated;
+use App\Listeners\Order\LogOrderReady;
+use App\Listeners\Order\SendOrderCancelledNotification;
+use App\Listeners\Order\SendOrderCompletedNotification;
+use App\Listeners\Order\SendOrderCreatedNotification;
+use App\Listeners\Order\SendOrderReadyNotification;
+use App\Listeners\Table\LogTableAdded;
+use App\Listeners\Table\SendTableAddedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +51,67 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+
+            //  Menu Items:
+
+        ItemAdded::class => [
+            LogItemAdded::class,
+            SendItemAddedNotification::class,
+        ],
+
+        ItemRemoved::class => [
+            LogItemRemoved::class,
+            SendItemRemovedNotification::class,
+        ],
+
+        OutOfStock::class => [
+            LogOutOfStock::class,
+            SendOutOfStockNotification::class,
+        ],
+
+        InStock::class => [
+            LogInStock::class,
+            SendInStockNotification::class,
+        ],
+
+            //  Orders:
+        OrderCreated::class => [
+            LogOrderCreated::class,
+            SendOrderCreatedNotification::class,
+        ],
+
+        OrderReady::class => [
+            LogOrderReady::class,
+            SendOrderReadyNotification::class,
+        ],
+
+        OrderCompleted::class => [
+            LogOrderActivity::class,
+            SendOrderCompletedNotification::class,
+        ],
+
+        OrderCancelled::class => [
+            LogOrderCancelledActivity::class,
+            SendOrderCancelledNotification::class,
+        ],
+
+
+            //  Tables
+        TableAdded::class => [
+            LogTableAdded::class,
+            SendTableAddedNotification::class,
+        ],
+
+            // Menu Categories:
+        CategoryAdded::class => [
+            LogCategoryAdded::class,
+            SendCategoryAddedNotification::class,
+        ],
+         CategoryRemoved::class => [
+            LogCategoryRemoved::class,
+            SendCategoryRemovedNotification::class,
+        ]
     ];
 
     /**
