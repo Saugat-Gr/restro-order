@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";
-import { useColorModes } from "@coreui/vue";
-import { Link, usePage, router } from "@inertiajs/vue3";
+import { CButton, useColorModes } from "@coreui/vue";
+import { Link, usePage, router, useForm } from "@inertiajs/vue3";
 import AppBreadcrumb from "@/Components/AppBreadcrumb.vue";
 import AppHeaderDropdownAccnt from "@/Components/AppHeaderDropdownAccnt.vue";
 
@@ -17,6 +17,12 @@ const store = useStore();
 const sidebarVisible = computed(() => store.getters["sidebar/visible"]);
 
 const page = usePage();
+
+const form = useForm({});
+
+const markAllAsRead = () => {
+  form.post(route("notifications.all"));
+};
 
 /* ✅ FIXED: reactive Inertia props */
 const notifications = computed(() => page.props.notifications || []);
@@ -127,6 +133,12 @@ onMounted(() => {
             >
               No notifications
             </CDropdownItem>
+
+            <div class="p-2 text-center" v-if="notifications.length > 0">
+              <CButton color="primary" variant="outline" @click="markAllAsRead">
+                Mark All As Read
+              </CButton>
+            </div>
           </CDropdownMenu>
         </CDropdown>
       </CHeaderNav>

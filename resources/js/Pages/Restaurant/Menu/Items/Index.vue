@@ -69,7 +69,6 @@ const resetFilters = () => {
   filters.value = { search: "", status: "", stock: "", perPage: 10 };
 };
 
-
 const deleteForm = useForm({ _method: "delete" });
 const statusForm = useForm({ _method: "patch", status: null });
 const stockForm = useForm({ _method: "patch", is_in_stock: null });
@@ -106,31 +105,47 @@ const changePage = (page) => {
   );
 };
 </script>
-
 <template>
   <Head>
     <title>{{ app.title }}</title>
   </Head>
 
-  <CContainer class="border rounded-4 shadow-lg mt-4 p-4">
-    <!-- HEADER -->
-    <div
-      class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
-    >
-      <!-- Filters -->
-      <div class="d-flex gap-2 flex-wrap">
+  <CContainer class="mt-4">
+    <div class="border-0 rounded-4 shadow-lg p-4 bg-white">
+
+      <!-- HEADER -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h4 class="mb-0 fw-semibold">Menu Items</h4>
+          <small class="text-medium-emphasis">
+            Manage your restaurant menu items
+          </small>
+        </div>
+
+        <Link href="/menu/menu-items/create" v-if="canCreate">
+          <CButton color="primary">
+            <CIcon name="cil-plus" class="me-2" />
+            Create
+          </CButton>
+        </Link>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="d-flex gap-2 flex-wrap mb-4 align-items-center">
+        <CFormInput
+          v-model="filters.search"
+          placeholder="Search items..."
+          class="w-auto"
+        />
+
         <CDropdown>
           <CDropdownToggle color="secondary" variant="outline">
             {{ $capitalize(removeUnderScore(filters.stock)) || "Stock" }}
           </CDropdownToggle>
           <CDropdownMenu>
             <CDropdownItem @click="filters.stock = ''">All</CDropdownItem>
-            <CDropdownItem @click="filters.stock = 'in_stock'"
-              >In Stock</CDropdownItem
-            >
-            <CDropdownItem @click="filters.stock = 'out_of_stock'"
-              >Out of Stock</CDropdownItem
-            >
+            <CDropdownItem @click="filters.stock = 'in_stock'">In Stock</CDropdownItem>
+            <CDropdownItem @click="filters.stock = 'out_of_stock'">Out of Stock</CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
 
@@ -140,12 +155,8 @@ const changePage = (page) => {
           </CDropdownToggle>
           <CDropdownMenu>
             <CDropdownItem @click="filters.status = ''">All</CDropdownItem>
-            <CDropdownItem @click="filters.status = 'active'"
-              >Active</CDropdownItem
-            >
-            <CDropdownItem @click="filters.status = 'inactive'"
-              >Inactive</CDropdownItem
-            >
+            <CDropdownItem @click="filters.status = 'active'">Active</CDropdownItem>
+            <CDropdownItem @click="filters.status = 'inactive'">Inactive</CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
 
@@ -154,183 +165,168 @@ const changePage = (page) => {
         </CButton>
       </div>
 
-      <!-- Search -->
-      <div class="col-md-4">
-        <CInputGroup>
-          <CFormInput v-model="filters.search" placeholder="Search..." />
-        </CInputGroup>
-      </div>
+      <!-- TABLE -->
+      <CTable hover responsive align="middle" class="mb-0">
 
-      <!-- Create -->
-      <Link href="/menu/menu-items/create" v-if="canCreate">
-        <CButton color="primary">
-          <CIcon name="cil-plus" class="me-2" />
-          Create
-        </CButton>
-      </Link>
-    </div>
+        <CTableHead>
+          <CTableRow class="text-medium-emphasis">
+            <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell>Item</CTableHeaderCell>
+            <CTableHeaderCell>Category</CTableHeaderCell>
+            <CTableHeaderCell>Status</CTableHeaderCell>
+            <CTableHeaderCell>Stock</CTableHeaderCell>
+            <CTableHeaderCell class="text-end">Actions</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
 
-    <!-- TABLE -->
-    <CTable hover responsive align="middle">
-      <CTableHead>
-        <CTableRow>
-          <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Image</CTableHeaderCell>
-          <CTableHeaderCell>Name</CTableHeaderCell>
-          <CTableHeaderCell>Status</CTableHeaderCell>
-          <CTableHeaderCell>Category</CTableHeaderCell>
-          <CTableHeaderCell>Stock</CTableHeaderCell>
-          <CTableHeaderCell class="text-end">Actions</CTableHeaderCell>
-        </CTableRow>
-      </CTableHead>
+        <CTableBody>
+          <CTableRow v-for="(item, index) in menuItems" :key="item.id">
 
-      <CTableBody>
-        <CTableRow v-for="(item, index) in menuItems" :key="item.id">
-          <!-- Index -->
-          <CTableHeaderCell>
-            {{
-              (props.menu_items.current_page - 1) * props.menu_items.per_page +
-              index +
-              1
-            }}
-          </CTableHeaderCell>
+            <!-- INDEX -->
+            <CTableDataCell class="text-medium-emphasis">
+              {{ (props.menu_items.current_page - 1) * props.menu_items.per_page + index + 1 }}
+            </CTableDataCell>
 
-          <!-- Image -->
-          <CTableDataCell class="text-center">
-            <CImage
-              v-if="item.image"
-              :src="`/storage/${item.image}`"
-              width="45"
-              height="45"
-              class="rounded"
-            />
-            <span v-else class="text-muted small">—</span>
-          </CTableDataCell>
+            <!-- ITEM -->
+            <CTableDataCell>
+              <div class="d-flex align-items-center gap-3">
+                <CImage
+                  v-if="item.image"
+                  :src="`/storage/${item.image}`"
+                  width="42"
+                  height="42"
+                  class="rounded-3 border"
+                />
+                <div>
+                  <div class="fw-semibold">{{ item.item_name }}</div>
+                  <small class="text-medium-emphasis">
+                    {{ item.menu_item_category?.name || "—" }}
+                  </small>
+                </div>
+              </div>
+            </CTableDataCell>
 
-          <!-- Name -->
-          <CTableDataCell class="fw-semibold">
-            {{ item.item_name }}
-          </CTableDataCell>
+            <!-- CATEGORY -->
+            <CTableDataCell class="text-medium-emphasis">
+              {{ item.menu_item_category?.name || "—" }}
+            </CTableDataCell>
 
-          <!-- Status -->
-          <CTableDataCell>
-            <label class="switch m-0">
-              <input
-                type="checkbox"
-                :checked="item.status === 'active'"
-                :disabled="!canUpdate"
-                @change="
-                  (e) =>
+            <!-- STATUS (UNCHANGED LOGIC) -->
+            <CTableDataCell>
+              <label class="switch m-0">
+                <input
+                  type="checkbox"
+                  :checked="item.status === 'active'"
+                  :disabled="!canUpdate"
+                  @change="(e) =>
                     toggleStatus(item, e.target.checked ? 'active' : 'inactive')
-                "
-              />
-              <span class="slider"></span>
-            </label>
-          </CTableDataCell>
+                  "
+                />
+                <span class="slider"></span>
+              </label>
+            </CTableDataCell>
 
-          <!-- Category -->
-          <CTableDataCell>
-            {{ item.menu_item_category?.name || "—" }}
-          </CTableDataCell>
-
-          <!-- Stock -->
-          <CTableDataCell>
-            <CDropdown>
-              <CDropdownToggle
-                size="sm"
-                :color="item.is_in_stock ? 'success' : 'danger'"
-                class="text-white"
-              >
-                {{ item.is_in_stock ? "In Stock" : "Out of Stock" }}
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem @click="toggleStock(item, true)"
-                  >In Stock</CDropdownItem
+            <!-- STOCK (MODERN BUT SAME LOGIC) -->
+            <CTableDataCell>
+              <CDropdown>
+                <CDropdownToggle
+                  size="sm"
+                  :color="item.is_in_stock ? 'success' : 'danger'"
+                  class="rounded-pill px-3 text-white fw-semibold"
                 >
-                <CDropdownItem @click="toggleStock(item, false)"
-                  >Out of Stock</CDropdownItem
+                  {{ item.is_in_stock ? "In Stock" : "Out of Stock" }}
+                </CDropdownToggle>
+
+                <CDropdownMenu>
+                  <CDropdownItem @click="toggleStock(item, true)">
+                    In Stock
+                  </CDropdownItem>
+                  <CDropdownItem @click="toggleStock(item, false)">
+                    Out of Stock
+                  </CDropdownItem>
+                </CDropdownMenu>
+              </CDropdown>
+            </CTableDataCell>
+
+            <!-- ACTIONS -->
+            <CTableDataCell class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+
+                <Link :href="route('menu.menu-items.show', item.id)">
+                  <CButton size="sm" color="primary" variant="outline">
+                    <i class="bi bi-eye" />
+                  </CButton>
+                </Link>
+
+                <Link
+                  :href="route('menu.menu-items.edit', item.id)"
+                  v-if="canUpdate"
                 >
-              </CDropdownMenu>
-            </CDropdown>
-          </CTableDataCell>
+                  <CButton size="sm" color="secondary" variant="outline">
+                    <CIcon name="cil-pencil" />
+                  </CButton>
+                </Link>
 
-          <!-- Actions -->
-          <CTableDataCell class="text-end">
-            <div class="d-flex justify-content-end gap-2">
-              <Link
-                :href="route('menu.menu-items.edit', item.id)"
-                v-if="canUpdate"
-              >
-                <CButton size="sm" color="secondary" variant="outline">
-                  <CIcon name="cil-pencil" />
+                <CButton
+                  size="sm"
+                  color="danger"
+                  variant="outline"
+                  v-if="canUpdate"
+                  @click="deleteItem(item)"
+                >
+                  <CIcon name="cil-trash" />
                 </CButton>
-              </Link>
 
-              <CButton
-                size="sm"
-                color="danger"
-                variant="outline"
-                @click="deleteItem(item)"
-                v-if="canUpdate"
-              >
-                <CIcon name="cil-trash" />
-              </CButton>
+              </div>
+            </CTableDataCell>
 
-              <Link :href="route('menu.menu-items.show', item.id)">
-                <CButton size="sm" color="primary" variant="outline">
-                  <i class="bi bi-eye"></i>
-                </CButton>
-              </Link>
-            </div>
-          </CTableDataCell>
-        </CTableRow>
-      </CTableBody>
-    </CTable>
+          </CTableRow>
+        </CTableBody>
+      </CTable>
 
-    <!-- PAGINATION -->
-    <div
-      v-if="hasPagination"
-      class="d-flex justify-content-between align-items-center mt-4"
-    >
-      <div class="text-muted small">
-        Showing {{ props.menu_items.from }} to {{ props.menu_items.to }} of
-        {{ props.menu_items.total }}
+      <!-- PAGINATION (RESTORED EXACTLY) -->
+      <div
+        v-if="hasPagination"
+        class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3"
+      >
+        <div class="text-muted small">
+          Showing {{ props.menu_items.from }} to {{ props.menu_items.to }} of
+          {{ props.menu_items.total }}
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <CPagination>
+            <CPaginationItem
+              :disabled="props.menu_items.current_page === 1"
+              @click="changePage(props.menu_items.current_page - 1)"
+            >
+              Prev
+            </CPaginationItem>
+
+            <CPaginationItem
+              :disabled="props.menu_items.current_page === props.menu_items.last_page"
+              @click="changePage(props.menu_items.current_page + 1)"
+            >
+              Next
+            </CPaginationItem>
+          </CPagination>
+
+          <CFormSelect v-model="filters.perPage">
+            <option :value="10">10</option>
+            <option :value="25">25</option>
+            <option :value="50">50</option>
+          </CFormSelect>
+        </div>
       </div>
 
-      <div class="d-flex align-items-center gap-3">
-        <CPagination>
-          <CPaginationItem
-            :disabled="props.menu_items.current_page === 1"
-            @click="changePage(props.menu_items.current_page - 1)"
-          >
-            Prev
-          </CPaginationItem>
-
-          <CPaginationItem
-            :disabled="
-              props.menu_items.current_page === props.menu_items.last_page
-            "
-            @click="changePage(props.menu_items.current_page + 1)"
-          >
-            Next
-          </CPaginationItem>
-        </CPagination>
-
-        <CFormSelect v-model="filters.perPage">
-          <option :value="10">10</option>
-          <option :value="25">25</option>
-          <option :value="50">50</option>
-        </CFormSelect>
+      <!-- EMPTY -->
+      <div v-if="menuItems.length === 0" class="text-center py-5 text-medium-emphasis">
+        No menu items found
       </div>
-    </div>
 
-    <!-- EMPTY -->
-    <div v-if="menuItems.length === 0" class="text-center py-5 text-muted">
-      No data found.
     </div>
   </CContainer>
 </template>
-
 
 <style scoped>
 .switch {

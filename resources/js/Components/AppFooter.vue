@@ -11,7 +11,7 @@
     </div>
     <div class="">
       <span class="" target="_blank">Powered by</span>
-      <a href="https://cloudtechservice.com/">CloudTech Service</a>
+      <a href="https://cloudtechservice.com/" target="__blank">CloudTech Service</a>
     </div>
   </CFooter>
 </template>

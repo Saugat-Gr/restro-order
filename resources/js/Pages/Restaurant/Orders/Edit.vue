@@ -172,7 +172,7 @@ const saveOrder = () => {
 
             <div class="mb-4">
               <label class="form-label">Status</label>
-              <CFormSelect v-model="form.status">
+              <CFormSelect v-model="form.status" :disabled="form.status === 'completed' || form.status === 'cancelled'">
                 <option
                   v-for="status in order_statuses"
                   :key="status"

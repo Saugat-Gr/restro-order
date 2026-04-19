@@ -72,6 +72,14 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
         return back();
     });
 
+    Route::post('/notification/read-all', function () {
+        $user = auth()->user();
+
+        $user->unreadNotifications->markAsRead();
+
+        return back();
+    })->name('notifications.all');
+
     //  Activity Log: 
     Route::get('/activity-logs', ActivityLogController::class);
 

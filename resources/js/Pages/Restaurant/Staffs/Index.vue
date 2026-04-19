@@ -55,40 +55,42 @@ const destroy = (id) => {
   }
 };
 </script>
-
 <template>
-  <CContainer class="py-4">
-    <!-- HEADER -->
-    <CRow class="mb-4 align-items-center">
-      <CCol>
-        <h3 class="fw-bold mb-1">Staff Management</h3>
-        <p class="text-muted mb-0">Manage restaurant staff and permissions</p>
-      </CCol>
+  <CContainer class="mt-4">
 
-      <CCol class="text-end">
+    <div class="bg-white border-0 rounded-4 shadow-lg p-4">
+
+      <!-- HEADER -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h4 class="mb-0 fw-semibold">Staff Management</h4>
+          <small class="text-medium-emphasis">
+            Manage restaurant staff and permissions
+          </small>
+        </div>
+
         <CButton color="primary" :href="route('staffs.create')">
-          <i class="bi bi-plus"></i> Add Staff
+          <i class="bi bi-plus me-1"></i>
+          Add Staff
         </CButton>
-      </CCol>
-    </CRow>
+      </div>
 
-    <!-- SEARCH -->
-    <CCard class="mb-3 border-0 shadow-sm">
-      <CCardBody>
+      <!-- SEARCH -->
+      <div class="mb-3">
         <CFormInput
           v-model="search"
           placeholder="Search staff by name or email..."
         />
-      </CCardBody>
-    </CCard>
+      </div>
 
-    <!-- TABLE -->
-    <CCard class="border-0 shadow-lg">
-      <CCardBody class="p-0">
+      <!-- TABLE CARD -->
+      <div class="border rounded-4 overflow-hidden">
+
         <CTable hover responsive class="align-middle mb-0">
+
           <!-- HEAD -->
-          <CTableHead color="light">
-            <CTableRow>
+          <CTableHead class="bg-light">
+            <CTableRow class="text-medium-emphasis">
               <CTableHeaderCell>Staff</CTableHeaderCell>
               <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
@@ -99,19 +101,21 @@ const destroy = (id) => {
 
           <!-- BODY -->
           <CTableBody>
+
             <!-- EMPTY -->
             <CTableRow v-if="filteredStaffs.length === 0">
-              <CTableDataCell colspan="5" class="text-center py-5 text-muted">
+              <CTableDataCell colspan="5" class="text-center py-5 text-medium-emphasis">
                 No staff members found
               </CTableDataCell>
             </CTableRow>
 
             <!-- ROW -->
             <CTableRow v-for="staff in filteredStaffs" :key="staff.id">
+
               <!-- STAFF -->
               <CTableDataCell>
-                <div class="d-flex align-items-center gap-2">
-                  <!-- AVATAR -->
+                <div class="d-flex align-items-center gap-3">
+
                   <img
                     v-if="staff.avatar"
                     :src="`/storage/${staff.avatar}`"
@@ -130,22 +134,23 @@ const destroy = (id) => {
                   </div>
 
                   <div>
-                    <div class="fw-semibold">
-                      {{ staff.name }}
-                    </div>
+                    <div class="fw-semibold">{{ staff.name }}</div>
+                    <small class="text-medium-emphasis">Staff member</small>
                   </div>
+
                 </div>
               </CTableDataCell>
 
               <!-- EMAIL -->
-              <CTableDataCell class="text-muted">
+              <CTableDataCell class="text-medium-emphasis">
                 {{ staff.email }}
               </CTableDataCell>
 
-              <!-- STATUS + TOGGLE -->
+              <!-- STATUS -->
               <CTableDataCell>
                 <div class="d-flex align-items-center gap-3">
-                  <!-- SWITCH -->
+
+    
                   <label class="switch mb-0">
                     <input
                       type="checkbox"
@@ -154,17 +159,19 @@ const destroy = (id) => {
                     />
                     <span class="slider"></span>
                   </label>
+
                 </div>
               </CTableDataCell>
 
               <!-- DATE -->
-              <CTableDataCell class="text-muted">
+              <CTableDataCell class="text-medium-emphasis">
                 {{ new Date(staff.created_at).toLocaleDateString() }}
               </CTableDataCell>
 
               <!-- ACTIONS -->
               <CTableDataCell class="text-end">
                 <div class="d-flex justify-content-end gap-2">
+
                   <CButton
                     size="sm"
                     color="info"
@@ -191,16 +198,21 @@ const destroy = (id) => {
                   >
                     <i class="bi bi-trash"></i>
                   </CButton>
+
                 </div>
               </CTableDataCell>
+
             </CTableRow>
+
           </CTableBody>
+
         </CTable>
-      </CCardBody>
-    </CCard>
+
+      </div>
+
+    </div>
   </CContainer>
 </template>
-
 <style scoped>
 .switch {
   position: relative;

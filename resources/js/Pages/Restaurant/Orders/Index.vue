@@ -45,91 +45,115 @@ const update = (orderId, status) => {
 };
 </script>
 <template>
-  <CContainer class="border rounded-4 shadow-lg mt-4 p-4">
-    <CTable hover responsive align="middle" class="mb-0">
-      <CTableCaption class="text-medium-emphasis">
-        Recent 10 Orders
-      </CTableCaption>
+  <CContainer class="mt-4">
+    <div class="border-0 rounded-4 shadow-lg p-4 bg-white">
 
-      <CTableHead>
-        <CTableRow class="text-medium-emphasis">
-          <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Order</CTableHeaderCell>
-          <CTableHeaderCell>Status</CTableHeaderCell>
-          <CTableHeaderCell>Amount</CTableHeaderCell>
-          <CTableHeaderCell>Created By</CTableHeaderCell>
-          <CTableHeaderCell>Table</CTableHeaderCell>
-          <CTableHeaderCell class="text-end" width="120">
-            Actions
-          </CTableHeaderCell>
-        </CTableRow>
-      </CTableHead>
+      <!-- HEADER -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="mb-0 fw-semibold">Orders</h4>
+          <small class="text-medium-emphasis">
+            Recent 10 orders overview
+          </small>
+        </div>
+      </div>
 
-      <CTableBody>
-        <CTableRow v-for="(order, index) in orders" :key="order.id">
-          <!-- Index -->
-          <CTableHeaderCell>
-            {{ index + 1 }}
-          </CTableHeaderCell>
+      <!-- TABLE -->
+      <CTable hover responsive align="middle" class="mb-0">
 
-          <!-- Order Number -->
-          <CTableDataCell class="fw-semibold">
-            {{ order.order_number }}
-          </CTableDataCell>
+        <CTableHead>
+          <CTableRow class="text-medium-emphasis">
+            <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell>Order</CTableHeaderCell>
+            <CTableHeaderCell>Status</CTableHeaderCell>
+            <CTableHeaderCell>Amount</CTableHeaderCell>
+            <CTableHeaderCell>Created By</CTableHeaderCell>
+            <CTableHeaderCell>Table</CTableHeaderCell>
+            <CTableHeaderCell class="text-end">Actions</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
 
-          <!-- Status -->
-          <CTableDataCell>
-            <CDropdown>
-              <CDropdownToggle
-                size="sm"
-                color="primary"
-                variant="outline"
-                :disabled="updateStatus.processing"
-              >
-                {{ $capitalize(removeUnderScore(order.status)) }}
-              </CDropdownToggle>
+        <CTableBody>
+          <CTableRow v-for="(order, index) in orders" :key="order.id">
 
-              <CDropdownMenu>
-                <CDropdownItem
-                  v-for="status in order_statuses"
-                  :key="status"
-                  :active="order.status === status"
-                  @click="update(order.id, status)"
-                  :disabled="order.status === 'completed' || order.status === 'cancelled'"
+            <!-- INDEX -->
+            <CTableHeaderCell class="text-medium-emphasis">
+              {{ index + 1 }}
+            </CTableHeaderCell>
+
+            <!-- ORDER NUMBER -->
+            <CTableDataCell>
+              <div class="fw-semibold">
+                {{ order.order_number }}
+              </div>
+            </CTableDataCell>
+
+            <!-- STATUS (same logic, cleaner UI) -->
+            <CTableDataCell>
+              <CDropdown>
+                <CDropdownToggle
+                  size="sm"
+                  :color="order.status === 'completed'
+                    ? 'success'
+                    : order.status === 'cancelled'
+                      ? 'danger'
+                      : 'primary'"
+                  variant="outline"
+                  class="rounded-pill px-3"
+                  :disabled="updateStatus.processing"
                 >
-                  {{ $capitalize(removeUnderScore(status)) }}
-                </CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          </CTableDataCell>
+                  {{ $capitalize(removeUnderScore(order.status)) }}
+                </CDropdownToggle>
 
-          <!-- Amount -->
-          <CTableDataCell class="fw-medium">
-            {{ formatCurrency(order.total_amount) }}
-          </CTableDataCell>
+                <CDropdownMenu>
+                  <CDropdownItem
+                    v-for="status in order_statuses"
+                    :key="status"
+                    :active="order.status === status"
+                    @click="update(order.id, status)"
+                    :disabled="order.status === 'completed' || order.status === 'cancelled'"
+                  >
+                    {{ $capitalize(removeUnderScore(status)) }}
+                  </CDropdownItem>
+                </CDropdownMenu>
+              </CDropdown>
+            </CTableDataCell>
 
-          <!-- User -->
-          <CTableDataCell>
-            {{ order.user.name }}
-          </CTableDataCell>
+            <!-- AMOUNT -->
+            <CTableDataCell class="fw-semibold">
+              {{ formatCurrency(order.total_amount) }}
+            </CTableDataCell>
 
-          <!-- Table -->
-          <CTableDataCell>
-            <span class="text-medium-emphasis">
-              {{ order.table?.table_number || "TAKE-AWAY" }}
-            </span>
-          </CTableDataCell>
+            <!-- USER -->
+            <CTableDataCell class="text-medium-emphasis">
+              {{ order.user.name }}
+            </CTableDataCell>
 
-          <!-- Actions -->
-          <CTableDataCell class="text-end">
-            <Link :href="route('orders.edit', order.id)">
-              <CButton size="sm" color="secondary" variant="outline">
-                <CIcon name="cil-pencil" />
-              </CButton>
-            </Link>
-          </CTableDataCell>
-        </CTableRow>
-      </CTableBody>
-    </CTable>
+            <!-- TABLE -->
+            <CTableDataCell>
+              <span class="text-medium-emphasis">
+                {{ order.table?.table_number || "TAKE-AWAY" }}
+              </span>
+            </CTableDataCell>
+
+            <!-- ACTIONS -->
+            <CTableDataCell class="text-end">
+              <Link :href="route('orders.edit', order.id)">
+                <CButton size="sm" color="secondary" variant="outline">
+                  <CIcon name="cil-pencil" />
+                </CButton>
+              </Link>
+            </CTableDataCell>
+
+          </CTableRow>
+        </CTableBody>
+      </CTable>
+
+      <!-- EMPTY STATE -->
+      <div v-if="orders.length === 0" class="text-center py-5 text-medium-emphasis">
+        No orders found
+      </div>
+
+    </div>
   </CContainer>
 </template>
