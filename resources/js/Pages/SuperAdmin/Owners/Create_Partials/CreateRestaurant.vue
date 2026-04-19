@@ -24,6 +24,9 @@ const submit = () => {
     preserveScroll: true,
     onSuccess: () => {
          form.reset();
+    },
+    onError: (e) => {
+       console.log(e)
     }
   });
 };
@@ -49,6 +52,7 @@ const submit = () => {
           </option>
         </select>
         <label>Owner</label>
+           <div class="text-danger small">{{ form.errors.owner_id }}</div>
       </div>
 
       <div class="form-floating">
@@ -58,6 +62,7 @@ const submit = () => {
           placeholder="Restaurant name"
         />
         <label>Restaurant name</label>
+           <div class="text-danger small">{{ form.errors.name }}</div>
       </div>
 
       <div class="form-floating">
@@ -67,6 +72,7 @@ const submit = () => {
           placeholder="Restaurant name"
         />
         <label>Restaurant Email</label>
+           <div class="text-danger small">{{ form.errors.email }}</div>
       </div>
 
       <div class="row g-3">
@@ -78,6 +84,7 @@ const submit = () => {
               placeholder="Phone"
             />
             <label>Phone</label>
+               <div class="text-danger small">{{ form.errors.phone }}</div>
           </div>
         </div>
 
@@ -89,6 +96,7 @@ const submit = () => {
               placeholder="Address"
             />
             <label>Address</label>
+               <div class="text-danger small">{{ form.errors.address }}</div>
           </div>
         </div>
       </div>
@@ -100,6 +108,7 @@ const submit = () => {
           class="form-control"
           @change="(e) => (form.logo = e.target.files[0])"
         />
+           <div class="text-danger small">{{ form.errors.logo }}</div>
       </div>
 
       <button
@@ -107,7 +116,7 @@ const submit = () => {
         :disabled="form.processing"
         @click.prevent="submit"
       >
-        Create Restaurant →
+        Create Restaurant 
       </button>
     </div>
   </div>

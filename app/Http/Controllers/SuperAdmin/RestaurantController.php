@@ -96,6 +96,8 @@ class RestaurantController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->restaurantService->removeRestaurant($id);
+
+        return back()->with('success', 'Restaurant Removed');
     }
 }

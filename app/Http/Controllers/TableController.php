@@ -80,8 +80,11 @@ class TableController extends Controller
             event(new TableAdded($table));
             return redirect()->route('tables.index')->with('success', 'Table Created.');
         } catch (QueryException $e) {
+            Log::info($e->getMessage());
             return redirect()->back()->with('error', 'Table Name Already Exists.');
         } catch (Exception $e) {
+            Log::info($e->getMessage());
+
             return redirect()->back()->with('error', 'Cannot Create Table');
         }
     }

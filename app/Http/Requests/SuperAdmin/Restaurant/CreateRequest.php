@@ -23,11 +23,21 @@ class CreateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|size:10',
-            'address' => 'nullable|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|size:10',
+            'address' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:png,jpg,gif,svg|max:2048',
             'owner_id' => 'required|exists:users,id'
         ];
+    }
+
+    public function messages(){
+          return[
+             'owner_id' => "Please select an owner.",
+             "name" => "Name for the restaurant is requried.",
+             "email" => "Email For the Restaurant is required",
+             "phone" => "Phone for the Restaurant is required",
+             "address" => "Address for the Restaurant is required"
+          ];
     }
 }

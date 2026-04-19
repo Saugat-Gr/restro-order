@@ -60,6 +60,9 @@ class RolePermissionSeeder extends Seeder
             "edit-staffs",
             "delete-staffs",
 
+            // Analytics:
+            "view-owner-analytics",
+
             // App Settings
             "update-app-settings",
         ];

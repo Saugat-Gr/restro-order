@@ -19,7 +19,7 @@ import {
 import { Link, useForm } from "@inertiajs/vue3";
 import { computed, watch } from "vue";
 import debounce from "lodash/debounce";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency, removeUnderScore } from "@/utils/format";
 
 defineOptions({
   layout: AuthenticatedLayout,
@@ -59,10 +59,10 @@ watch(
 );
 </script>
 <template>
-  <CContainer class=" border rounded-4 shadow-lg mt-4 p-4">
-
-    <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
-
+  <CContainer class="border rounded-4 shadow-lg mt-4 p-4">
+    <div
+      class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap"
+    >
       <div class="flex-grow-1 text-center">
         <CFormInput
           class="w-50 mx-auto"
@@ -73,7 +73,7 @@ watch(
 
       <div>
         <CFormLabel class="text-medium-emphasis">Transaction Method</CFormLabel>
-        <CFormSelect v-model="filters.transaction_method" >
+        <CFormSelect v-model="filters.transaction_method">
           <option
             v-for="transaction in props.transaction_methods"
             :key="transaction"
@@ -83,14 +83,10 @@ watch(
           </option>
         </CFormSelect>
       </div>
-
     </div>
 
     <CTable hover responsive align="middle" class="mb-0">
-
-      <CTableCaption class="text-medium-emphasis">
-        Transactions
-      </CTableCaption>
+      <CTableCaption class="text-medium-emphasis"> Transactions </CTableCaption>
 
       <CTableHead>
         <CTableRow class="text-medium-emphasis">
@@ -108,7 +104,6 @@ watch(
           v-for="(transaction, index) in transactions"
           :key="transaction.id"
         >
-
           <!-- Index -->
           <CTableDataCell>
             {{
@@ -126,13 +121,13 @@ watch(
 
           <!-- User -->
           <CTableDataCell>
-            {{ transaction.user.name }}
+            {{ transaction?.user?.name || "USER" }}
           </CTableDataCell>
 
           <!-- Method -->
           <CTableDataCell>
             <span class="text-medium-emphasis">
-              {{ $capitalize(transaction.payment_method) }}
+              {{ removeUnderScore($capitalize(transaction.payment_method)) }}
             </span>
           </CTableDataCell>
 
@@ -145,7 +140,6 @@ watch(
           <CTableDataCell>
             {{ $capitalize(transaction.status) }}
           </CTableDataCell>
-
         </CTableRow>
       </CTableBody>
     </CTable>
@@ -154,9 +148,7 @@ watch(
       v-if="props.transactions.last_page >= 1"
       class="mt-4 d-flex justify-content-end align-items-center flex-wrap gap-3"
     >
-
       <CPagination class="mb-0">
-
         <CPaginationItem
           color="light"
           :disabled="!props.transactions.prev_page_url"
@@ -184,13 +176,10 @@ watch(
           </Link>
           <span v-else>Next</span>
         </CPaginationItem>
-
       </CPagination>
 
       <div class="d-flex align-items-center gap-2">
-        <CFormLabel class="mb-0 text-medium-emphasis">
-          Items:
-        </CFormLabel>
+        <CFormLabel class="mb-0 text-medium-emphasis"> Items: </CFormLabel>
 
         <CFormSelect v-model="filters.perPage" style="width: 100px">
           <option
@@ -202,8 +191,6 @@ watch(
           </option>
         </CFormSelect>
       </div>
-
     </div>
-
   </CContainer>
 </template>

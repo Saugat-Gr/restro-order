@@ -58,7 +58,7 @@ const destroy = (id) => {
 <template>
   <CContainer class="mt-4">
 
-    <div class="bg-white border-0 rounded-4 shadow-lg p-4">
+    <div class=" border-0 rounded-4 shadow-lg p-4">
 
       <!-- HEADER -->
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">

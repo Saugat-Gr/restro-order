@@ -4,6 +4,8 @@
 namespace App\Services\SuperAdmin;
 
 use App\Enums\Status;
+use App\Events\SuperAdmin\Restaurant\RestaurantCreated;
+use App\Events\SuperAdmin\Restaurant\RestaurantRemoved;
 use App\Http\Requests\SuperAdmin\Restaurant\CreateRequest;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -38,10 +40,10 @@ class RestaurantService
             }, 'owner_name')
             ->groupBy('restaurants.id');
 
-            if($status !== 'all'){
-                 $query->where('restaurants.status', $status);
-            }
-           return $query->get();
+        if ($status !== 'all') {
+            $query->where('restaurants.status', $status);
+        }
+        return $query->get();
     }
 
     public function createRestaurant(CreateRequest $request)
@@ -60,6 +62,8 @@ class RestaurantService
         $user->restaurant_id = $restaurant->id;
         $user->save();
 
+        event(new RestaurantCreated($restaurant));
+
     }
 
     public function updateRequest(Request $request, Restaurant $restaurant)
@@ -69,6 +73,19 @@ class RestaurantService
         ]);
 
         $restaurant->update($validated_data);
+    }
+
+    public function removeRestaurant(string $id)
+    {
+        $restaurant = Restaurant::findOrFail($id);
+
+        $owner = User::where('restaurant_id', $restaurant->id);
+
+        event(new RestaurantRemoved($restaurant));
+        $restaurant->delete();
+
+        $owner->restaurant_id = null;
+
     }
 
 }

@@ -49,6 +49,17 @@ const toggleOwnerStatus = (owner) => {
   });
 };
 
+const deleteOwner = (owner) => {
+  if (confirm(`Are you sure you want to delete ${owner.name}?`)) {
+    router.delete(route("owners.destroy", owner.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        router.reload({ only: ["owners"] });
+      },
+    });
+  }
+};
+
 const filterUsers = debounce(() => {
   filterUser.get(route("owners.index"), {
     preserveState: true,
@@ -73,7 +84,6 @@ watch(
   <CContainer class="mt-4">
     <CCard class="shadow-lg border-0 rounded-4 p-4">
       <CCardBody>
-
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
@@ -115,14 +125,12 @@ watch(
               <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Restaurant</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
+              <CTableHeaderCell>Actions</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
 
           <CTableBody>
-            <CTableRow
-              v-for="(owner, index) in ownersList"
-              :key="owner.id"
-            >
+            <CTableRow v-for="(owner, index) in ownersList" :key="owner.id">
               <!-- Index -->
               <CTableDataCell>
                 {{ index + 1 }}
@@ -166,8 +174,6 @@ watch(
               <!-- Status + Toggle -->
               <CTableDataCell>
                 <div class="d-flex align-items-center gap-3">
-          
-
                   <!-- YOUR ORIGINAL SWITCH (UNCHANGED) -->
                   <label class="switch mb-0">
                     <input
@@ -179,6 +185,16 @@ watch(
                   </label>
                 </div>
               </CTableDataCell>
+
+              <CTableDataCell>
+                <CButton
+                  color="danger"
+                  variant="outline"
+                  @click="deleteOwner(owner)"
+                >
+                  <i class="bi bi-trash"></i>
+                </CButton>
+              </CTableDataCell>
             </CTableRow>
           </CTableBody>
         </CTable>
@@ -188,14 +204,9 @@ watch(
           v-if="ownersList.length === 0"
           class="text-center py-5 d-flex justify-center align-items-center gap-2"
         >
-          <CIcon
-            name="cil-user"
-            size="xl"
-            class="mb-3 text-medium-emphasis"
-          />
+          <CIcon name="cil-user" size="xl" class="mb-3 text-medium-emphasis" />
           <h6 class="text-medium-emphasis">No owners found</h6>
         </div>
-
       </CCardBody>
     </CCard>
   </CContainer>

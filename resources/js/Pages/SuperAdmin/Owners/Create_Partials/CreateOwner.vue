@@ -14,6 +14,7 @@ const form = useForm({
 
 const submit = () => {
   form.post("/register", {
+    forceFormData: true,
     preserveScroll: true,
     onSuccess: () => {
       form.reset();
@@ -27,7 +28,7 @@ const handleFileChange = (e) => {
 </script>
 
 <template>
-  <CForm @submit.prevent="submit">
+  <CForm @submit.prevent="submit" enctype="multipart/form-data">
     <div class="mb-4">
       <h4 class="mb-1">Create Owner</h4>
       <p class="text-medium-emphasis mb-0">
@@ -116,7 +117,7 @@ const handleFileChange = (e) => {
             :disabled="form.processing"
             type="submit"
           >
-            Create Owner →
+            Create Owner 
           </CButton>
         </div>
       </CCol>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\UserRole;
+use App\Events\SuperAdmin\Owner\OwnerCreated;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\SuperAdmin\OwnerController;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Exception;
@@ -57,6 +59,8 @@ class RegisteredUserController extends Controller
             $user->assignRole(UserRole::OWNER->value);
 
             event(new Registered($user));
+
+            event(new OwnerCreated($user));
 
             // Auth::login($user);
 

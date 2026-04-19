@@ -111,7 +111,7 @@ const changePage = (page) => {
   </Head>
 
   <CContainer class="mt-4">
-    <div class="border-0 rounded-4 shadow-lg p-4 bg-white">
+    <div class="border-0 rounded-4 shadow-lg p-4 ">
 
       <!-- HEADER -->
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -173,8 +173,8 @@ const changePage = (page) => {
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Item</CTableHeaderCell>
             <CTableHeaderCell>Category</CTableHeaderCell>
-            <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Stock</CTableHeaderCell>
+            <CTableHeaderCell v-if="canUpdate">Status</CTableHeaderCell>
+            <CTableHeaderCell >Stock</CTableHeaderCell>
             <CTableHeaderCell class="text-end">Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -212,7 +212,7 @@ const changePage = (page) => {
             </CTableDataCell>
 
             <!-- STATUS (UNCHANGED LOGIC) -->
-            <CTableDataCell>
+            <CTableDataCell v-if="canUpdate">
               <label class="switch m-0">
                 <input
                   type="checkbox"
@@ -228,7 +228,7 @@ const changePage = (page) => {
 
             <!-- STOCK (MODERN BUT SAME LOGIC) -->
             <CTableDataCell>
-              <CDropdown>
+              <CDropdown :disabled="!canUpdate">
                 <CDropdownToggle
                   size="sm"
                   :color="item.is_in_stock ? 'success' : 'danger'"

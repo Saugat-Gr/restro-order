@@ -163,7 +163,7 @@ const placeOrder = () => {
             </div>
 
             <CInputGroup style="max-width: 320px">
-              <span class="input-group-text bg-white">
+              <span class="input-group-text ">
                 <CIcon :icon="cilSearch" />
               </span>
               <CFormInput
@@ -337,7 +337,7 @@ const placeOrder = () => {
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="btn-group btn-group-sm">
                     <CButton @click="decreaseQty(index)">−</CButton>
-                    <CButton disabled class="px-3 bg-white text-dark border">
+                    <CButton disabled class="px-3  text-dark border">
                       {{ item.quantity }}
                     </CButton>
                     <CButton @click="increaseQty(index)">+</CButton>
@@ -351,7 +351,7 @@ const placeOrder = () => {
             </div>
           </CCardBody>
 
-          <CCardFooter class="bg-white border-top p-3">
+          <CCardFooter class=" border-top p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <span class="fw-semibold">Total</span>
               <span class="fw-bold text-primary fs-6">

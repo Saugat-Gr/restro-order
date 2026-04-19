@@ -173,9 +173,16 @@ export default function getNav(page) {
 
         {
             name: "Logs",
-            icon: "cil-chart-line",
+            icon: "cil-clipboard",
             to: "/activity-logs",
             roles: ["owner"],
+        },
+
+        {
+             name: "Analytics",
+             to: "/analytics",
+             icon: "cil-chart-line",
+             roles: ["owner"] 
         },
 
         //  App Configurations:

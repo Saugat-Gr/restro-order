@@ -12,6 +12,10 @@ use App\Events\Order\OrderCancelled;
 use App\Events\Order\OrderCompleted;
 use App\Events\Order\OrderCreated;
 use App\Events\Order\OrderReady;
+use App\Events\SuperAdmin\Owner\OwnerCreated;
+use App\Events\SuperAdmin\Owner\OwnerRemoved;
+use App\Events\SuperAdmin\Restaurant\RestaurantCreated;
+use App\Events\SuperAdmin\Restaurant\RestaurantRemoved;
 use App\Events\Table\TableAdded;
 use App\Listeners\Menu\Category\LogCategoryAdded;
 use App\Listeners\Menu\Category\LogCategoryRemoved;
@@ -33,6 +37,14 @@ use App\Listeners\Order\SendOrderCancelledNotification;
 use App\Listeners\Order\SendOrderCompletedNotification;
 use App\Listeners\Order\SendOrderCreatedNotification;
 use App\Listeners\Order\SendOrderReadyNotification;
+use App\Listeners\SuperAdmin\Owner\LogOwnerCreated;
+use App\Listeners\SuperAdmin\Owner\LogOwnerRemoved;
+use App\Listeners\SuperAdmin\Owner\SendOwnerCreatedNotification;
+use App\Listeners\SuperAdmin\Owner\SendOwnerRemovedNotification;
+use App\Listeners\SuperAdmin\Restaurant\LogRestaurantCreated;
+use App\Listeners\SuperAdmin\Restaurant\LogRestaurantRemoved;
+use App\Listeners\SuperAdmin\Restaurant\SendRestaurantCreatedNotification;
+use App\Listeners\SuperAdmin\Restaurant\SendRestaurantRemovedNotification;
 use App\Listeners\Table\LogTableAdded;
 use App\Listeners\Table\SendTableAddedNotification;
 use Illuminate\Auth\Events\Registered;
@@ -108,9 +120,30 @@ class EventServiceProvider extends ServiceProvider
             LogCategoryAdded::class,
             SendCategoryAddedNotification::class,
         ],
-         CategoryRemoved::class => [
+        CategoryRemoved::class => [
             LogCategoryRemoved::class,
             SendCategoryRemovedNotification::class,
+        ]
+        ,
+            //  SuperAdmin Owner:
+        OwnerCreated::class => [
+            LogOwnerCreated::class,
+            SendOwnerCreatedNotification::class
+        ],
+
+        OwnerRemoved::class => [
+            LogOwnerRemoved::class,
+            SendOwnerRemovedNotification::class,
+        ],
+
+        RestaurantCreated::class => [
+            LogRestaurantCreated::class,
+            SendRestaurantCreatedNotification::class,
+        ],
+
+        RestaurantRemoved::class => [
+            LogRestaurantRemoved::class,
+            SendRestaurantRemovedNotification::class,
         ]
     ];
 

@@ -28,9 +28,22 @@ class Order extends Model
     {
         static::addGlobalScope(TenantScope::class);
         static::creating(function ($order) {
-            if (empty($order->order_number)) {
-                $order->order_number = self::generateOrderNumber();
+            if (!empty($order->order_number)) {
+                return;
             }
+
+            $attempts = 0;
+
+            do {
+                try {
+                    $order->order_number = self::generateOrderNumber();
+                    return;
+                } catch (\Exception $e) {
+                    $attempts++;
+                }
+            } while ($attempts < 5);
+
+            throw new \Exception('Failed to generate unique order number');
         });
     }
 
@@ -49,8 +62,9 @@ class Order extends Model
         return $this->belongsTo(Table::class, 'table_id');
     }
 
-    public function restaurant(){
-         return $this->belongsTo(Restaurant::class);
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
     }
 
     public function getStatusColorAttribute()
@@ -67,10 +81,11 @@ class Order extends Model
 
     public static function generateOrderNumber(): string
     {
-        $prefix = 'ORD';                   
-        $date = now()->format('Ymd');       
+        $prefix = 'ORD';
+        $date = now()->format('Ymd');
 
-        $lastOrder = self::where('order_number', 'like', "{$prefix}-{$date}-%")
+        $lastOrder = self::withoutGlobalScope(TenantScope::class) // <-- bypass tenant filter
+            ->where('order_number', 'like', "{$prefix}-{$date}-%")
             ->orderBy('order_number', 'desc')
             ->first();
 

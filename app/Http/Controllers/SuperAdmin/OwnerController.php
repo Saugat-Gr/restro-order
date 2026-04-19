@@ -90,6 +90,13 @@ class OwnerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
+
+        if ($this->ownerService->removeOwner($id)) {
+
+            return redirect()->back()->with('success', 'Owner Removed');
+        }
+        return back()->with('error', 'Restaurant Exists for the User');
+
     }
 }

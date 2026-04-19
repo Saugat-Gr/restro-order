@@ -25,7 +25,7 @@ class CreateRequest extends FormRequest
         return [
             'item_name' => 'required',
             'description' => 'required',
-            'image' => 'required|mimes:png,jpeg,jpg,svg|max:2048',
+            'image' => 'required|mimes:png,jpeg,jpg,svg,avif|max:2048',
             'price' => 'required|numeric',
             'status' => 'required|in:' . implode(',', array_column(Status::cases(), 'value')),
             'menu_item_category_id' => 'required|exists:menu_item_categories,id',

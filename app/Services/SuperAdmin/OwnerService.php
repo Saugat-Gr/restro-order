@@ -3,6 +3,7 @@
 namespace App\Services\SuperAdmin;
 
 use App\Enums\UserRole;
+use App\Events\SuperAdmin\Owner\OwnerRemoved;
 use App\Http\Requests\SuperAdmin\Owner\UpdateRequest;
 use App\Models\User;
 
@@ -46,6 +47,18 @@ class OwnerService
         $user = User::findOrFail($id);
 
         $user->update($validated_data);
+    }
+
+    public function removeOwner(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        if (!empty($user->restaurant_id)) {
+            return false;
+        }
+
+        event(new OwnerRemoved($user));
+        $user->delete();
     }
 
 }

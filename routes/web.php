@@ -56,10 +56,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-//  Owner and Staffs
-Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->group(function () {
-
-
+Route::middleware('auth')->group(function () {
     //   Notification Seen: 
     Route::post('/notifications/{id}/read', function ($id, Request $request) {
         $notification = auth()->user()
@@ -79,10 +76,19 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 
         return back();
     })->name('notifications.all');
+});
+
+
+//  Owner and Staffs
+Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->group(function () {
+
 
     //  Activity Log: 
     Route::get('/activity-logs', ActivityLogController::class);
 
+    // Analytics Log:
+
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class,'index'])->name('analytics');
 
     //  Dashboard Routes:
     Route::get(
