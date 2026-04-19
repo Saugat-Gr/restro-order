@@ -271,6 +271,7 @@ const changePage = (page) => {
                 color="danger"
                 variant="outline"
                 @click="deleteItem(item)"
+                v-if="canUpdate"
               >
                 <CIcon name="cil-trash" />
               </CButton>

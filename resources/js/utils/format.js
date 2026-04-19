@@ -20,3 +20,8 @@ export const removeUnderScore = (word) => {
     if (!word || typeof word !== "string") return "";
     return word.replaceAll("_", " ");
 };
+
+export const removeHyphesn = (word) => {
+    if (!word || typeof word !== "string") return "";
+    return word.replaceAll("_", " ");
+};

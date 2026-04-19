@@ -45,7 +45,7 @@ const menu_item = page.props.menu_item;
                 <CBadge
                   :color="menu_item.status === 'active' ? 'success' : 'danger'"
                 >
-                  {{ menu_item.is_in_stock ? "Available" : "Un-Available" }}
+                  {{ menu_item.is_in_stock ? "Available" : "Un Available" }}
                 </CBadge>
               </div>
             </div>

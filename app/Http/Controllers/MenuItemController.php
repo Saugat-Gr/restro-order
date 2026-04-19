@@ -21,7 +21,7 @@ class MenuItemController extends Controller
     {
         $this->menuItemService = $menuItemService;
         $this->middleware('permission:view-menu-items', ['only' => ['index']]);
-        $this->middleware('permission:create-menu-item', ['only' => ['store']]);
+        $this->middleware('permission:create-menu-item', ['only' => ['create','store']]);
         $this->middleware('permission:update-menu-item', ['only' => ['edit', 'update']]);
 
     }
