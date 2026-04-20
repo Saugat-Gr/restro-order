@@ -54,8 +54,8 @@ class RestaurantRemovedNotification extends Notification
             'data' => [
                 "restaurant_name" => $this->restaurant->name,
                 "restaurant_email" => $this->restaurant->email,
-                "owner_name" => $this->restaurant->user->name,
-                "owner_email" => $this->restaurant->user->email,
+                "owner_name" => !empty($this->restaurant->user->name) ? $this->restaurant->user->name : 'NOT ASSIGNED',
+                "owner_email" => !empty($this->restaurant->user->email) ? $this->restaurant->user->name : 'NOT ASSIGNED',
 
             ]
         ];

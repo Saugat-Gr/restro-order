@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,6 +23,11 @@ class ActivityLog extends Model
     protected $casts = [
         'metadata' => 'array',
     ];
+
+
+     public static function booted(){
+           static::addGlobalScope(TenantScope::class);
+     }
 
     public function subject()
     {

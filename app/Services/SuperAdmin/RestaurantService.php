@@ -82,6 +82,7 @@ class RestaurantService
         $owner = User::where('restaurant_id', $restaurant->id);
 
         event(new RestaurantRemoved($restaurant));
+        
         $restaurant->delete();
 
         $owner->restaurant_id = null;

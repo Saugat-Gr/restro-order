@@ -23,15 +23,14 @@ class LogRestaurantRemoved
     {
         $restaurant = $event->restaurant->load('user');
 
-
         app(ActivityService::class)->log(
             "restaurant.removed",
             $restaurant,
             "New restaurant: {$restaurant->name} removed",
             [
                 "restaurant_name" => $restaurant->name,
-                "owner_name" => $restaurant->user->name,
-                "owner_email" => $restaurant->user->email,
+                "owner_name" => !empty($restaurant->user->name) ? $restaurant->user->name : 'NOT ASSIGNED',
+                "owner_email" => !empty($restaurant->user->email) ? $restaurant->user->name : 'NOT ASSIGNED',
 
             ]
         );

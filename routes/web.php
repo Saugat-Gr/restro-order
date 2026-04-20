@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\SuperAdmin\ActivityLogsController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
 use App\Http\Controllers\SuperAdmin\RestaurantController as SuperAdminRestaurantController;
@@ -44,6 +45,8 @@ Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(fu
     Route::resource('/owners', OwnerController::class);
     Route::resource('/restaurants', SuperAdminRestaurantController::class);
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('superadmin.analytics');
+
+    Route::get('/activity-logs', ActivityLogsController::class);
 
 });
 

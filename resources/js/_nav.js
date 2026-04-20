@@ -22,8 +22,6 @@ export default function getNav(page) {
             roles: ["super-admin"],
         },
 
-        //  Owners
-
         {
             component: "CNavGroup",
             name: "Owners",
@@ -56,6 +54,13 @@ export default function getNav(page) {
         },
 
         //  Analytics: Super-admin
+
+        {
+            name: "Logs",
+            to: "/super-admin/activity-logs",
+            icon: "cil-clipboard",
+            roles: ["super-admin"],
+        },
 
         {
             name: "Analytics",
@@ -179,10 +184,10 @@ export default function getNav(page) {
         },
 
         {
-             name: "Analytics",
-             to: "/analytics",
-             icon: "cil-chart-line",
-             roles: ["owner"] 
+            name: "Analytics",
+            to: "/analytics",
+            icon: "cil-chart-line",
+            roles: ["owner"],
         },
 
         //  App Configurations:
