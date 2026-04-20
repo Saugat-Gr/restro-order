@@ -60,7 +60,7 @@ class OrderRepository implements OrderInterface
           return User::role('staff')->where('restaurant_id', auth()->user()->restaurant_id)->get();
     }
 
-    public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null): Collection
+    public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null)
     {
         return Order::with('table')
             ->when($tableNumber, function ($q) use ($tableNumber) {
@@ -73,6 +73,6 @@ class OrderRepository implements OrderInterface
                 $q->where('status', $status);
             })
             ->latest()
-            ->get();
+            ->paginate(15);
     }
 }

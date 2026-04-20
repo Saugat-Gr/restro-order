@@ -9,7 +9,7 @@
         >&copy; {{ new Date().getFullYear() }} Dev.</span
       >
     </div>
-    <div class="">
+    <div class="d-flex gap-2">
       <span class="" target="_blank">Powered by</span>
       <a href="https://cloudtechservice.com/" target="__blank">CloudTech Service</a>
     </div>

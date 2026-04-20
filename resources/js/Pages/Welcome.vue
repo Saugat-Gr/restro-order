@@ -3,6 +3,7 @@ import { Head, Link, usePage } from "@inertiajs/vue3";
 import { watch } from "vue";
 
 import { CContainer, CRow, CCol, CCard, CCardBody, CButton } from "@coreui/vue";
+import AppFooter from "@/Components/AppFooter.vue";
 
 const page = usePage();
 const user = page.props.auth.user;
@@ -24,10 +25,10 @@ watch(
 );
 
 const features = [
-  { icon: "🍽️", title: "Tables", desc: "Live table tracking" },
-  { icon: "🧾", title: "Orders", desc: "Fast order processing" },
-  { icon: "📊", title: "Reports", desc: "Sales insights" },
-  { icon: "👨‍🍳", title: "Staff", desc: "Role management" },
+  { icon: "🍽️", title: "Tables", desc: "Track availability and manage seating in real time." },
+  { icon: "🧾", title: "Orders", desc: "Create and process orders quickly with minimal errors." },
+  { icon: "📊", title: "Reports", desc: "Understand sales trends and daily performance." },
+  { icon: "👨‍🍳", title: "Staff", desc: "Assign roles and manage your team efficiently." },
 ];
 </script>
 
@@ -37,10 +38,12 @@ const features = [
   <div class="min-vh-100 d-flex flex-column bg-body">
     <!-- HEADER -->
     <header class="border-bottom bg-body">
-      <CContainer
-        class="d-flex justify-content-between align-items-center py-3"
-      >
-        <div class="fw-bold fs-5 text-primary">RestoSystem</div>
+      <CContainer class="d-flex justify-content-between align-items-center py-3">
+        <div class="fw-bold fs-5 text-primary">
+          <Link :href="route('welcome')" class="text-decoration-none">
+            RestoSystem
+          </Link>
+        </div>
 
         <div>
           <Link v-if="user" :href="link">
@@ -61,31 +64,31 @@ const features = [
           <!-- TEXT -->
           <CCol lg="6">
             <h1 class="fw-bold display-5">
-              Restaurant Management<br />
-              <span class="text-primary">System</span>
+              Manage Your Restaurant<br />
+              <span class="text-primary">With Confidence</span>
             </h1>
 
             <p class="text-body-secondary mt-3 fs-6">
-              A centralized platform to manage tables, orders, staff, and
-              business performance in real time.
+              RestoSystem brings your tables, orders, staff, and reports into one
+              simple dashboard—helping you stay organized and make better decisions every day.
             </p>
 
             <div class="mt-4">
               <Link v-if="user" :href="link">
-                <CButton color="primary"> Go to Dashboard </CButton>
+                <CButton color="primary">Go to Dashboard</CButton>
               </Link>
             </div>
           </CCol>
 
-          <!-- VISUAL CARD (IMPORTANT FIX) -->
+          <!-- VISUAL -->
           <CCol lg="6">
             <div class="hero-visual">
               <CCard class="border-0 shadow-sm bg-body-tertiary">
                 <CCardBody class="p-5 text-center">
                   <div class="display-6 mb-2">🍽️</div>
-                  <h5 class="fw-semibold">Live Dashboard Preview</h5>
+                  <h5 class="fw-semibold">Everything in One Place</h5>
                   <p class="text-body-secondary mb-0">
-                    Orders • Tables • Analytics • Staff
+                    Tables • Orders • Reports • Staff Management
                   </p>
                 </CCardBody>
               </CCard>
@@ -98,7 +101,10 @@ const features = [
     <!-- FEATURES -->
     <section class="py-5 bg-body-tertiary">
       <CContainer>
-        <h4 class="text-center fw-bold mb-4">Core Features</h4>
+        <h4 class="text-center fw-bold mb-2">Core Features</h4>
+        <p class="text-center text-body-secondary mb-4 small">
+          Designed to simplify daily operations and improve efficiency.
+        </p>
 
         <CRow class="g-3">
           <CCol v-for="(f, i) in features" :key="i" md="3">
@@ -106,7 +112,9 @@ const features = [
               <CCardBody class="text-center">
                 <div class="fs-3 mb-2">{{ f.icon }}</div>
                 <h6 class="fw-semibold">{{ f.title }}</h6>
-                <p class="text-body-secondary small mb-0">{{ f.desc }}</p>
+                <p class="text-body-secondary small mb-0">
+                  {{ f.desc }}
+                </p>
               </CCardBody>
             </CCard>
           </CCol>
@@ -115,11 +123,7 @@ const features = [
     </section>
 
     <!-- FOOTER -->
-    <footer class="border-top bg-body py-3">
-      <CContainer class="text-center text-body-secondary small">
-        © {{ new Date().getFullYear() }} RestoSystem
-      </CContainer>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
@@ -131,7 +135,6 @@ h4 {
   letter-spacing: -0.02em;
 }
 
-/* subtle lift instead of flat UI */
 .feature-card {
   transition: 0.2s ease;
 }
@@ -140,7 +143,6 @@ h4 {
   transform: translateY(-4px);
 }
 
-/* hero visual depth */
 .hero-visual {
   position: relative;
 }

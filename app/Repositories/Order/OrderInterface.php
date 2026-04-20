@@ -21,6 +21,6 @@ interface OrderInterface
 
     public function getStaffs();
 
-    public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null): Collection;
+    public function searchOrders(?string $tableNumber = null, ?string $searchTerm = null, ?string $status = null);
 
 }

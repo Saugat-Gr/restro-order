@@ -49,27 +49,26 @@ watch(
 );
 
 const edit = (order) => {
-    router.get(route('orders.edit', order.id));
-  
+  router.get(route("orders.edit", order.id));
 };
-
 </script>
+
 <template>
-  <CContainer fluid class="py-4">
+  <CContainer fluid class="py-4 border shadow-lg rounded-4 p-4">
+    <!-- PAGE HEADER -->
+    <CCard class="mb-4 border-0 ">
+      <CCardBody class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1 fw-semibold">Order Search</h5>
+          <div class="text-muted small">Filter and track restaurant orders</div>
+        </div>
+      </CCardBody>
+    </CCard>
 
-    <!-- HEADER -->
-    <div class="mb-4">
-      <h4 class="fw-semibold mb-1">Order Search</h4>
-      <div class="text-muted small">
-        Filter and track restaurant orders in real time
-      </div>
-    </div>
-
-    <!-- FILTER CARD -->
+    <!-- FILTERS -->
     <CCard class="mb-4 border-0 shadow-sm">
       <CCardBody>
-        <CRow class="g-3">
-
+        <CRow class="g-3 align-items-center">
           <CCol md="3">
             <CFormSelect v-model="filterData.table">
               <option value="">All Tables</option>
@@ -98,41 +97,34 @@ const edit = (order) => {
 
           <CCol md="6">
             <CInputGroup>
-              <CFormInput
-                v-model="filterData.searchTerm"
-                placeholder="Search order number..."
-              />
               <span class="input-group-text">
                 <CIcon :icon="cilSearch" />
               </span>
+              <CFormInput
+                v-model="filterData.searchTerm"
+                placeholder="Search by order number..."
+              />
             </CInputGroup>
           </CCol>
-
         </CRow>
       </CCardBody>
     </CCard>
 
     <!-- RESULTS -->
     <CRow class="g-4">
-
-      <CCol v-for="order in props.orders" :key="order.id" lg="4">
-
-        <CCard class="border-0 shadow-md order-card h-100">
-
+      <CCol v-for="order in props.orders.data" :key="order.id" lg="4">
+        <CCard class="border-0 shadow-lg h-100">
           <!-- HEADER -->
           <CCardBody class="pb-2">
-
             <div class="d-flex justify-content-between align-items-start">
-
               <div>
-                <div class="text-muted small">Order</div>
-                <div class="fw-bold text-primary">
+                <div class="fw-semibold fs-5 text-primary">
                   {{ order.order_number }}
                 </div>
               </div>
 
               <CBadge
-                class="px-2 py-1"
+                shape="rounded-pill"
                 :color="
                   order.status === 'pending'
                     ? 'warning'
@@ -141,67 +133,100 @@ const edit = (order) => {
                     : 'secondary'
                 "
               >
-                {{ order.status }}
+                {{ $capitalize(order.status) }}
               </CBadge>
-
             </div>
-
           </CCardBody>
 
-          <hr class="my-0">
-
           <!-- BODY -->
-          <CCardBody class="pt-2 pb-2 small text-muted">
-
-            <div class="d-flex justify-content-between mb-1">
-              <span>Table</span>
-              <span class="text-dark">
-                {{ order.table?.table_number || '-' }}
+          <CCardBody class="pt-2 small">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Table</span>
+              <span class="fw-medium">
+                {{ order.table?.table_number || "-" }}
               </span>
             </div>
 
-            <div class="d-flex justify-content-between mb-1">
-              <span>Total</span>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Total</span>
               <span class="text-success fw-semibold">
                 {{ formatCurrency(order.total_amount) }}
               </span>
             </div>
 
             <div class="d-flex justify-content-between">
-              <span>Time</span>
-              <span>
+              <span class="text-muted">Time</span>
+              <span class="small">
                 {{ new Date(order.created_at).toLocaleString() }}
               </span>
             </div>
-
           </CCardBody>
 
           <!-- FOOTER -->
-          <CCardBody class="pt-0">
-
-            <div class="d-flex justify-content-end">
-
-              <Link :href="route('orders.edit', order)">
-                <CButton color="dark" variant="outline" size="sm">
-                  <CIcon name="cil-pencil" />
-                </CButton>
-              </Link>
-
-            </div>
-
+          <CCardBody class="pt-0 d-flex justify-content-end">
+            <Link :href="route('orders.edit', order)">
+              <CButton color="dark" variant="outline" size="sm">
+                <CIcon icon="cil-pencil" class="me-1" />
+                Edit
+              </CButton>
+            </Link>
           </CCardBody>
-
         </CCard>
-
       </CCol>
 
-      <!-- EMPTY -->
-      <CCol v-if="props.orders.length === 0" class="text-center py-5">
-        <div class="text-muted">No orders found</div>
-      </CCol>
+      <!-- PAGINATION -->
+      <div
+        v-if="props.orders.links && props.orders.links.length > 0"
+        class="d-flex  align-items-center justify-end mt-4 gap-2"
+      >
+        <!-- PREVIOUS -->
+        <CButton
+          size="sm"
+          variant="outline"
+          color="primary"
+          :disabled="!props.orders.prev_page_url"
+          @click="
+            router.get(
+              props.orders.prev_page_url,
+              {},
+              { preserveState: true, preserveScroll: true }
+            )
+          "
+        >
+           Previous
+        </CButton>
 
+
+        <!-- NEXT -->
+        <CButton
+          size="sm"
+          variant="outline"
+          color="primary"
+          :disabled="!props.orders.next_page_url"
+          @click="
+            router.get(
+              props.orders.next_page_url,
+              {},
+              { preserveState: true, preserveScroll: true }
+            )
+          "
+        >
+          Next 
+        </CButton>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <CCol v-if="props.orders.data.length === 0">
+        <CCard class="border-0 shadow-sm text-center py-5">
+          <CCardBody>
+            <div class="text-muted mb-2">No orders found</div>
+            <div class="small text-muted">
+              Try adjusting filters or search term
+            </div>
+          </CCardBody>
+        </CCard>
+      </CCol>
     </CRow>
-
   </CContainer>
 </template>
 
@@ -212,6 +237,6 @@ const edit = (order) => {
 
 .order-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 </style>

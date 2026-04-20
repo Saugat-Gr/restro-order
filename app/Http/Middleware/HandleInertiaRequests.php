@@ -52,6 +52,11 @@ class HandleInertiaRequests extends Middleware
                 },
             ],
 
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+            ],
+
             'notifications' => function () use ($request) {
                 if (!$request->user())
                     return [];

@@ -1,94 +1,137 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+import {
+  CContainer,
+  CRow,
+  CCol,
+  CCard,
+  CCardBody,
+  CButton,
+  CForm,
+  CFormInput,
+  CFormCheck,
+  CAlert
+} from '@coreui/vue';
+import AppFooter from '@/Components/AppFooter.vue';
+
 defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
+  canResetPassword: Boolean,
+  status: String,
 });
 
 const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
+  email: '',
+  password: '',
+  remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+  form.post(route('login'), {
+    onFinish: () => form.reset('password'),
+  });
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
+  <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
+  <div class="min-vh-100 d-flex flex-column bg-body">
+    <!-- HEADER -->
+    <header class="border-bottom bg-body">
+        
+      <CContainer class="d-flex justify-content-between align-items-center py-3">
+          <div class="fw-bold fs-5 text-primary">
+          <Link :href="route('welcome')" class="text-decoration-none">
+                RestoSystem
+            </Link>
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
+        <Link :href="route('login')">
+          <CButton color="secondary" size="sm">Login</CButton>
+        </Link>
+      </CContainer>
+    </header>
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+    <!-- LOGIN SECTION -->
+    <section class="flex-grow-1 d-flex align-items-center py-5">
+      <CContainer>
+        <CRow class="justify-content-center">
+          <CCol md="6" lg="5">
+            <CCard class="border-0 shadow-lg bg-body-tertiary">
+              <CCardBody class="p-4">
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <h4 class="fw-bold mb-3 text-center">Login</h4>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <CAlert v-if="status" color="success">
+                  {{ status }}
+                </CAlert>
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
+                <CForm @submit.prevent="submit">
+                  <!-- Email -->
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <CFormInput
+                      type="email"
+                      v-model="form.email"
+                      required
+                      autofocus
+                      autocomplete="username"
+                    />
+                    <div v-if="form.errors.email" class="text-danger small mt-1">
+                      {{ form.errors.email }}
+                    </div>
+                  </div>
 
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+                  <!-- Password -->
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <CFormInput
+                      type="password"
+                      v-model="form.password"
+                      required
+                      autocomplete="current-password"
+                    />
+                    <div v-if="form.errors.password" class="text-danger small mt-1">
+                      {{ form.errors.password }}
+                    </div>
+                  </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
+                  <!-- Remember -->
+                  <div class="mb-3">
+                    <CFormCheck
+                      label="Remember me"
+                      v-model="form.remember"
+                    />
+                  </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
+                  <!-- Actions -->
+                  <div class="d-flex justify-content-between align-items-center">
+                    <Link
+                      v-if="canResetPassword"
+                      :href="route('password.request')"
+                      class="text-decoration-none small"
+                    >
+                      Forgot password?
+                    </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+                    <CButton
+                      type="submit"
+                      color="primary"
+                      :disabled="form.processing"
+                    >
+                      Log in
+                    </CButton>
+                  </div>
+                </CForm>
+
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      </CContainer>
+    </section>
+
+    <AppFooter/>
+  </div>
 </template>

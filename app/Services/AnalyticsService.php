@@ -60,7 +60,7 @@ class AnalyticsService
                         [
                             'label' => 'Orders This Week',
                             'data' => $weekly,
-                            'borderColor' => '#22c55e',
+                            'borderColor' => 'blue',
                         ]
                     ]
                 ],
