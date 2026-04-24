@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\Jobs\BulkStaffCreated;
 use App\Events\Menu\Category\CategoryAdded;
 use App\Events\Menu\Category\CategoryRemoved;
 use App\Events\Menu\Item\InStock;
@@ -17,6 +18,8 @@ use App\Events\SuperAdmin\Owner\OwnerRemoved;
 use App\Events\SuperAdmin\Restaurant\RestaurantCreated;
 use App\Events\SuperAdmin\Restaurant\RestaurantRemoved;
 use App\Events\Table\TableAdded;
+use App\Listeners\Jobs\Staff\LogBulkStaffCreated;
+use App\Listeners\Jobs\Staff\SendBulkStaffCreatedNotification;
 use App\Listeners\Menu\Category\LogCategoryAdded;
 use App\Listeners\Menu\Category\LogCategoryRemoved;
 use App\Listeners\Menu\Category\SendCategoryAddedNotification;
@@ -144,6 +147,12 @@ class EventServiceProvider extends ServiceProvider
         RestaurantRemoved::class => [
             LogRestaurantRemoved::class,
             SendRestaurantRemovedNotification::class,
+        ],
+
+        // BulkStaff:
+        BulkStaffCreated::class => [
+             LogBulkStaffCreated::class,
+             SendBulkStaffCreatedNotification::class,
         ]
     ];
 

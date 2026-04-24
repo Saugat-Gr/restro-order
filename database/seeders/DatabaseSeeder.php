@@ -35,7 +35,9 @@ class DatabaseSeeder extends Seeder
             return $default;
         }
 
-        $files = array_filter(scandir($fullPath), fn($file) =>
+        $files = array_filter(
+            scandir($fullPath),
+            fn($file) =>
             !in_array($file, ['.', '..']) && is_file($fullPath . '/' . $file)
         );
 
@@ -49,17 +51,20 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $this->command->info('🚀 Seeding started...');
+        $this->call([
+            RolePermissionSeeder::class
+        ]);
+
+        $this->command->info('Seeding started...');
 
         $startOfLastYear = now()->subYear()->startOfYear();
 
-        // ==================== Super Admin ====================
         $superAdmin = User::firstOrCreate(
             ['email' => 'superadmin@gmail.com'],
             [
-                'name'       => 'Super Admin',
-                'password'   => Hash::make('password'),
-                'status'     => Status::ACTIVE->value,
+                'name' => 'Super Admin',
+                'password' => Hash::make('password'),
+                'status' => Status::ACTIVE->value,
                 'created_at' => now()->subYears(2),
                 'updated_at' => now()->subYears(2),
             ]
@@ -75,43 +80,45 @@ class DatabaseSeeder extends Seeder
 
         foreach ($restaurantsData as $data) {
 
-            // ==================== Owner ====================
             $owner = User::firstOrCreate(
                 ['email' => $data['owner_email']],
                 [
-                    'name'     => $data['owner_name'],
+                    'name' => $data['owner_name'],
                     'password' => Hash::make('password'),
-                    'status'   => Status::ACTIVE->value,
-                    'avatar'   => $this->getRandomImage('user/avatars', 'user/avatars/default-avatar.jpg'),
+                    'status' => Status::ACTIVE->value,
+                    'avatar' => $this->getRandomImage('user/avatars', 'user/avatars/default-avatar.jpg'),
                 ]
             );
 
             $restaurant = Restaurant::firstOrCreate(
                 ['email' => $data['restaurant_email']],
                 [
-                    'name'      => $data['restaurant_name'],
-                    'owner_id'  => $owner->id,
-                    'phone'     => fake()->phoneNumber(),
-                    'address'   => fake()->address(),
-                    'logo'      => $this->getRandomImage('restaurant/logos', 'restaurant/logos/default-logo.jpg'),
-                    'status'    => Status::ACTIVE->value,
+                    'name' => $data['restaurant_name'],
+                    'owner_id' => $owner->id,
+                    'phone' => fake()->phoneNumber(),
+                    'address' => fake()->address(),
+                    'logo' => $this->getRandomImage('restaurant/logos', 'restaurant/logos/default-logo.jpg'),
+                    'status' => Status::ACTIVE->value,
                 ]
             );
 
             $owner->update(['restaurant_id' => $restaurant->id]);
             $owner->assignRole('owner');
 
-            // ==================== Staff ====================
             $staffMembers = [];
             for ($i = 1; $i <= rand(6, 8); $i++) {
-                $staff = User::create([
-                    'name'         => fake()->name(),
-                    'email'        => strtolower(str_replace(' ', '', $data['restaurant_name'])) . $i . '@staff.com',
-                    'password'     => Hash::make('password123'),
-                    'status'       => Status::ACTIVE->value,
-                    'restaurant_id'=> $restaurant->id,
-                    'avatar'       => $this->getRandomImage('user/avatars', 'user/avatars/default-avatar.jpg'),
-                ]);
+                $staff = User::firstOrCreate(
+                    [
+                        'email' => strtolower(str_replace(' ', '', $data['restaurant_name'])) . $i . '@staff.com',
+                    ],
+                    [
+                        'name' => fake()->name(),
+                        'password' => Hash::make('password123'),
+                        'status' => Status::ACTIVE->value,
+                        'restaurant_id' => $restaurant->id,
+                        'avatar' => $this->getRandomImage('user/avatars', 'user/avatars/default-avatar.jpg'),
+                    ]
+                );
                 $staff->assignRole('staff');
                 $staffMembers[] = $staff;
             }
@@ -123,30 +130,29 @@ class DatabaseSeeder extends Seeder
             foreach ($categoryNames as $name) {
                 $categories[] = MenuItemCategory::create([
                     'restaurant_id' => $restaurant->id,
-                    'name'          => $name,
+                    'name' => $name,
                 ]);
             }
 
-            // ==================== Menu Items (FIXED) ====================
             $menuItems = [];
 
             $itemImages = [
-                'Appetizers'   => ['menu-items/appetizer1.jpg', 'menu-items/appetizer2.jpg'],
+                'Appetizers' => ['menu-items/appetizer1.jpg', 'menu-items/appetizer2.jpg'],
                 'Main Courses' => ['menu-items/main1.jpg', 'menu-items/main2.jpg'],
-                'Desserts'     => ['menu-items/dessert1.jpg'],
-                'Beverages'    => ['menu-items/drink1.jpg', 'menu-items/drink2.jpg'],
+                'Desserts' => ['menu-items/dessert1.jpg'],
+                'Beverages' => ['menu-items/drink1.jpg', 'menu-items/drink2.jpg'],
             ];
 
             $menuNames = [
-                'Appetizers'   => ['Chicken Wings', 'Spring Rolls', 'Garlic Bread', 'French Fries'],
+                'Appetizers' => ['Chicken Wings', 'Spring Rolls', 'Garlic Bread', 'French Fries'],
                 'Main Courses' => ['Butter Chicken', 'Margherita Pizza', 'Pasta Carbonara', 'Grilled Salmon'],
-                'Desserts'     => ['Chocolate Cake', 'Vanilla Ice Cream', 'Cheesecake'],
-                'Beverages'    => ['Coca Cola', 'Fresh Orange Juice', 'Espresso Coffee', 'Lemon Tea'],
+                'Desserts' => ['Chocolate Cake', 'Vanilla Ice Cream', 'Cheesecake'],
+                'Beverages' => ['Coca Cola', 'Fresh Orange Juice', 'Espresso Coffee', 'Lemon Tea'],
             ];
 
             for ($m = 0; $m < rand(25, 35); $m++) {
                 $category = $categories[array_rand($categories)];
-                $catName  = $category->name;
+                $catName = $category->name;
 
                 $names = $menuNames[$catName] ?? ['Special Item'];
                 $randomName = $names[array_rand($names)];
@@ -157,84 +163,39 @@ class DatabaseSeeder extends Seeder
                 );
 
                 $menuItem = MenuItem::create([
-                    'restaurant_id'         => $restaurant->id,
+                    'restaurant_id' => $restaurant->id,
                     'menu_item_category_id' => $category->id,
-                    'item_name'             => $randomName,
-                    'description'           => fake()->sentence(8),
-                    'image'                 => $imagePath ?? 'restaurant/items/images/default.jpg',
-                    'price'                 => fake()->randomFloat(2, 150, 1200), // NPR style
-                    'status'                => Status::ACTIVE->value,
-                    'is_in_stock'           => true,
+                    'item_name' => $randomName,
+                    'description' => fake()->sentence(8),
+                    'image' => $imagePath ?? 'restaurant/items/images/default.jpg',
+                    'price' => fake()->randomFloat(2, 150, 1200), // NPR style
+                    'status' => Status::ACTIVE->value,
+                    'is_in_stock' => true,
                 ]);
 
                 $menuItems[] = $menuItem;
             }
-
-            // ==================== Tables ====================
             $tables = [];
             for ($t = 1; $t <= 10; $t++) {
-                $tables[] = Table::create([
-                    'table_number'      => "T{$t}",
-                    'capacity'          => rand(2, 8),
-                    'restaurant_id'     => $restaurant->id,
-                    'assigned_staff_id' => $staffMembers[array_rand($staffMembers)]->id,
-                    'status'            => fake()->randomElement(TableStatus::values()),
-                ]);
+                $tables[] = Table::firstOrCreate(
+                    ['table_number' => "T{$t}",],
+                    [
+                        'capacity' => rand(2, 8),
+                        'restaurant_id' => $restaurant->id,
+                        'assigned_staff_id' => $staffMembers[array_rand($staffMembers)]->id,
+                        'status' => fake()->randomElement(TableStatus::values()),
+                    ]
+                );
             }
 
-            // // ==================== Orders + OrderItems + Transactions (FIXED) ====================
-            // for ($o = 0; $o < rand(30, 50); $o++) {
-            //     $table = $tables[array_rand($tables)];
-            //     $staff = $staffMembers[array_rand($staffMembers)];
 
-            //     DB::transaction(function () use ($restaurant, $table, $staff, $menuItems, $startOfLastYear) {
-
-            //         // Create order without triggering events (prevents duplicate order_number)
-            //         $order = Order::create([
-            //                 'restaurant_id' => $restaurant->id,
-            //                 'table_id'      => $table->id,
-            //                 'created_by'    => $staff->id,
-            //                 'status'        => OrderStatus::COMPLETED,   // Most orders completed → revenue shows
-            //                 'total_amount'  => 0,
-            //         ]);
-
-            //         $total = 0;
-
-            //         for ($i = 0; $i < rand(2, 5); $i++) {
-            //             $item = $menuItems[array_rand($menuItems)];
-            //             $qty  = rand(1, 3);
-
-            //             OrderItem::create([
-            //                 'order_id'      => $order->id,
-            //                 'restaurant_id' => $restaurant->id,
-            //                 'menu_item_id'  => $item->id,
-            //                 'item_name'     => $item->item_name,
-            //                 'quantity'      => $qty,
-            //                 'item_price'    => $item->price,
-            //             ]);
-
-            //             $total += $item->price * $qty;
-            //         }
-
-            //         $order->update(['total_amount' => $total]);
-
-            //         // Create Transaction (matches your OrderService logic)
-            //         if ($order->status === OrderStatus::COMPLETED) {
-            //             Transaction::create([
-            //                 'restaurant_id'  => $restaurant->id,
-            //                 'order_id'       => $order->id,
-            //                 'processed_by'   => $staff->id,
-            //                 'amount'         => $total,
-            //                 'payment_method' => fake()->randomElement(TransactionMethod::values()),
-            //                 'paid_at'        => $this->randomTimestamp($startOfLastYear),
-            //             ]);
-            //         }
-            //     });
-            // }
-
-            $this->command->info("✅ {$data['restaurant_name']} seeded successfully");
+            $this->command->info("{$data['restaurant_name']} seeded successfully");
         }
 
-        $this->command->info('🎉 Full seeding completed!');
+        $this->call([
+            OrderSeeder::class,
+            OrderTransactionSeeder::class,
+            OrderCancelledSeeder::class,
+        ]);
     }
 }

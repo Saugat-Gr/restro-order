@@ -17,7 +17,7 @@ class OrderSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            $user = User::where('email', 'bipin@gmail.com')->first();
+            $user = User::inRandomOrder()->first();
             $tables = Table::where('restaurant_id', $user->restaurant_id)->get();
             $menuItems = MenuItem::where('is_in_stock', true)->get();
 
@@ -28,7 +28,7 @@ class OrderSeeder extends Seeder
             // create 20 orders
             for ($i = 0; $i < 5; $i++) {
 
-                $table = $tables->random();
+                $table = $tables->random()->first();
 
                 $order = Order::create([
                     'restaurant_id' => $user->restaurant_id,

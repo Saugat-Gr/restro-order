@@ -118,8 +118,7 @@ class StaffController extends Controller
 
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:csv,txt',   // allow txt too for flexibility
+        $request->validate([// allow txt too for flexibility
         ]);
 
         $file = $request->file('file');
@@ -132,6 +131,7 @@ class StaffController extends Controller
             $storedPath,                    // now guaranteed to end with .csv
             auth()->user()->restaurant_id
         );
+
 
         return back()->with('success', 'Import started.');
     }

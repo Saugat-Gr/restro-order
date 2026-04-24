@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\Jobs\BulkStaffCreated;
 use App\Models\User;
 use Hash;
 use Illuminate\Bus\Queueable;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Log;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class BulkStaffCreateJob implements ShouldQueue
@@ -23,9 +25,11 @@ class BulkStaffCreateJob implements ShouldQueue
 
     public function handle(): void
     {
+        $createdStaffs = [];
+
         SimpleExcelReader::create(storage_path("app/{$this->filePath}"))
             ->getRows()
-            ->each(function ($row) {
+            ->each(function ($row) use (&$createdStaffs) {
 
                 if (User::where('email', $row['email'])->exists()) {
                     return;
@@ -39,6 +43,13 @@ class BulkStaffCreateJob implements ShouldQueue
                 ]);
 
                 $user->assignRole('staff');
+
+                $createdStaffs[] = $user->id;
             });
+
+        if (!empty($createdStaffs)) {
+            Log::info('STARTING');
+            event(new BulkStaffCreated($createdStaffs));
+        }
     }
 }

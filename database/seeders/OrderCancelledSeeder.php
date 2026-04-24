@@ -19,13 +19,13 @@ class OrderCancelledSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            $user = User::where('email', 'bipin@gmail.com')->first();
-            $tables = Table::all();
+            $user = User::inRandomOrder()->first();
+            $tables = Table::where('restaurant_id', $user->restaurant_id)->get();
             $menuItems = MenuItem::where('is_in_stock', true)->get();
 
             for ($i = 0; $i < 12; $i++) {
 
-                $table = $tables->random();
+                $table = $tables->random()->first();
 
                 // Random date in last 12 months
                 $date = Carbon::now()->subDays(rand(0, 365));

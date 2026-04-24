@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
-        // USERS
         $superAdmin = User::create([
             'name' => 'Super Admin',
             'email' => 'admin@saas.com',
