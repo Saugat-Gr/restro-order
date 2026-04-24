@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Enums\TransactionMethod;
 use App\Events\Order\OrderCompleted;
 use App\Http\Requests\Order\CreateRequest;
 use App\Http\Requests\Order\UpdateRequest;
@@ -31,12 +32,14 @@ class OrderController extends Controller
     public function index()
     {
         $orders = $this->orderService->getRecentOrders();
+        $payment_methods = TransactionMethod::values();
 
 
         return Inertia::render('Restaurant/Orders/Index', [
             'app' => ['title' => 'Orders'],
             'orders' => $orders,
-            'order_statuses' => OrderStatus::values()
+            'order_statuses' => OrderStatus::values(),
+            'payment_methods' => $payment_methods
         ]);
     }
 
@@ -76,6 +79,7 @@ class OrderController extends Controller
     public function update(UpdateRequest $request, Order $order)
     {
         try {
+            Log::info($request);
             $order = $this->orderService->updateOrder($order, $request->validated());
             return redirect()->back()
                 ->with('success', 'Order updated successfully.');

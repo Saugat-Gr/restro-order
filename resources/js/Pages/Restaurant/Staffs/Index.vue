@@ -11,8 +11,9 @@ const props = defineProps({
 
 const search = ref("");
 
-const staffsList = computed(() => props.staffs ?? []);
+const staffsList = computed(() => props.staffs.data ?? []);
 
+const hasPagination = computed(() => props.staffs?.last_page > 1);
 
 const filteredStaffs = computed(() => {
   if (!search.value) return staffsList.value;
@@ -22,122 +23,166 @@ const filteredStaffs = computed(() => {
   );
 });
 
+/* IMPORT */
+const fileInpute = ref(null);
+const file = ref(null);
 
+const handleFile = (e) => {
+  file.value = e.target.files[0];
+};
+
+const uploadFile = () => {
+  if (!file.value) return;
+
+  const formData = new FormData();
+  formData.append("file", file.value);
+
+  router.post(route("staffs.import"), formData, {
+    forceFormData: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      file.value = null;
+      if (fileInput.value) {
+        fileInput.value.value = "";
+      }
+    },
+  });
+};
+
+/* STATUS */
 const statusForm = useForm({
   status: "",
   _method: "patch",
 });
 
-
 const toggleStaffStatus = (staff) => {
-  const originalStatus = staff.status;
-  const newStatus = originalStatus === "active" ? "inactive" : "active";
+  const original = staff.status;
+  const updated = original === "active" ? "inactive" : "active";
 
-  staff.status = newStatus;
-
-  statusForm.status = newStatus;
+  staff.status = updated;
+  statusForm.status = updated;
 
   statusForm.patch(route("staffs.update", staff.id), {
     preserveScroll: true,
-
-    onError: () => {
-      staff.status = originalStatus;
-    },
+    onError: () => (staff.status = original),
   });
 };
 
-
+/* DELETE */
 const destroy = (id) => {
-  if (confirm("Are you sure you want to delete this staff?")) {
+  if (confirm("Delete this staff?")) {
     router.delete(route("staffs.destroy", id), {
       preserveScroll: true,
     });
   }
 };
+
+const changePage = (page) => {
+  router.get(
+    route("staffs.index"),
+    {page},
+    { preserveState: true, preserveScroll: true }
+  );
+};
 </script>
+
 <template>
   <CContainer class="mt-4">
+    <!-- HEADER CARD -->
+    <CCard class="mb-4">
+      <CCardBody>
+        <div
+          class="d-flex justify-content-between align-items-center flex-wrap gap-3"
+        >
+          <div>
+            <h4 class="mb-0">Staff Management</h4>
+            <small class="text-medium-emphasis">
+              Manage restaurant staff, roles & permissions
+            </small>
+          </div>
 
-    <div class=" border-0 rounded-4 shadow-lg p-4">
+          <div class="d-flex gap-2 align-items-center flex-wrap justify-end">
+            <!-- FILE IMPORT -->
+            <CFormInput
+              type="file"
+              ref="fileInput"
+              size="sm"
+              accept=".csv,.xlsx,.xls"
+              @change="handleFile"
+            />
 
-      <!-- HEADER -->
-      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <div>
-          <h4 class="mb-0 fw-semibold">Staff Management</h4>
-          <small class="text-medium-emphasis">
-            Manage restaurant staff and permissions
-          </small>
+            <div class="d-flex gap-2">
+              <CButton
+                color="success"
+                class="text-white"
+                size="sm"
+                @click="uploadFile"
+                :disabled="!file"
+              >
+                Import
+              </CButton>
+
+              <!-- ADD STAFF -->
+              <CButton color="primary" size="sm" :href="route('staffs.create')">
+                Add Staff
+              </CButton>
+            </div>
+          </div>
         </div>
+      </CCardBody>
+    </CCard>
 
-        <CButton color="primary" :href="route('staffs.create')">
-          <i class="bi bi-plus me-1"></i>
-          Add Staff
-        </CButton>
-      </div>
-
-      <!-- SEARCH -->
-      <div class="mb-3">
+    <!-- SEARCH -->
+    <CCard class="mb-3">
+      <CCardBody>
         <CFormInput
           v-model="search"
           placeholder="Search staff by name or email..."
         />
-      </div>
+      </CCardBody>
+    </CCard>
 
-      <!-- TABLE CARD -->
-      <div class="border rounded-4 overflow-hidden">
-
-        <CTable hover responsive class="align-middle mb-0">
-
-          <!-- HEAD -->
-          <CTableHead class="bg-light">
-            <CTableRow class="text-medium-emphasis">
+    <!-- TABLE -->
+    <CCard>
+      <CCardBody class="p-0">
+        <CTable hover responsive class="mb-0 align-middle">
+          <CTableHead color="light">
+            <CTableRow>
               <CTableHeaderCell>Staff</CTableHeaderCell>
               <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
               <CTableHeaderCell>Joined</CTableHeaderCell>
-              <CTableHeaderCell class="text-end">Actions</CTableHeaderCell>
+              <CTableHeaderCell class="text-center">Actions</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
 
-          <!-- BODY -->
           <CTableBody>
-
-            <!-- EMPTY -->
             <CTableRow v-if="filteredStaffs.length === 0">
-              <CTableDataCell colspan="5" class="text-center py-5 text-medium-emphasis">
-                No staff members found
+              <CTableDataCell
+                colspan="5"
+                class="text-center text-medium-emphasis py-4"
+              >
+                No staff found
               </CTableDataCell>
             </CTableRow>
 
-            <!-- ROW -->
             <CTableRow v-for="staff in filteredStaffs" :key="staff.id">
-
               <!-- STAFF -->
               <CTableDataCell>
                 <div class="d-flex align-items-center gap-3">
-
-                  <img
+                  <CAvatar
                     v-if="staff.avatar"
                     :src="`/storage/${staff.avatar}`"
-                    class="rounded-circle border shadow-sm"
-                    width="42"
-                    height="42"
-                    style="object-fit: cover"
                   />
 
-                  <div
-                    v-else
-                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
-                    style="width: 42px; height: 42px"
-                  >
-                    {{ staff.name.charAt(0).toUpperCase() }}
-                  </div>
+                  <CAvatar v-else color="primary">
+                    {{ staff.name.charAt(0) }}
+                  </CAvatar>
 
                   <div>
                     <div class="fw-semibold">{{ staff.name }}</div>
-                    <small class="text-medium-emphasis">Staff member</small>
+                    <small class="text-medium-emphasis">Staff</small>
                   </div>
-
                 </div>
               </CTableDataCell>
 
@@ -148,19 +193,17 @@ const destroy = (id) => {
 
               <!-- STATUS -->
               <CTableDataCell>
-                <div class="d-flex align-items-center gap-3">
 
-    
-                  <label class="switch mb-0">
-                    <input
-                      type="checkbox"
-                      :checked="staff.status === 'active'"
-                      @change="toggleStaffStatus(staff)"
-                    />
-                    <span class="slider"></span>
-                  </label>
-
-                </div>
+                 <label class="switch m-0">
+                <input
+                  type="checkbox"
+                  :checked="staff.status === 'active'"
+                  @change="() =>
+                    toggleStaffStatus(staff )
+                  "
+                />
+                <span class="slider"></span>
+              </label>
               </CTableDataCell>
 
               <!-- DATE -->
@@ -169,9 +212,8 @@ const destroy = (id) => {
               </CTableDataCell>
 
               <!-- ACTIONS -->
-              <CTableDataCell class="text-end">
-                <div class="d-flex justify-content-end gap-2">
-
+              <CTableDataCell>
+                <div class="d-flex gap-2 align-items-center justify-center">
                   <CButton
                     size="sm"
                     color="info"
@@ -198,21 +240,51 @@ const destroy = (id) => {
                   >
                     <i class="bi bi-trash"></i>
                   </CButton>
-
                 </div>
               </CTableDataCell>
-
             </CTableRow>
-
           </CTableBody>
-
         </CTable>
+      </CCardBody>
+    </CCard>
 
+     <div
+        v-if="hasPagination"
+        class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3"
+      >
+        <div class="text-muted small">
+          Showing {{ props.staffs.from }} to {{ props.staffs.to }} of
+          {{ props.staffs.total }}
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <CPagination>
+            <CPaginationItem
+              :disabled="props.staffs.current_page === 1"
+              @click="changePage(props.staffs.current_page - 1)"
+            >
+              Prev
+            </CPaginationItem>
+
+            <CPaginationItem
+              :disabled="props.staffs.current_page === props.staffs.last_page"
+              @click="changePage(props.staffs.current_page + 1)"
+            >
+              Next
+            </CPaginationItem>
+          </CPagination>
+
+        </div>
       </div>
 
-    </div>
+      <!-- EMPTY -->
+      <div v-if="staffsList.length === 0" class="text-center py-5 text-medium-emphasis">
+        No menu items found
+      </div>
+
   </CContainer>
 </template>
+
 <style scoped>
 .switch {
   position: relative;

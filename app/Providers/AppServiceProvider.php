@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\SuperAdmin\FacadeRestaurantController;
 use App\Repositories\Dashboard\DashBoardInterface;
 use App\Repositories\Dashboard\DashboardRepository;
 use App\Repositories\MenuItem\MenuItemInterface;
 use App\Repositories\MenuItem\MenuItemRepository;
 use App\Repositories\Order\OrderInterface;
 use App\Repositories\Order\OrderRepository;
+use App\Services\SuperAdmin\RestaurantService;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Restaurant\RestaurantInterface;
 use App\Repositories\Restaurant\RestaurantRepository;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(OrderInterface::class, OrderRepository::class);
 
+        $this->app->singleton(RestaurantService::class);
     }
 
     /**

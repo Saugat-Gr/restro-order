@@ -13,7 +13,7 @@ class StaffService
 
     public function getStaffs()
     {
-        return User::where('restaurant_id', auth()->user()->restaurant_id)->role(UserRole::STAFF)->get();
+        return User::where('restaurant_id', auth()->user()->restaurant_id)->role(UserRole::STAFF)->paginate(10);
     }
 
     public function createStaff(CreateRequest $request)

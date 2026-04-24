@@ -1,5 +1,6 @@
 <?php
 
+use App\Facade\SuperAdminRestaurantFacade;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -183,6 +184,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'RestaurantService' => SuperAdminRestaurantFacade::class
     ])->toArray(),
 
 ];

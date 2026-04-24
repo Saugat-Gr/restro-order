@@ -23,11 +23,11 @@ class TransactionController extends Controller
         $transaction_method = $request->input('transaction_method');
         $searchTerm = $request->input('searchTerm');
 
-        $transactions = Transaction::with('user')->when($transaction_method, function (Builder $q) use ($transaction_method) {
+        $transactions = Transaction::with(['user', 'order'])->when($transaction_method, function (Builder $q) use ($transaction_method) {
             $q->where('payment_method', $transaction_method);
         })->when($searchTerm, function (Builder $q) use ($searchTerm) {
             $q->where('transaction_number', 'LIKE', '%' . $searchTerm . '%');
-        })->paginate($perPage)->withQueryString();
+        })->orderBy('created_at', 'DESC')->paginate($perPage)->withQueryString();
 
 
         return Inertia::render('Restaurant/Transactions/Index', [

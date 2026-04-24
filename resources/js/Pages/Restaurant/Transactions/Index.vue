@@ -79,7 +79,7 @@ watch(
             :key="transaction"
             :value="transaction"
           >
-            {{ transaction }}
+            {{ $capitalize(removeUnderScore(transaction)) }}
           </option>
         </CFormSelect>
       </div>
@@ -91,11 +91,11 @@ watch(
       <CTableHead>
         <CTableRow class="text-medium-emphasis">
           <CTableHeaderCell>#</CTableHeaderCell>
-          <CTableHeaderCell>Transaction</CTableHeaderCell>
+          <CTableHeaderCell>Transaction ID</CTableHeaderCell>
+          <CTableHeaderCell>Order ID</CTableHeaderCell>
           <CTableHeaderCell>Processed By</CTableHeaderCell>
           <CTableHeaderCell>Method</CTableHeaderCell>
           <CTableHeaderCell>Amount</CTableHeaderCell>
-          <CTableHeaderCell>Status</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
 
@@ -119,6 +119,12 @@ watch(
             {{ transaction.transaction_number }}
           </CTableDataCell>
 
+          <!-- Order Number -->
+
+           <CTableDataCell> 
+             {{ transaction.order.order_number }}
+           </CTableDataCell>
+
           <!-- User -->
           <CTableDataCell>
             {{ transaction?.user?.name || "USER" }}
@@ -136,10 +142,6 @@ watch(
             {{ formatCurrency(transaction.amount) }}
           </CTableDataCell>
 
-          <!-- Status -->
-          <CTableDataCell>
-            {{ $capitalize(transaction.status) }}
-          </CTableDataCell>
         </CTableRow>
       </CTableBody>
     </CTable>

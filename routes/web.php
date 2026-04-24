@@ -1,10 +1,12 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SuperAdmin\ActivityLogsController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
+use App\Http\Controllers\SuperAdmin\FacadeRestaurantController;
 use App\Http\Controllers\SuperAdmin\RestaurantController as SuperAdminRestaurantController;
 
 use App\Http\Controllers\DashboardController;
@@ -16,8 +18,10 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SuperAdmin\OwnerController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TransactionController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +47,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:super-admin'])->prefix('super-admin')->group(function () {
     Route::get('/dashboard', [SuperAdminDashboard::class, 'index']);
     Route::resource('/owners', OwnerController::class);
-    Route::resource('/restaurants', SuperAdminRestaurantController::class);
+    Route::resource('/restaurants', FacadeRestaurantController::class);
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('superadmin.analytics');
 
     Route::get('/activity-logs', ActivityLogsController::class);
@@ -91,7 +95,7 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 
     // Analytics Log:
 
-    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class,'index'])->name('analytics');
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics');
 
     //  Dashboard Routes:
     Route::get(
@@ -147,6 +151,8 @@ Route::middleware(['auth', 'role:owner|staff', 'ensure.restaurant.is.active'])->
 Route::fallback(function () {
     return redirect()->route('welcome')->with('error', 'Page Not Found');
 });
+
+Route::post('/test-import', [StaffController::class, 'import'])->name('staffs.import');
 
 require __DIR__ . '/auth.php';
 

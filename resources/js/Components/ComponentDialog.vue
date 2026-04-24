@@ -4,6 +4,7 @@ import { CModal, CButton } from "@coreui/vue";
 const props = defineProps({
   visible: Boolean,
   message: { type: String, default: "Are you sure?" },
+  button_text: {type:String, default:"Delete"}
 });
 
 const emit = defineEmits(["update:visible", "confirm", "cancel"]);
@@ -25,7 +26,7 @@ const confirm = () => {
     title="Confirm Delete"
     backdrop="static"
     centered
-    autoclose={false} 
+    autoclose="'static'" 
   >
     <div class="modal-body">
       {{ message }}
@@ -33,8 +34,8 @@ const confirm = () => {
 
     <!-- ✅ Custom footer div NOW WORKS -->
     <div class="d-flex justify-content-end gap-2 p-3 border-top">
-      <CButton color="secondary" @click="cancel">Cancel</CButton>
-      <CButton color="danger" @click="confirm">Delete</CButton>
+      <CButton color="secondary" @click="cancel" v-if="button_text !== 'Cancel'">Cancel</CButton>
+      <CButton color="danger" @click="confirm">{{ button_text }}</CButton>
     </div>
   </CModal>
 </template>

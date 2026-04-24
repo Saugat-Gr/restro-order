@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Enums\UserRole;
 use App\Http\Requests\Staffs\CreateRequest;
 use App\Http\Requests\Staffs\UpdateRequest;
+use App\Jobs\BulkStaffCreateJob;
 use App\Models\User;
 use App\Services\StaffService;
 use Hash;
@@ -114,4 +115,25 @@ class StaffController extends Controller
 
         return redirect()->route('staffs.index')->with('success', 'Staff Deleted');
     }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt',   // allow txt too for flexibility
+        ]);
+
+        $file = $request->file('file');
+
+        // Force .csv extension when storing (this is the key fix)
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $storedPath = $file->storeAs('imports', $originalName . '_' . time() . '.csv');
+
+        BulkStaffCreateJob::dispatch(
+            $storedPath,                    // now guaranteed to end with .csv
+            auth()->user()->restaurant_id
+        );
+
+        return back()->with('success', 'Import started.');
+    }
+
 }

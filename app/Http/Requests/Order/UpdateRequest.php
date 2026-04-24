@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Order;
 
 use App\Enums\OrderStatus;
+use App\Enums\TransactionMethod;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -29,6 +31,7 @@ class UpdateRequest extends FormRequest
             'items.*.id' => ['nullable', 'exists:order_items,id'],
             'items.*.menu_item_id' => ['sometimes', 'exists:menu_items,id'],
             'items.*.quantity' => ['sometimes', 'integer', 'min:1'],
+            'payment_method' => ['sometimes', Rule::in(TransactionMethod::values())]
         ];
     }
 }

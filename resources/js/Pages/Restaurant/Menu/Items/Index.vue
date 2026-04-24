@@ -284,7 +284,6 @@ const changePage = (page) => {
         </CTableBody>
       </CTable>
 
-      <!-- PAGINATION (RESTORED EXACTLY) -->
       <div
         v-if="hasPagination"
         class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3"

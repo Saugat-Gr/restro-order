@@ -22,18 +22,25 @@ class Transaction extends Model
         'status',
     ];
 
-    public static function booted(){
+    public static function booted()
+    {
         static::addGlobalScope(TenantScope::class);
 
-        static::creating(function($model){
-             if(!$model->transaction_number){
-                 $model->transaction_number = (string) Str::uuid();
-             }
+        static::creating(function ($model) {
+            if (!$model->transaction_number) {
+                $model->transaction_number = (string) Str::uuid();
+            }
         });
     }
 
-    public function user(){
-           return $this->belongsTo(User::class, 'processed_by');
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'processed_by');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 
 }
